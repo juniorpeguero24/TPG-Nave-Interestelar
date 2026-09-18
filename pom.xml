@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>NaveInterestelar</groupId>
+  <artifactId>NaveInterestelar</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <description>Super POM for NaveInterestelar</description>
+  <modules>
+    <module>dominio</module>
+  </modules>
+  <packaging>pom</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>grupo3</groupId>
+      <artifactId>tpg-nave-interestelar</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+  </dependencies>
+</project>
