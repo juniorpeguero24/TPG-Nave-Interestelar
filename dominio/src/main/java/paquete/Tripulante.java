@@ -1,8 +1,8 @@
 package paquete;
 
 public abstract class Tripulante {
-    private int id,antiguedad;
-    private String nombre,cargo,planetaOrigen;
+    private int id, antiguedad;
+    private String nombre, cargo, planetaOrigen;
 
 
     public Tripulante(int id, int antiguedad, String nombre, String cargo, String planetaOrigen) {
@@ -34,4 +34,9 @@ public abstract class Tripulante {
         return planetaOrigen;
     }
 
+
+    @Override
+    public String toString() {
+        return nombre+" "+cargo+" "+" Planeta de Origen: "+planetaOrigen+" Antiguedad: "+antiguedad;
+    }
 }
