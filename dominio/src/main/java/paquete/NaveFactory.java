@@ -1,24 +1,18 @@
 package paquete;
 
 public class NaveFactory {
-    public static Nave crearNave(int id,String nombre,String tipoClase){
-        double masa;
-        
-        switch (tipoClase.toLowerCase()){
+    public static Nave crearNave(String nombre,String clase){
+        if (clase == null)
+            return null;
+        switch (clase.toLowerCase()){
             case "exploradora":
-                masa = 1200.5;
-                break;
+                return new NaveExploradora(nombre);
             case "carguero":
-                masa = 8500;
-                break;
+                return new NaveCarguero(nombre);
             case "combate":
-                masa = 3400;
-                break;
+                return new NaveCombate(nombre);
             default:
-                masa=2000;
-            tipoClase = "estandar";
-            break;
+                return null;
         }
-        return new Nave(id,nombre,tipoClase,masa);
     }
 }
