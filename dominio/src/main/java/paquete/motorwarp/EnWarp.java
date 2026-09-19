@@ -1,28 +1,35 @@
 package paquete.motorwarp;
 
 class EnWarp implements EstadoWarp {
+    private final MotorWarp motor;
 
-    EnWarp(){
+    EnWarp(MotorWarp motor){
+        this.motor = motor;
     }
 
+    @Override
     public String nombre(){
         return "En Warp";
     }
 
-    public void prepararSalto(MotorWarp motor){
+    @Override
+    public void prepararSalto(){
         System.out.println("Transicion invalida");
     }
 
-    public void iniciarWarp(MotorWarp motor){
+    @Override
+    public void iniciarWarp(){
         System.out.println("En Warp...");
     }
 
-    public void finalizarWarp(MotorWarp motor){
+    @Override
+    public void finalizarWarp(){
         System.out.println("Enfriando motor");
-        motor.cambiarEstado(new Enfriamiento());
+        motor.cambiarEstado(new Enfriamiento(motor));
     }
 
-    public void finalizarEnfriamiento(MotorWarp motor){
+    @Override
+    public void finalizarEnfriamiento(){
 
         System.out.println("Transicion invalida");
     }

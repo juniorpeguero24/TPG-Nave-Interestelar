@@ -4,7 +4,7 @@ public class MotorWarp {
     private EstadoWarp estado;
 
     public MotorWarp(){
-        estado = new Disponible();
+        estado = new Disponible(this);
     }
 
     void cambiarEstado(EstadoWarp estado){
@@ -16,19 +16,19 @@ public class MotorWarp {
     }
 
     public void prepararSalto(){
-        this.estado.prepararSalto(this);
+        this.estado.prepararSalto();
     }
 
     public void iniciarWarp(){
-        this.estado.iniciarWarp(this);
+        this.estado.iniciarWarp();
     }
 
     public void finalizarWarp(){
-        this.estado.finalizarWarp(this);
+        this.estado.finalizarWarp();
     }
 
     public void finalizarEnfriamiento(){
-        this.estado.finalizarEnfriamiento(this);
+        this.estado.finalizarEnfriamiento();
     }
 
 }
