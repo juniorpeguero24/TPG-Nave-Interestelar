@@ -5,11 +5,6 @@
   <artifactId>tpg-nave-interestelar</artifactId>
   <version>1.0-SNAPSHOT</version>
   <description>Project for dominio</description>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-  </properties>
   <build>
     <resources>
       <resource>
