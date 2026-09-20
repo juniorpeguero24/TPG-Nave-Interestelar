@@ -2,17 +2,20 @@ package paquete;
 
 import java.util.ArrayList;
 
+import paquete.bitacora.Bitacora;
 import paquete.motorwarp.MotorWarp;
 
 public abstract class Nave {
-    protected String nombre;
-    protected int combustible, energia,desgaste;
-    protected MotorWarp motorWarp;
-    protected ArrayList<Tripulante> tripulantes;
-    
-    public static final int CAPACIDAD_MAX_COMBUSTIBLE = 100;
-    public static final int CAPACIDAD_MAX_ENERGIA = 100;
-    public static final int LIMITE_DESGASTE_MANTENIMIENTO = 80;
+    private String nombre;
+    private int combustible, energia,desgaste;
+    private MotorWarp motorWarp;
+    private ArrayList<Tripulante> tripulantes;
+    private Bitacora bitacora;
+    private AsistenteComando asistente;
+
+    private static final int CAPACIDAD_MAX_COMBUSTIBLE = 100;
+    private static final int CAPACIDAD_MAX_ENERGIA = 100;
+    private static final int LIMITE_DESGASTE_MANTENIMIENTO = 80;
 
     public Nave( String nombre,int combustible,int energia) {
         this.nombre = nombre;
@@ -21,6 +24,8 @@ public abstract class Nave {
         this.desgaste = 0;
         this.motorWarp = new MotorWarp();
         this.tripulantes = new ArrayList<>();
+        this.bitacora = new Bitacora();
+        this.asistente = new AsistenteComando(this.motorWarp, this.bitacora);
     }
 
     public void agregarTripulante(Tripulante t){
@@ -66,7 +71,8 @@ public abstract class Nave {
         return desgaste;
     }
 
-    public MotorWarp getMotorWarp() {
-        return motorWarp;
+    public AsistenteComando getAsistenteComando() {
+        return asistente;
     }
+
 }

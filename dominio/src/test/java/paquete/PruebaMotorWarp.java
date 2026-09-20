@@ -1,21 +1,21 @@
 package paquete;
 
-/// Prueba de cambios de estado validos e invalidos del motor Warp
-
-
 public class PruebaMotorWarp {
     public static void main(String[] args) {
-        Nave nave = new Nave(2, "ABCD", "carguero", 3000);
+        Nave nave = NaveFactory.crearNave("ABCD", "carguero");
+        AsistenteComando asistente = nave.getAsistenteComando();
 
-        nave.finalizarWarp();
-        nave.finalizarEnfriamiento();
-        nave.iniciarWarp();
-        nave.prepararSalto();
+        // Órdenes inválidas desde el estado inicial Disponible.
+        asistente.finalizarWarp();
+        asistente.iniciarWarp();
 
-        nave.iniciarWarp();
-        nave.finalizarWarp();
-        nave.finalizarEnfriamiento();
+        // Secuencia válida: Disponible -> PreparandoSalto -> EnWarp
+        // -> Enfriamiento -> Disponible.
+        asistente.prepararSalto();
+        asistente.iniciarWarp();
+        asistente.finalizarWarp();
+        asistente.finalizarEnfriamiento();
 
-        System.out.println(nave.getBitacora());
+        System.out.println(asistente.generarInformeBitacora());
     }
 }
