@@ -1,9 +1,11 @@
 package paquete.motorwarp;
 
+import paquete.bitacora.EventoMotorWarp;
+
 public interface EstadoWarp {
         String nombre();
-        void prepararSalto();
-        void iniciarWarp();
-        void finalizarWarp();
-        void finalizarEnfriamiento();
+        EventoMotorWarp prepararSalto();
+        EventoMotorWarp iniciarWarp();
+        EventoMotorWarp finalizarWarp();
+        EventoMotorWarp finalizarEnfriamiento();
 }

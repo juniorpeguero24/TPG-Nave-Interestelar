@@ -2,48 +2,20 @@ package paquete;
 
 /// Prueba de cambios de estado validos e invalidos del motor Warp
 
-import paquete.motorwarp.MotorWarp;
 
 public class PruebaMotorWarp {
     public static void main(String[] args) {
-        MotorWarp motor = new MotorWarp();
+        Nave nave = new Nave(2, "ABCD", "carguero", 3000);
 
-        System.out.println(motor.getEstado());
+        nave.finalizarWarp();
+        nave.finalizarEnfriamiento();
+        nave.iniciarWarp();
+        nave.prepararSalto();
 
-        //invalidos
-        motor.iniciarWarp();
-        motor.finalizarWarp();
-        motor.finalizarEnfriamiento();
-        //valido
-        motor.prepararSalto();
+        nave.iniciarWarp();
+        nave.finalizarWarp();
+        nave.finalizarEnfriamiento();
 
-        System.out.println(motor.getEstado());
-
-        //invalidos
-        motor.finalizarWarp();
-        motor.finalizarEnfriamiento();
-        motor.prepararSalto();
-        //valido
-        motor.iniciarWarp();
-
-        System.out.println(motor.getEstado());
-
-        //invalidos
-        motor.iniciarWarp();
-        motor.finalizarEnfriamiento();
-        motor.prepararSalto();
-        //valido
-        motor.finalizarWarp();
-
-        System.out.println(motor.getEstado());
-
-        //invalidos
-        motor.iniciarWarp();
-        motor.prepararSalto();
-        motor.finalizarWarp();
-        //valido
-        motor.finalizarEnfriamiento();
-
-        System.out.println(motor.getEstado());
+        System.out.println(nave.getBitacora());
     }
 }
