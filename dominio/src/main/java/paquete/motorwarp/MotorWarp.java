@@ -1,6 +1,7 @@
 package paquete.motorwarp;
 
-import paquete.bitacora.EventoMotorWarp;
+import paquete.bitacora.Evento;
+import paquete.bitacora.TipoEvento;
 
 public class MotorWarp {
     private EstadoWarp estado;
@@ -9,32 +10,32 @@ public class MotorWarp {
         this.estado = new Disponible(this);
     }
 
-    EventoMotorWarp cambiarEstado(EstadoWarp estado){
+    Evento cambiarEstado(EstadoWarp estado){
         this.estado = estado;
-        return new EventoMotorWarp("Cambio de estado: " + estado.nombre());
+        return new Evento(TipoEvento.MOTOR_WARP, "Cambio de estado a " + estado.nombre());
+    }
+
+    Evento registrarError(){
+        return new Evento(TipoEvento.MOTOR_WARP, "Transición inválida");
     }
 
     public String getEstado(){
         return this.estado.nombre();
     }
 
-    EventoMotorWarp registrarError(){
-        return new EventoMotorWarp("Transicion inválida");
-    }
-
-    public EventoMotorWarp prepararSalto(){
+    public Evento prepararSalto(){
         return this.estado.prepararSalto();
     }
 
-    public EventoMotorWarp iniciarWarp(){
+    public Evento iniciarWarp(){
         return this.estado.iniciarWarp();
     }
 
-    public EventoMotorWarp finalizarWarp(){
+    public Evento finalizarWarp(){
         return this.estado.finalizarWarp();
     }
 
-    public EventoMotorWarp finalizarEnfriamiento(){
+    public Evento finalizarEnfriamiento(){
         return this.estado.finalizarEnfriamiento();
     }
 

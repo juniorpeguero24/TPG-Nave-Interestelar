@@ -125,7 +125,7 @@ EventoMotorWarp finalizarEnfriamiento();
 
 #### Postcondiciones
 
-- Devuelve un `EventoMotorWarp` no nulo.
+- Devuelve un `Evento` no nulo.
 - Si la operación es válida para el estado:
   - solicita a `MotorWarp` el cambio al estado siguiente;
   - el evento informa la transición realizada.
@@ -138,14 +138,14 @@ EventoMotorWarp finalizarEnfriamiento();
 - Cada implementación respeta las reglas de transición correspondientes a su estado.
 - Una operación inválida no modifica el estado del motor.
 - Todas las operaciones definidas por la interfaz devuelven un evento
-  `EventoMotorWarp`.
+  `Evento`.
 
 ## `MotorWarp`
 
 ### Responsabilidad
 
 `MotorWarp` administra el estado actual del motor y delega cada operación al objeto que representa dicho estado. 
-También genera un `EventoMotorWarp` utilizado para registrar una transición válida o inválida.
+También genera un `Evento` utilizado para registrar una transición válida o inválida.
 
 `MotorWarp` no registra los eventos directamente en una `Bitacora`. Devuelve los eventos a su llamador, que se encarga de
 registrarlos.
@@ -206,7 +206,7 @@ public EventoMotorWarp finalizarEnfriamiento();
 #### Postcondiciones generales
 
 - Se delega la operación al estado actual.
-- Se devuelve un `EventoMotorWarp` no nulo.
+- Se devuelve un `Evento` no nulo.
 - Si la transición es válida:
   - el motor cambia al estado siguiente;
   - el evento informa el cambio de estado.

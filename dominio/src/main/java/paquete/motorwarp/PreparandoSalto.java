@@ -1,6 +1,6 @@
 package paquete.motorwarp;
 
-import paquete.bitacora.EventoMotorWarp;
+import paquete.bitacora.Evento;
 
 class PreparandoSalto implements EstadoWarp {
 
@@ -17,24 +17,24 @@ class PreparandoSalto implements EstadoWarp {
     }
 
     @Override
-    public EventoMotorWarp prepararSalto(){
+    public Evento prepararSalto(){
 
         return motor.registrarError();
     }
 
     @Override
-    public EventoMotorWarp iniciarWarp(){
+    public Evento iniciarWarp(){
         return motor.cambiarEstado(new EnWarp(motor));
     }
 
     @Override
-    public EventoMotorWarp finalizarWarp(){
+    public Evento finalizarWarp(){
 
         return motor.registrarError();
     }
 
     @Override
-    public EventoMotorWarp finalizarEnfriamiento(){
+    public Evento finalizarEnfriamiento(){
         return motor.registrarError();
     }
 
