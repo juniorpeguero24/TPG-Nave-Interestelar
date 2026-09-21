@@ -1,5 +1,7 @@
 package paquete.motorwarp;
 
+import paquete.bitacora.Evento;
+
 class Enfriamiento implements EstadoWarp {
     private final MotorWarp motor;
 
@@ -13,27 +15,26 @@ class Enfriamiento implements EstadoWarp {
     }
 
     @Override
-    public void prepararSalto(){
-
-        System.out.println("Transicion invalida");
+    public Evento prepararSalto(){
+        return motor.registrarError();
     }
 
     @Override
-    public void iniciarWarp(){
+    public Evento iniciarWarp(){
 
-        System.out.println("Transicion invalida");
+        return motor.registrarError();
     }
 
     @Override
-    public void finalizarWarp(){
-        System.out.println("Transicion invalida");
+    public Evento finalizarWarp(){
+
+        return motor.registrarError();
     }
 
     @Override
-    public void finalizarEnfriamiento() {
+    public Evento finalizarEnfriamiento() {
 
-        System.out.println("Enfriamiento finalizado");
-        motor.cambiarEstado(new Disponible(motor));
+        return motor.cambiarEstado(new Disponible(motor));
     }
 
 }
