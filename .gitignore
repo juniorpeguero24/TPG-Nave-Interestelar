@@ -1,0 +1,4 @@
+.data/
+.metadata/
+dominio/target/
+*.class
