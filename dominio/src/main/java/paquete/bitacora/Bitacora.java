@@ -10,12 +10,12 @@ public class Bitacora {
         eventos = new ArrayList<Evento>();
     }
 
-    public void registraEvento(Evento evento){
+    public void registrarEvento(Evento evento){
         if (evento != null)
             eventos.add(evento);
     }
 
-    public ArrayList<Evento> consultaEvento(LocalDateTime desde, LocalDateTime hasta){
+    public ArrayList<Evento> consultarEvento(LocalDateTime desde, LocalDateTime hasta){
         ArrayList<Evento> eventosConsultados = new ArrayList<>();
 
         for (Evento evento : eventos) {

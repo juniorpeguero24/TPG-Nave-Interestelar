@@ -3,76 +3,108 @@ package paquete;
 import java.util.ArrayList;
 
 import paquete.bitacora.Bitacora;
+import paquete.bitacora.Evento;
+
 import paquete.motorwarp.MotorWarp;
 
 public abstract class Nave {
     private String nombre;
-    private int combustible, energia,desgaste;
+    private Recursos recursos;
     private MotorWarp motorWarp;
-    private ArrayList<Tripulante> tripulantes;
+    private Tripulacion tripulacion;
     private Bitacora bitacora;
-    private AsistenteComando asistente;
 
-    private static final int CAPACIDAD_MAX_COMBUSTIBLE = 100;
-    private static final int CAPACIDAD_MAX_ENERGIA = 100;
-    private static final int LIMITE_DESGASTE_MANTENIMIENTO = 80;
 
     public Nave( String nombre,int combustible,int energia) {
         this.nombre = nombre;
-        this.combustible = combustible;
-        this.energia = energia;
-        this.desgaste = 0;
         this.motorWarp = new MotorWarp();
-        this.tripulantes = new ArrayList<>();
+        this.tripulacion = new Tripulacion();
         this.bitacora = new Bitacora();
-        this.asistente = new AsistenteComando(this.motorWarp, this.bitacora);
-    }
-
-    public void agregarTripulante(Tripulante t){
-        if (t != null && !this.tripulantes.contains(t))
-            tripulantes.add(t);
-    }
-    
-    public void cargarCombustible(int cantidad){
-        if (cantidad > 0 && (this.combustible+ cantidad) <= CAPACIDAD_MAX_COMBUSTIBLE)
-            this.combustible += cantidad;
-    }
-    
-    public void cargaEnergia(int cantidad){
-        if (cantidad > 0 && (this.energia + cantidad) <= CAPACIDAD_MAX_ENERGIA)
-            this.energia += cantidad;
-    }
-    
-    public void realizarMantenimiento(){
-        this.desgaste = 0;
-    }
-    
-    public boolean requiereMantenimiento(){
-        return this.desgaste >= LIMITE_DESGASTE_MANTENIMIENTO;
+        this.recursos = new Recursos(combustible, energia);
     }
 
     public String getNombre() {
         return nombre;
     }
+    
+    // Operaciones delegadas sobre Tripulacion
+    public void agregarTripulante(Tripulante tripulante) {
+        this.tripulacion.agregarTripulante(tripulante);
+    }
 
     public ArrayList<Tripulante> getTripulantes() {
-        return tripulantes;
+        return tripulacion.getTripulantes();
     }
-
+    
+    public boolean tieneTripulacionValida() {
+        return tripulacion.esValida();
+    }
+    
+    // Operaciones delegadas sobre Recursos 
     public int getCombustible() {
-        return combustible;
+        return recursos.getCombustible();
     }
 
+    public void cargarCombustible(int cantidad) {
+        recursos.cargarCombustible(cantidad);
+    }
+
+    public void consumirCombustible(int cantidad) {
+        recursos.consumirCombustible(cantidad);
+    }
+    
     public int getEnergia() {
-        return energia;
+        return recursos.getEnergia();
     }
-
+    
+    public void cargarEnergia(int cantidad) {
+        recursos.cargarEnergia(cantidad);
+    }
+    
+    public void consumirEnergia(int cantidad) {
+        recursos.consumirEnergia(cantidad);
+    }
+    
     public int getDesgaste() {
-        return desgaste;
+        return recursos.getDesgaste();
+    }
+    
+    public void aumentarDesgaste(int cantidad) {
+        recursos.aumentarDesgaste(cantidad);
+    }
+    
+    public void realizarMantenimiento(){
+        recursos.realizarMantenimiento();
+    }
+    
+    public boolean requiereMantenimiento(){
+        return recursos.requiereMantenimiento();
+    }  
+    
+    // Operaciones delegadas sobre Bitacora
+    public void registrarEvento(Evento evento) {
+        bitacora.registrarEvento(evento);
+    }
+    
+    public String generarInformeBitacora() {
+        return bitacora.toString();
+    }
+    
+    // Operaciones delegadas sobre el Motor Warp
+    public Evento prepararSalto(){
+        return motorWarp.prepararSalto();
     }
 
-    public AsistenteComando getAsistenteComando() {
-        return asistente;
+    public Evento iniciarWarp(){
+        return motorWarp.iniciarWarp(); 
     }
 
+    public Evento finalizarWarp(){
+        return motorWarp.finalizarWarp();
+    }
+
+    public Evento finalizarEnfriamiento(){
+        return motorWarp.finalizarEnfriamiento();
+    }
+    
 }

@@ -4,5 +4,6 @@ public enum TipoEvento {
     MOTOR_WARP,
     RECURSOS,
     MISION,
-    NAVEGACION
+    NAVEGACION,
+    ERROR
 }
