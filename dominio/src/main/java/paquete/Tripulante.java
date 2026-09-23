@@ -1,18 +1,23 @@
 package paquete;
 
-public abstract class Tripulante {
-    private int id, antiguedad;
-    private String nombre, cargo, planetaOrigen;
+public class Tripulante {
+    private int id;
+    private int antiguedad;
+    private String nombre;
+    private Cargo cargo;
+    private Origen planetaOrigen;
 
+    public Tripulante(int id, int antiguedad, String nombre, Cargo cargo, Origen planetaOrigen) {
+        if (antiguedad < 0) {
+            throw new IllegalArgumentException("La antiguedad no puede ser negativa");
+        }
 
-    public Tripulante(int id, int antiguedad, String nombre, String cargo, String planetaOrigen) {
         this.id = id;
         this.antiguedad = antiguedad;
         this.nombre = nombre;
         this.cargo = cargo;
         this.planetaOrigen = planetaOrigen;
     }
-
 
     public int getId() {
         return id;
@@ -26,17 +31,18 @@ public abstract class Tripulante {
         return nombre;
     }
 
-    public String getCargo() {
+    public Cargo getCargo() {
         return cargo;
     }
 
-    public String getPlanetaOrigen() {
+    public Origen getPlanetaOrigen() {
         return planetaOrigen;
     }
 
-
     @Override
     public String toString() {
-        return nombre+" "+cargo+" "+" Planeta de Origen: "+planetaOrigen+" Antiguedad: "+antiguedad;
+        return nombre + " " + cargo
+                + " Planeta de Origen: " + planetaOrigen
+                + " Antiguedad: " + antiguedad;
     }
 }
