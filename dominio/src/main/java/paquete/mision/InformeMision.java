@@ -37,25 +37,40 @@ public class InformeMision {
     public String getMisionEjecutada() {
         return misionEjecutada;
     }
+    
     public ResultadoMision getResultado() {
         return resultado;
     }
+    
     public ArrayList<String> getAccionesPrincipales() {
         return accionesPrincipales;
     }
+    
     public int getCombustibleConsumido() {
         return combustibleConsumido;
     }
+    
     public int getEnergiaConsumida() {
         return energiaConsumida;
     }
+    
     public int getDesgasteGenerado() {
         return desgasteGenerado;
     }
+    
     public String getEstadoFinalNave() {
         return estadoFinalNave;
     }
+    
     public ArrayList<String> getObservaciones() {
         return observaciones;
+    }
+    
+    protected void agregarAccionPrincipal(String accion) {
+        accionesPrincipales.add(accion);
+    }
+
+    protected void agregarObservacion(String observacion) {
+        observaciones.add(observacion);
     }
 }

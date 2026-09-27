@@ -56,7 +56,7 @@ public class Recursos {
     }    
     
     public void consumirCombustible(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        if (cantidad <= 0) {
+        if (cantidad < 0) {
             throw new OperacionRecursoInvalidaExcepcion("El combustible a consumir debe ser positivo");
         }
         if (cantidad > combustible) {
@@ -66,7 +66,7 @@ public class Recursos {
     }
     
     public void consumirEnergia(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        if (cantidad <= 0) {
+        if (cantidad < 0) {
             throw new OperacionRecursoInvalidaExcepcion("La energia a consumir debe ser positiva");
         }
         if (cantidad > energia) {
@@ -76,7 +76,7 @@ public class Recursos {
     }
     
     public void aumentarDesgaste(int cantidad) throws OperacionRecursoInvalidaExcepcion {
-        if (cantidad <= 0) {
+        if (cantidad < 0) {
             throw new OperacionRecursoInvalidaExcepcion("El desgaste debe ser positivo");
         }
         if (cantidad + desgaste > DESGASTE_MAXIMO) {
