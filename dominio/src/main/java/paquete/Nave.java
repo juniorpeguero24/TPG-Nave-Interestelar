@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import paquete.bitacora.Bitacora;
 import paquete.bitacora.Evento;
 
+import paquete.excepciones.OperacionRecursoInvalidaExcepcion;
+import paquete.excepciones.RecursoInsuficienteExcepcion;
+
 import paquete.motorwarp.MotorWarp;
 
 public abstract class Nave {
@@ -27,6 +30,14 @@ public abstract class Nave {
         return nombre;
     }
     
+    public String obtenerEstadoActual() {
+        return " Combustible: " + recursos.getCombustible()
+                + ", Energia: " + recursos.getEnergia()
+                + ", Desgaste: " + recursos.getDesgaste()
+                + ", Requiere mantenimiento: " + recursos.requiereMantenimiento()
+                + ", Motor Warp: " + motorWarp.getEstado();
+    }
+    
     // Operaciones delegadas sobre Tripulacion
     public void agregarTripulante(Tripulante tripulante) {
         this.tripulacion.agregarTripulante(tripulante);
@@ -45,11 +56,11 @@ public abstract class Nave {
         return recursos.getCombustible();
     }
 
-    public void cargarCombustible(int cantidad) {
+    public void cargarCombustible(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         recursos.cargarCombustible(cantidad);
     }
 
-    public void consumirCombustible(int cantidad) {
+    public void consumirCombustible(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirCombustible(cantidad);
     }
     
@@ -57,11 +68,11 @@ public abstract class Nave {
         return recursos.getEnergia();
     }
     
-    public void cargarEnergia(int cantidad) {
+    public void cargarEnergia(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         recursos.cargarEnergia(cantidad);
     }
     
-    public void consumirEnergia(int cantidad) {
+    public void consumirEnergia(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirEnergia(cantidad);
     }
     
@@ -69,7 +80,7 @@ public abstract class Nave {
         return recursos.getDesgaste();
     }
     
-    public void aumentarDesgaste(int cantidad) {
+    public void aumentarDesgaste(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         recursos.aumentarDesgaste(cantidad);
     }
     
@@ -80,6 +91,10 @@ public abstract class Nave {
     public boolean requiereMantenimiento(){
         return recursos.requiereMantenimiento();
     }  
+    
+    public void verificarDisponibilidadRecursos(int combustibleNecesario, int energiaNecesaria, int desgasteGenerado) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
+        recursos.verificarDisponibilidadRecursos(combustibleNecesario,energiaNecesaria,desgasteGenerado);
+    }
     
     // Operaciones delegadas sobre Bitacora
     public void registrarEvento(Evento evento) {
