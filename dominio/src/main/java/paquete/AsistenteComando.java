@@ -3,6 +3,8 @@ package paquete;
 import paquete.bitacora.Evento;
 import paquete.bitacora.TipoEvento;
 
+import paquete.excepciones.OperacionRecursoInvalidaExcepcion;
+
 public class AsistenteComando {
     private final Nave nave;
 
@@ -49,9 +51,9 @@ public class AsistenteComando {
     public void cargarCombustible(int cantidad) {
         try {
             nave.cargarCombustible(cantidad);
-            nave.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se cargaron " + cantidad + " unidades de combustible"));
+            this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se cargaron " + cantidad + " unidades de combustible"));
 
-        } catch (IllegalArgumentException e) {
+        } catch (OperacionRecursoInvalidaExcepcion e) {
             this.registrarEvento(new Evento(TipoEvento.ERROR, e.getMessage()));
         }
     }
@@ -59,15 +61,15 @@ public class AsistenteComando {
     public void cargarEnergia(int cantidad) {
         try {
             nave.cargarEnergia(cantidad);
-            nave.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se cargaron " + cantidad + " unidades de energia"));
+            this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se cargaron " + cantidad + " unidades de energia"));
 
-        } catch (IllegalArgumentException e) {
+        } catch (OperacionRecursoInvalidaExcepcion e) {
             this.registrarEvento(new Evento(TipoEvento.ERROR, e.getMessage()));
         }
     }
     
     public void realizarMantenimiento() {
         nave.realizarMantenimiento();
-        nave.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se cargaron realizo mantenimiento"));
+        this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se realizo el mantenimiento de la nave"));
     }
 }
