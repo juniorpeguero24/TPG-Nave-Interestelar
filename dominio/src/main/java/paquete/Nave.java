@@ -123,5 +123,6 @@ public abstract class Nave {
     }
 
     public String obtenerEstadoActualMotor() {
+        return this.motorWarp.getEstado();
     }
 }

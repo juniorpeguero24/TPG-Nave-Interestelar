@@ -104,7 +104,12 @@ public class AsistenteComando {
         this.nave.aumentarDesgaste(cantidad);
     }
 
-    public void verificarDisponibilidadParaMision(int combustibleNecesario, int energiaNecesaria) {
+    public void verificarDisponibilidadParaMision(int combustibleNecesario, int energiaNecesaria,int desgasteGenerado) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        if (!this.estaDisponibleParaSalto())
+            throw new OperacionRecursoInvalidaExcepcion("\n[ERROR] Operacion Recurso Invalida." +
+                    "\nLa nave no esta disponible para iniciar la mision." +
+                    "\n Motor en estado: "+this.nave.obtenerEstadoActualMotor());
+        this.nave.verificarDisponibilidadRecursos(combustibleNecesario,energiaNecesaria,desgasteGenerado);
     }
 
     public void ordenarSaltoWarp() {
