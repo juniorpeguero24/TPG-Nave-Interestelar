@@ -5,7 +5,15 @@
   <artifactId>tpg-nave-interestelar</artifactId>
   <version>1.0-SNAPSHOT</version>
   <description>Project for dominio</description>
-  <build>
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+    <build>
     <resources>
       <resource>
         <directory>${basedir}</directory>

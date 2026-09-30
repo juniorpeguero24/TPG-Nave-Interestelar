@@ -265,3 +265,144 @@ cuando una operación no está permitida.
 #### Invariantes
 
 - Una operación inválida nunca altera el estado del motor.
+
+## `Liquidacion`
+
+### Responsabilidad
+
+Define el contrato para la consulta y cálculo de conceptos remunerativos dentro del esquema de liquidación de haberes.
+
+### `calcularTotal`
+
+```java
+double calcularTotal();
+```
+
+### Precondiciones
+
+- El componente debe estar inicializado.
+
+### Postcondiciones
+
+- Devuelve el valor total acumulado en PG (mayor o igual a 0).
+- No altera el estado interno de los objetos.
+
+#### `obtenerDetalle`
+
+```java
+String obtenerDetalle();
+```
+
+### Precondiciones
+
+- El componente debe estar inicializado.
+
+### Postcondiciones
+
+- Devuelve una cadena no vacía con los conceptos aplicados y sus montos.
+
+### `SueldoBase`
+
+### Responsabilidad
+
+Componente base que asigna la remuneración inicial según el cargo del tripulante.
+
+```Java
+public SueldoBase(Cargo cargo);
+```
+
+### Precondiciones
+
+- cargo no debe ser null.
+
+### Postcondiciones
+
+- Asigna el monto base correspondiente al cargo según el dominio.
+
+### Invariantes
+
+- El sueldo base nunca es negativo.
+- El cargo asociado permanece inmutable.
+
+### `LiquidacionDecorator`
+
+### Responsabilidad
+
+Clase abstracta base para componer conceptos remunerativos delegando en el componente envuelto.
+
+```Java
+public LiquidacionDecorator(Liquidacion envoltorio);
+```
+
+### Precondiciones
+
+- envoltorio no debe ser null.
+
+### Postcondiciones
+
+- Almacena la referencia al componente interno decorado.
+
+### Invariantes
+
+- La referencia interna envoltorio nunca es null.
+
+### `SubsidioOrigen`
+
+### Responsabilidad
+
+Añade el subsidio fijo según el planeta de origen del tripulante.
+
+```Java
+public SubsidioOrigen(Liquidacion envoltorio, Origen origen);
+```
+
+### Precondiciones
+
+- envoltorio no debe ser null.
+- origen no debe ser null.
+
+### Postcondiciones
+
+- Suma el subsidio correspondiente al total acumulado.
+- Agrega la descripción del subsidio al detalle.
+
+### `Antiguedad`
+
+### Responsabilidad
+
+Calcula y agrega el adicional por años de servicio según el cargo del tripulante.
+
+```Java
+public Antiguedad(Liquidacion envoltorio, Cargo cargo, int antiguedad);
+```
+
+### Precondiciones
+
+- envoltorio no debe ser null.
+- cargo no debe ser null.
+- antiguedad debe ser mayor o igual a cero (antiguedad >= 0).
+
+### Postcondiciones
+
+- Suma el adicional por año correspondiente al cargo sobre su haber base.
+- Registra el desglose de años en el detalle.
+
+### `AdicionalConsejeros`
+
+### Responsabilidad
+
+Añade el adicional por consejos brindados durante el período liquidado.
+
+```Java
+public AdicionalConsejeros(Liquidacion envoltorio, int cantidadConsejos);
+```
+
+### Precondiciones
+
+- envoltorio no debe ser null.
+- cantidadConsejos debe ser mayor o igual a cero (cantidadConsejos >= 0).
+
+### Postcondiciones
+
+- Agrega 2 PG por cada consejo registrado al monto total.
+- Incorpora la cantidad de consejos computados al detalle.

@@ -113,3 +113,42 @@ Esto permite que un estado solicite una transición sin exponer las
 operaciones internas de cambio de estado fuera del paquete
 `paquete.motorwarp`. Es una decisión adecuada para mantener encapsulada la
 implementación del patrón.
+
+# Patrón Decorator aplicado a Liquidación de Haberes
+
+## ¿Qué problema resuelve?
+
+El cálculo de haberes mensuales involucra conceptos acumulativos (sueldo base por cargo, antigüedad, subsidio por origen y adicionales por consejos).
+
+El patrón Decorator evita la explosión de subclases por combinaciones posibles y permite componer dinámicamente los conceptos remunerativos en tiempo de ejecución envolviendo un componente base.
+
+## Participantes del patrón
+
+### Componente común: `Liquidacion`
+
+Interfaz que define los métodos comunes:
+
+- `calcularTotal()`: devuelve el monto acumulado en PG.
+- `obtenerDetalle()`: devuelve el desglose de conceptos aplicados.
+
+### Componente concreto: `SueldoBase`
+
+Punto de partida que asigna el haber según el cargo (Capitán 1000 PG, Consejero 600 PG, Teniente 400 PG, Alférez 200 PG). No envuelve a ningún objeto.
+
+### Decorador abstracto: `LiquidacionDecorator`
+
+Clase abstracta que implementa `Liquidacion` y contiene una referencia (`envoltorio`) al componente que decora, delegándole las llamadas por defecto.
+
+### Decoradores concretos
+
+Añaden su propio concepto al acumulado:
+
+- `SubsidioOrigen`: suma el valor según el planeta de origen (Terrícola 20 PG, Vulcano 30 PG, Marciano 18 PG).
+- `Antiguedad`: calcula el porcentaje anual correspondiente al cargo sobre el sueldo base.
+- `AdicionalConsejeros`: suma 2 PG por cada consejo registrado al cargo Consejero.
+
+## Ventajas de esta aplicación
+
+- Permite agregar o combinar nuevos conceptos sin modificar las clases existentes.
+- Mantiene identificable el aporte individual de cada concepto junto con el total final.
+
