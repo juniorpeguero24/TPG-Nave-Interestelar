@@ -4,6 +4,7 @@ import paquete.bitacora.Evento;
 import paquete.bitacora.TipoEvento;
 
 import paquete.excepciones.OperacionRecursoInvalidaExcepcion;
+import paquete.excepciones.RecursoInsuficienteExcepcion;
 
 public class AsistenteComando {
     private final Nave nave;
@@ -14,9 +15,10 @@ public class AsistenteComando {
 
 
     // ----- BITACORA ----- //
-    
-    private void registrarEvento(Evento evento){
-        nave.registrarEvento(evento);
+
+    public void registrarEvento(Evento evento){
+        if (evento != null)
+            nave.registrarEvento(evento);
     }
 
     public String generarInformeBitacora() {
@@ -71,5 +73,43 @@ public class AsistenteComando {
     public void realizarMantenimiento() {
         nave.realizarMantenimiento();
         this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se realizo el mantenimiento de la nave"));
+    }
+
+    // ----- CONSULTAS DE ESTADO Y DISPONIBILIDAD ----- //
+
+    public boolean estaDisponibleParaSalto() {
+        return "Disponible".equalsIgnoreCase(this.nave.obtenerEstadoActualMotor());
+    }
+
+    public void verificarDisponibilidadRecursos(int combustible, int energia, int desgaste)
+            throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
+        this.nave.verificarDisponibilidadRecursos(combustible, energia, desgaste);
+    }
+
+// ----- CONSUMO DE RECURSOS DURANTE LA MISIÓN ----- //
+
+    public void consumirCombustible(int cantidad)
+            throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        this.nave.consumirCombustible(cantidad);
+        this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se consumieron " + cantidad + " unidades de combustible"));
+    }
+
+    public void consumirEnergia(int cantidad)
+            throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        this.nave.consumirEnergia(cantidad);
+        this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se consumieron " + cantidad + " unidades de energía"));
+    }
+
+    public void aumentarDesgaste(int cantidad) throws OperacionRecursoInvalidaExcepcion {
+        this.nave.aumentarDesgaste(cantidad);
+    }
+
+    public void verificarDisponibilidadParaMision(int combustibleNecesario, int energiaNecesaria) {
+    }
+
+    public void ordenarSaltoWarp() {
+        this.prepararSalto();
+        this.iniciarWarp();
+        this.finalizarWarp();
     }
 }

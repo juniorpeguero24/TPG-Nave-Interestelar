@@ -121,5 +121,7 @@ public abstract class Nave {
     public Evento finalizarEnfriamiento(){
         return motorWarp.finalizarEnfriamiento();
     }
-    
+
+    public String obtenerEstadoActualMotor() {
+    }
 }
