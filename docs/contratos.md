@@ -406,3 +406,135 @@ public AdicionalConsejeros(Liquidacion envoltorio, int cantidadConsejos);
 
 - Agrega 2 PG por cada consejo registrado al monto total.
 - Incorpora la cantidad de consejos computados al detalle.
+
+## `Universo`
+
+### Responsabilidad
+
+`Universo` actúa como el centro de control del sistema. Sus responsabilidades son:
+
+- Mantener el registro de asistentes de comando listos para operar.
+- Seleccionar y proveer la nave activa para su operación, asegurando el uso de una única nave a la vez.
+- Servir como punto de entrada de alto nivel sin depender de cómo se construyen las naves ni sus asistentes.
+
+### Constructor
+
+```java
+public Universo();
+```
+
+### Postcondiciones
+- Inicializa la colección interna de asistentes vacía.   
+- naveEnOperacion queda sin asignar (null).   
+
+### Invariantes
+- La colección de asistentes no contiene referencias nulas.
+
+### `registrarAsistente`
+
+```Java
+public void registrarAsistente(AsistenteComando asistente);
+```
+
+### Precondiciones
+- asistente no debe ser null.   
+
+### Postcondiciones
+- El asistente queda añadido a la colección del universo.   
+- Se incrementa la cantidad de naves registradas en 1.   
+
+### Invariantes
+- La cantidad de asistentes registrados nunca disminuye.   
+
+### `seleccionarNaveParaOperar`
+
+```Java
+public AsistenteComando seleccionarNaveParaOperar(int indice);
+```
+
+### Precondiciones
+- indice debe ser un valor válido: 0 <= indice < getCantidadNaves().   
+
+### Postcondiciones
+- Establece y devuelve el asistente correspondiente al índice como la nave activa en operación.   
+- Garantiza que solo un asistente esté en operación en un momento dado.
+
+### Invariantes
+- No modifica la cantidad ni el orden de los asistentes almacenados.   
+
+### `AsistenteComando`
+
+### Responsabilidad
+Es la entidad inteligente que gobierna una única nave. Actúa como intermediario obligatorio para toda orden o consulta externa (recursos, motor warp y bitácora).   
+
+`Constructor`
+
+```Java
+public AsistenteComando(Nave nave);
+```
+
+### Precondiciones
+- nave no debe ser null.   
+
+### Postcondiciones
+- Queda asociado bidireccionalmente a la nave indicada.   
+
+### Invariantes
+- Cada asistente opera exactamente una única nave a lo largo de su ciclo de vida.   
+
+### `verificarDisponibilidadParaMision`
+
+```Java
+public void verificarDisponibilidadParaMision(int combustibleNecesario, int energiaNecesaria, int desgasteGenerado)
+throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion;
+```
+
+### Precondiciones
+- combustibleNecesario >= 0, energiaNecesaria >= 0, desgasteGenerado >= 0.   
+
+### Postcondiciones
+- Si el motor está en estado "Disponible" y la nave cuenta con combustible, energía y margen de desgaste suficiente, la ejecución concluye normalmente.   
+- Si el motor no está disponible, lanza OperacionRecursoInvalidaExcepcion.   
+- Si alguno de los recursos es insuficiente, lanza RecursoInsuficienteExcepcion.   
+- No altera los recursos de la nave.   
+
+### Invariantes
+- No modifica el estado del motor ni los consumos de la nave si se produce una falla.   
+
+### `OrdenarSaltoWarp`
+
+```Java
+public void ordenarSaltoWarp();
+```
+
+### Precondiciones
+- El motor de la nave debe encontrarse en estado "Disponible".   
+
+### Postcondiciones
+- Ejecuta en secuencia: prepararSalto() -> iniciarWarp() -> finalizarWarp().   
+- El motor concluye en estado "Disponible".   
+- Registra cada transición como un Evento inmutable en la bitácora.   
+
+### Invariantes
+- La bitácora incrementa su tamaño según los eventos generados.   
+
+### `MisionResponsabilidad`
+
+Clase abstracta que define la plantilla y precondiciones generales para cualquier misión encomendada a un asistente.realizarMision (Template Method)
+```Java
+public final void realizarMision(AsistenteComando asistente)
+throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion;
+```
+
+### Precondiciones
+- asistente no debe ser null.   
+
+### Postcondiciones
+- Ejecuta en orden invariable: preparar -> ejecutar -> evaluar -> finalizar.
+- Si la verificación de recursos o motor falla, aborta lanzando la excepción correspondiente y no consume recursos de la nave.   
+- Si la misión finaliza con éxito, ordena el salto warp al asistente y asienta el evento de éxito en la bitácora.   
+- Si la misión falla, asienta el evento de fallo en la bitácora sin ordenar salto warp.
+
+### Invariantes
+- El flujo de ejecución permanece inalterable para cualquier subclase.
+- Toda misión registra su desenlace en la bitácora del asistente.

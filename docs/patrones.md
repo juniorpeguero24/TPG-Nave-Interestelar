@@ -152,3 +152,54 @@ Añaden su propio concepto al acumulado:
 - Permite agregar o combinar nuevos conceptos sin modificar las clases existentes.
 - Mantiene identificable el aporte individual de cada concepto junto con el total final.
 
+# Patrón Template Method aplicado a `Mision`
+
+## ¿Qué problema resuelve?
+
+Toda misión en el universo sigue una serie estricta de etapas invariantes que deben ejecutarse en un orden predeterminado (preparar la nave y verificar recursos, ejecutar la tarea específica, evaluar el resultado y finalizar asentando el desenlace y ejecutando maniobras warp si hubo éxito).
+
+Sin el patrón Template Method, cada misión concreta implementaría su propio flujo de control, lo que causaría:
+- Duplicación de la lógica de validación de recursos y motor.
+- Riesgo de alterar el orden de las etapas de ejecución.
+- Dispersión de la responsabilidad de asentar los eventos en la bitácora y ordenar el salto warp.
+
+El patrón Template Method permite fijar el esqueleto del algoritmo de ejecución en una clase abstracta (`Mision`), delegando únicamente los pasos variables (`ejecutar` y `evaluar`) en las subclases concretas.
+
+## Participantes del patrón
+
+### Clase Abstracta (Plantilla): `Mision`
+
+Define el método plantilla `realizarMision` marcado como `final` para impedir que las subclases alteren la estructura del proceso:
+
+```java
+public final void realizarMision(AsistenteComando asistente) 
+        throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
+    preparar(asistente);
+    ejecutar(asistente);
+    evaluar(asistente);
+    finalizar(asistente);
+}
+```
+- **Pasos concretos (invariantes):**
+    - `preparar(AsistenteComando asistente)`: solicita al asistente validar que el motor esté disponible y existan los recursos suficientes (combustible, energía, tolerancia al desgaste) antes de iniciar. Asienta el evento de inicio en la bitácora.
+    - `finalizar(AsistenteComando asistente)`: si la evaluación fue exitosa, ordena al asistente ejecutar el salto warp y registra el desenlace; si falló, asienta el evento de fallo.
+- **Pasos primitivos (abstractos):**
+    - `ejecutar(AsistenteComando asistente)`: implementado por cada misión concreta para consumir los recursos asignados y realizar su tarea específica.
+    - `evaluar(AsistenteComando asistente)`: determina y asigna el estado final (`ResultadoMision.EXITO` o `ResultadoMision.FALLO`).
+
+### Clases Concretas
+
+- `Mision01` (Intercepción y asistencia)
+- `Mision02` (Recolección)
+- `Mision03` (Retorno seguro)
+
+Cada una define sus propios requisitos de recursos en el constructor y concreta las acciones específicas de su labor mediante las órdenes canalizadas por el `AsistenteComando`.
+
+## Intermediación y Desacoplamiento (`AsistenteComando`)
+
+El diseño cumple estrictamente con el principio de mínima sorpresa y bajo acoplamiento: `Mision` no conoce ni interactúa directamente con `Nave`. Toda consulta de estado, verificación y consumo de combustible/energía se le solicita al `AsistenteComando`, quien gobierna la nave y asienta los sucesos en la bitácora.
+
+## Ventajas de esta aplicación
+
+- **Principio Abierto/Cerrado (OCP):** Permite añadir nuevos tipos de misiones sin tocar la estructura del algoritmo ni las misiones existentes.
+- **Control centralizado:** Asegura que ninguna misión comience sin recursos ni omita el registro en la bitácora o la transición del motor warp ante un éxito.
