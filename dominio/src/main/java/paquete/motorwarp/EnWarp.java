@@ -30,6 +30,14 @@ class EnWarp implements EstadoWarp {
         return motor.cambiarEstado(new Enfriamiento(motor));
     }
 
+    // Por requerimiento R3 de la aclaración, vuelve a Disponible directamente
+    /*
+    @Override
+    public Evento finalizarWarp(){
+        return motor.cambiarEstado(new Disponible(motor));
+    }
+    */
+
     @Override
     public Evento finalizarEnfriamiento(){
        return motor.registrarError();

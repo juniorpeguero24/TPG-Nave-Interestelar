@@ -1,11 +1,14 @@
 package paquete;
 
+import paquete.haberes.*;
+
 public class Tripulante {
-    private int id;
-    private int antiguedad;
-    private String nombre;
-    private Cargo cargo;
-    private Origen planetaOrigen;
+    private final int id;
+    private final int antiguedad;
+    private final String nombre;
+    private final Cargo cargo;
+    private final Origen planetaOrigen;
+    private int cantidadConsejos;
 
     public Tripulante(int id, int antiguedad, String nombre, Cargo cargo, Origen planetaOrigen) {
         if (antiguedad < 0) {
@@ -17,7 +20,24 @@ public class Tripulante {
         this.nombre = nombre;
         this.cargo = cargo;
         this.planetaOrigen = planetaOrigen;
+        this.cantidadConsejos=0;
     }
+
+    public Liquidacion liquidarHaberes(){
+        Liquidacion liquidacion = new SueldoBase(this.cargo);
+        liquidacion = new Antiguedad(liquidacion,this.cargo,this.antiguedad);
+        liquidacion = new SubsidioOrigen(liquidacion,this.planetaOrigen);
+        if (this.cargo.equals(Cargo.CONSEJERO))
+            liquidacion = new AdicionalConsejeros(liquidacion,this.cantidadConsejos);
+        return liquidacion;
+    }
+
+    public void registrarConsejo(){
+        if (this.cargo.equals(Cargo.CONSEJERO))
+            this.cantidadConsejos++;
+    }
+
+    public int getCantidadConsejos() {return cantidadConsejos;}
 
     public int getId() {
         return id;

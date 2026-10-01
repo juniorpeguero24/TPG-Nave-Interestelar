@@ -1,33 +1,33 @@
 package paquete.mision;
 
-import paquete.Nave;
-
+import paquete.AsistenteComando;
+import paquete.bitacora.Evento;
+import paquete.bitacora.TipoEvento;
 import paquete.excepciones.OperacionRecursoInvalidaExcepcion;
 import paquete.excepciones.RecursoInsuficienteExcepcion;
 
 public class Mision02 extends Mision {
     private boolean elementoObtenido = false;
     
-    public Mision02(Nave nave) {
-        super(nave, "M-02 - Recoleccion", 4, 5, 4);
+    public Mision02() {
+        super( "M-02 - Recoleccion", 4, 5, 4);
     }
-    
+
     @Override
-    protected void ejecutar() throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
-        nave.consumirCombustible(getCombustibleNecesario());         
-        nave.aumentarDesgaste(getDesgasteGenerado());
-        
-        // ejecutar acciones
-        elementoObtenido = true;
-        nave.consumirEnergia(getEnergiaNecesaria());
+    protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
+        asistente.consumirCombustible(getCombustibleNecesario());
+        asistente.consumirEnergia(getEnergiaNecesaria());
+        asistente.aumentarDesgaste(getDesgasteGenerado());
+
+        asistente.registrarEvento(new Evento(TipoEvento.MISION,"Ejecutando maniobra de recolección..."));
+        this.elementoObtenido = true;
     }
-    
+
     @Override
-    protected void evaluar() {
-        if (elementoObtenido) {
-            resultado = ResultadoMision.EXITO;
-        } else {
-            resultado = ResultadoMision.FALLO;
-        }
+    protected void evaluar(AsistenteComando asistente) {
+        if (this.elementoObtenido)
+            this.resultado = ResultadoMision.EXITO;
+        else
+            this.resultado = ResultadoMision.FALLO;
     }
 }
