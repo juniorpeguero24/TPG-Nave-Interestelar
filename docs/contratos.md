@@ -226,7 +226,7 @@ public Evento enfriar();
 Evento cambiarEstado(EstadoWarp estado);
 ```
 
-Este método tiene visibilidad de paquete y es utilizado por los estados
+Este método tiene visibilidad de modelo y es utilizado por los estados
 concretos para solicitar una transición.
 
 #### Precondiciones
@@ -250,7 +250,7 @@ concretos para solicitar una transición.
 Evento registrarError();
 ```
 
-Este método tiene visibilidad de paquete y es utilizado por los estados
+Este método tiene visibilidad de modelo y es utilizado por los estados
 cuando una operación no está permitida.
 
 #### Precondiciones

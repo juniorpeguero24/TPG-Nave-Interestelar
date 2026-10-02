@@ -29,7 +29,7 @@ private EstadoWarp estado;
 También expone las operaciones del motor y las delega al estado:
 
 ```java
-public EventoMotorWarp prepararSalto() {
+public Evento prepararSalto() {
     return this.estado.prepararSalto();
 }
 ```
@@ -44,11 +44,9 @@ permitir el cambio de estado.
 
 ```java
 public interface EstadoWarp {
-    String nombre();
-    EventoMotorWarp prepararSalto();
-    EventoMotorWarp iniciarWarp();
-    EventoMotorWarp finalizarWarp();
-    EventoMotorWarp finalizarEnfriamiento();
+    Evento prepararSalto();
+    Evento saltar();
+    Evento enfriar();
 }
 ```
 
@@ -83,9 +81,9 @@ Las transiciones válidas son:
 Disponible
     -- prepararSalto() -->
 Preparando salto
-    -- iniciarWarp() -->
+    -- saltar() -->
 En Warp
-    -- finalizarWarp() -->
+    -- enfriar() -->
 Enfriamiento
     -- finalizarEnfriamiento() -->
 Disponible
@@ -102,7 +100,7 @@ El estado concreto crea el siguiente estado y solicita a `MotorWarp` que lo esta
 
 ## Consideración de diseño
 
-Las clases concretas de estado tienen visibilidad de paquete y reciben una
+Las clases concretas de estado tienen visibilidad de modelo y reciben una
 referencia al motor:
 
 ```java
@@ -110,8 +108,8 @@ private final MotorWarp motor;
 ```
 
 Esto permite que un estado solicite una transición sin exponer las
-operaciones internas de cambio de estado fuera del paquete
-`paquete.motorwarp`. Es una decisión adecuada para mantener encapsulada la
+operaciones internas de cambio de estado fuera del modelo
+`modelo`. Es una decisión adecuada para mantener encapsulada la
 implementación del patrón.
 
 # Patrón Decorator aplicado a Liquidación de Haberes
