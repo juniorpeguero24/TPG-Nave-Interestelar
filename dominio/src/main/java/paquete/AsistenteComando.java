@@ -8,23 +8,22 @@ import paquete.excepciones.RecursoInsuficienteExcepcion;
 
 public class AsistenteComando {
     private final Nave nave;
+    private Bitacora bitacora;
 
     public AsistenteComando(Nave nave){
         this.nave = nave;
+        bitacora = new Bitacora();
     }
-
 
     // ----- BITACORA ----- //
 
-    public void registrarEvento(Evento evento){
-        if (evento != null)
-            nave.registrarEvento(evento);
+    public void registrarEvento(Evento evento) {
+        bitacora.registrarEvento(evento);
     }
-
+    
     public String generarInformeBitacora() {
-        return nave.generarInformeBitacora();
+        return bitacora.toString();
     }
-
 
     // ----- MOTOR WARP ----- //
 
@@ -68,7 +67,7 @@ public class AsistenteComando {
         } catch (OperacionRecursoInvalidaExcepcion e) {
             this.registrarEvento(new Evento(TipoEvento.ERROR, e.getMessage()));
         }
-    }
+    }s
     
     public void realizarMantenimiento() {
         nave.realizarMantenimiento();
@@ -88,14 +87,12 @@ public class AsistenteComando {
 
 // ----- CONSUMO DE RECURSOS DURANTE LA MISIÓN ----- //
 
-    public void consumirCombustible(int cantidad)
-            throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+    public void consumirCombustible(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         this.nave.consumirCombustible(cantidad);
         this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se consumieron " + cantidad + " unidades de combustible"));
     }
 
-    public void consumirEnergia(int cantidad)
-            throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+    public void consumirEnergia(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         this.nave.consumirEnergia(cantidad);
         this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se consumieron " + cantidad + " unidades de energía"));
     }
