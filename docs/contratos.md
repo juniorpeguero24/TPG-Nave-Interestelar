@@ -113,10 +113,10 @@ String nombre();
 ### Operaciones de transición
 
 ```java
-EventoMotorWarp prepararSalto();
-EventoMotorWarp iniciarWarp();
-EventoMotorWarp finalizarWarp();
-EventoMotorWarp finalizarEnfriamiento();
+Evento prepararSalto();
+Evento saltar();
+Evento enfriar();
+
 ```
 
 #### Precondiciones
@@ -193,10 +193,10 @@ public String getEstado();
 ### Operaciones de transición
 
 ```java
-public EventoMotorWarp prepararSalto();
-public EventoMotorWarp iniciarWarp();
-public EventoMotorWarp finalizarWarp();
-public EventoMotorWarp finalizarEnfriamiento();
+public Evento prepararSalto();
+public Evento saltar();
+public Evento enfriar();
+
 ```
 
 #### Precondiciones
@@ -223,7 +223,7 @@ public EventoMotorWarp finalizarEnfriamiento();
 ### `cambiarEstado`
 
 ```java
-EventoMotorWarp cambiarEstado(EstadoWarp estado);
+Evento cambiarEstado(EstadoWarp estado);
 ```
 
 Este método tiene visibilidad de paquete y es utilizado por los estados
@@ -247,7 +247,7 @@ concretos para solicitar una transición.
 ### `registrarError`
 
 ```java
-EventoMotorWarp registrarError();
+Evento registrarError();
 ```
 
 Este método tiene visibilidad de paquete y es utilizado por los estados
@@ -512,7 +512,7 @@ public void ordenarSaltoWarp();
 - El motor de la nave debe encontrarse en estado "Disponible".   
 
 ### Postcondiciones
-- Ejecuta en secuencia: prepararSalto() -> iniciarWarp() -> finalizarWarp().   
+- Ejecuta en secuencia: prepararSalto() -> saltar() -> enfriar().   
 - El motor concluye en estado "Disponible".   
 - Registra cada transición como un Evento inmutable en la bitácora.   
 
