@@ -170,7 +170,7 @@ El patrón Template Method permite fijar el esqueleto del algoritmo de ejecució
 Define el método plantilla `realizarMision` marcado como `final` para impedir que las subclases alteren la estructura del proceso:
 
 ```java
-public void realizarMision(AsistenteComando asistente) 
+public final void realizarMision(AsistenteComando asistente) 
         throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
     preparar(asistente);
     ejecutar(asistente);
