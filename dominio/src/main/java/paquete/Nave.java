@@ -2,11 +2,10 @@ package paquete;
 
 import java.util.ArrayList;
 
-import paquete.bitacora.Evento;
-
 import paquete.excepciones.OperacionRecursoInvalidaExcepcion;
 import paquete.excepciones.RecursoInsuficienteExcepcion;
 
+import paquete.bitacora.Evento;
 import paquete.motorwarp.MotorWarp;
 
 public abstract class Nave {
@@ -92,7 +91,6 @@ public abstract class Nave {
     public void verificarDisponibilidadRecursos(int combustibleNecesario, int energiaNecesaria, int desgasteGenerado) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
         recursos.verificarDisponibilidadRecursos(combustibleNecesario,energiaNecesaria,desgasteGenerado);
     }
-    
     
     // Operaciones delegadas sobre el Motor Warp
     public Evento prepararSalto(){
