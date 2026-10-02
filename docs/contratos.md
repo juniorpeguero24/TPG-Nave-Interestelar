@@ -465,7 +465,7 @@ public AsistenteComando seleccionarNaveParaOperar(int indice);
 ### `AsistenteComando`
 
 ### Responsabilidad
-Es la entidad inteligente que gobierna una única nave. Actúa como intermediario obligatorio para toda orden o consulta externa (recursos, motor warp y bitácora).   
+Es la entidad inteligente que gobierna una única nave y registra eventos en la Bitacora. Actúa como intermediario obligatorio para toda orden o consulta externa (recursos, motor warp y bitácora).   
 
 `Constructor`
 
@@ -477,7 +477,8 @@ public AsistenteComando(Nave nave);
 - nave no debe ser null.   
 
 ### Postcondiciones
-- Queda asociado bidireccionalmente a la nave indicada.   
+- Queda asociado unidireccionalmente a la nave indicada. 
+- Contiene una Bitacora inicialmente vacia.  
 
 ### Invariantes
 - Cada asistente opera exactamente una única nave a lo largo de su ciclo de vida.   

@@ -2,8 +2,6 @@ package paquete;
 
 import java.util.ArrayList;
 
-import paquete.bitacora.Bitacora;
-import paquete.bitacora.Evento;
 
 import paquete.excepciones.OperacionRecursoInvalidaExcepcion;
 import paquete.excepciones.RecursoInsuficienteExcepcion;
@@ -15,7 +13,6 @@ public abstract class Nave {
     private Recursos recursos;
     private MotorWarp motorWarp;
     private Tripulacion tripulacion;
-    private Bitacora bitacora;
 
 
     public Nave( String nombre,int combustible,int energia) {
@@ -94,15 +91,6 @@ public abstract class Nave {
     
     public void verificarDisponibilidadRecursos(int combustibleNecesario, int energiaNecesaria, int desgasteGenerado) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
         recursos.verificarDisponibilidadRecursos(combustibleNecesario,energiaNecesaria,desgasteGenerado);
-    }
-    
-    // Operaciones delegadas sobre Bitacora
-    public void registrarEvento(Evento evento) {
-        bitacora.registrarEvento(evento);
-    }
-    
-    public String generarInformeBitacora() {
-        return bitacora.toString();
     }
     
     // Operaciones delegadas sobre el Motor Warp
