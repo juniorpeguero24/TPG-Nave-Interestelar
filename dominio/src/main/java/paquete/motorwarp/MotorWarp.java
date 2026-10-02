@@ -20,7 +20,7 @@ public class MotorWarp {
     }
 
     public String getEstado(){
-        return this.estado;
+        return this.estado.toString();
     }
 
     public Evento prepararSalto(){

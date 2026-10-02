@@ -2,7 +2,6 @@ package paquete;
 
 import java.util.ArrayList;
 
-import paquete.bitacora.Bitacora;
 import paquete.bitacora.Evento;
 
 import paquete.excepciones.OperacionRecursoInvalidaExcepcion;

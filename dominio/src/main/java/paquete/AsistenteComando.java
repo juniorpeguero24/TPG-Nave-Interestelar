@@ -13,18 +13,7 @@ public class AsistenteComando {
         this.nave = nave;
     }
 
-
-    // ----- BITACORA ----- //
-
-    public void registrarEvento(Evento evento){
-        if (evento != null)
-            nave.registrarEvento(evento);
-    }
-
-    public String generarInformeBitacora() {
-        return nave.generarInformeBitacora();
-    }
-
+    
 
     // ----- MOTOR WARP ----- //
 
@@ -33,18 +22,13 @@ public class AsistenteComando {
         this.registrarEvento(evento);
     }
 
-    public void iniciarWarp(){
-        Evento evento = nave.iniciarWarp();
+    public void saltar(){
+        Evento evento = nave.saltar();
         this.registrarEvento(evento);
     }
 
-    public void finalizarWarp(){
-        Evento evento = nave.finalizarWarp();
-        this.registrarEvento(evento);
-    }
-
-    public void finalizarEnfriamiento(){
-        Evento evento = nave.finalizarEnfriamiento();
+    public void enfriar(){
+        Evento evento = nave.enfriar();
         this.registrarEvento(evento);
     }
 
