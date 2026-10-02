@@ -10,7 +10,7 @@ class Disponible implements EstadoWarp {
     }
 
     @Override
-    public String nombre(){
+    public String toString(){
         return "Disponible";
     }
 
@@ -20,20 +20,16 @@ class Disponible implements EstadoWarp {
     }
 
     @Override
-    public Evento iniciarWarp(){
+    public Evento saltar(){
 
         return motor.registrarError();
     }
 
     @Override
-    public Evento finalizarWarp(){
+    public Evento enfriar(){
 
         return motor.registrarError();
     }
 
-    @Override
-    public Evento finalizarEnfriamiento(){
-        return motor.registrarError();
-    }
 
 }

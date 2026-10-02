@@ -12,7 +12,7 @@ class PreparandoSalto implements EstadoWarp {
 
 
     @Override
-    public String nombre(){
+    public String toString(){
         return "Preparando salto";
     }
 
@@ -23,18 +23,13 @@ class PreparandoSalto implements EstadoWarp {
     }
 
     @Override
-    public Evento iniciarWarp(){
+    public Evento saltar(){
         return motor.cambiarEstado(new EnWarp(motor));
     }
 
     @Override
-    public Evento finalizarWarp(){
+    public Evento enfriar(){
 
-        return motor.registrarError();
-    }
-
-    @Override
-    public Evento finalizarEnfriamiento(){
         return motor.registrarError();
     }
 

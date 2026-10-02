@@ -10,7 +10,7 @@ class EnWarp implements EstadoWarp {
     }
 
     @Override
-    public String nombre(){
+    public String toString(){
         return "En Warp";
     }
 
@@ -21,25 +21,16 @@ class EnWarp implements EstadoWarp {
     }
 
     @Override
-    public Evento iniciarWarp(){
+    public Evento saltar(){
         return motor.registrarError();
     }
 
     @Override
-    public Evento finalizarWarp(){
-        return motor.cambiarEstado(new Enfriamiento(motor));
+    public Evento enfriar(){
+       /* return motor.cambiarEstado(new Enfriamiento(motor));
+        Por requerimiento R3 de la aclaración, vuelve a Disponible directamente */
+
+       return motor.cambiarEstado(new Disponible(motor)); 
     }
 
-    // Por requerimiento R3 de la aclaración, vuelve a Disponible directamente
-    /*
-    @Override
-    public Evento finalizarWarp(){
-        return motor.cambiarEstado(new Disponible(motor));
-    }
-    */
-
-    @Override
-    public Evento finalizarEnfriamiento(){
-       return motor.registrarError();
-    }
 }

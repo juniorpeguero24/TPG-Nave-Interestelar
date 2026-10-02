@@ -15,14 +15,12 @@ public abstract class Nave {
     private Recursos recursos;
     private MotorWarp motorWarp;
     private Tripulacion tripulacion;
-    private Bitacora bitacora;
 
 
     public Nave( String nombre,int combustible,int energia) {
         this.nombre = nombre;
         this.motorWarp = new MotorWarp();
         this.tripulacion = new Tripulacion();
-        this.bitacora = new Bitacora();
         this.recursos = new Recursos(combustible, energia);
     }
 
@@ -96,30 +94,18 @@ public abstract class Nave {
         recursos.verificarDisponibilidadRecursos(combustibleNecesario,energiaNecesaria,desgasteGenerado);
     }
     
-    // Operaciones delegadas sobre Bitacora
-    public void registrarEvento(Evento evento) {
-        bitacora.registrarEvento(evento);
-    }
-    
-    public String generarInformeBitacora() {
-        return bitacora.toString();
-    }
     
     // Operaciones delegadas sobre el Motor Warp
     public Evento prepararSalto(){
         return motorWarp.prepararSalto();
     }
 
-    public Evento iniciarWarp(){
-        return motorWarp.iniciarWarp(); 
+    public Evento saltar(){
+        return motorWarp.saltar(); 
     }
 
-    public Evento finalizarWarp(){
-        return motorWarp.finalizarWarp();
-    }
-
-    public Evento finalizarEnfriamiento(){
-        return motorWarp.finalizarEnfriamiento();
+    public Evento enfriar(){
+        return motorWarp.enfriar();
     }
 
     public String obtenerEstadoActualMotor() {

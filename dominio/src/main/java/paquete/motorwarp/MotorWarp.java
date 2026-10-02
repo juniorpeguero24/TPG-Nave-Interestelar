@@ -12,7 +12,7 @@ public class MotorWarp {
 
     Evento cambiarEstado(EstadoWarp estado){
         this.estado = estado;
-        return new Evento(TipoEvento.MOTOR_WARP, "Cambio de estado a " + estado.nombre());
+        return new Evento(TipoEvento.MOTOR_WARP, "Cambio de estado a " + estado);
     }
 
     Evento registrarError(){
@@ -20,23 +20,19 @@ public class MotorWarp {
     }
 
     public String getEstado(){
-        return this.estado.nombre();
+        return this.estado;
     }
 
     public Evento prepararSalto(){
         return this.estado.prepararSalto();
     }
 
-    public Evento iniciarWarp(){
-        return this.estado.iniciarWarp();
+    public Evento saltar(){
+        return this.estado.saltar();
     }
 
-    public Evento finalizarWarp(){
-        return this.estado.finalizarWarp();
-    }
-
-    public Evento finalizarEnfriamiento(){
-        return this.estado.finalizarEnfriamiento();
+    public Evento enfriar(){
+        return this.estado.enfriar();
     }
 
 }

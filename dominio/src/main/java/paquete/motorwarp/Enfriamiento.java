@@ -10,7 +10,7 @@ class Enfriamiento implements EstadoWarp {
     }
 
     @Override
-    public String nombre(){
+    public String toString(){
         return "Enfriamiento";
     }
 
@@ -20,21 +20,15 @@ class Enfriamiento implements EstadoWarp {
     }
 
     @Override
-    public Evento iniciarWarp(){
+    public Evento saltar(){
 
         return motor.registrarError();
     }
 
     @Override
-    public Evento finalizarWarp(){
+    public Evento enfriar(){
 
         return motor.registrarError();
-    }
-
-    @Override
-    public Evento finalizarEnfriamiento() {
-
-        return motor.cambiarEstado(new Disponible(motor));
     }
 
 }
