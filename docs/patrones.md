@@ -100,7 +100,7 @@ El estado concreto crea el siguiente estado y solicita a `MotorWarp` que lo esta
 
 ## Consideración de diseño
 
-Las clases concretas de estado tienen visibilidad de modelo y reciben una
+Las clases concretas de estado tienen visibilidad de paquete y reciben una
 referencia al motor:
 
 ```java
@@ -108,8 +108,8 @@ private final MotorWarp motor;
 ```
 
 Esto permite que un estado solicite una transición sin exponer las
-operaciones internas de cambio de estado fuera del modelo
-`modelo`. Es una decisión adecuada para mantener encapsulada la
+operaciones internas de cambio de estado fuera del paquete
+`motorwarp`. Es una decisión adecuada para mantener encapsulada la
 implementación del patrón.
 
 # Patrón Decorator aplicado a Liquidación de Haberes
@@ -170,7 +170,7 @@ El patrón Template Method permite fijar el esqueleto del algoritmo de ejecució
 Define el método plantilla `realizarMision` marcado como `final` para impedir que las subclases alteren la estructura del proceso:
 
 ```java
-public final void realizarMision(AsistenteComando asistente) 
+public void realizarMision(AsistenteComando asistente) 
         throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
     preparar(asistente);
     ejecutar(asistente);
