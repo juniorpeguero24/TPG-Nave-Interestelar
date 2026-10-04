@@ -3,7 +3,6 @@
 dominio/target/
 *.class
 .idea/
-/NaveInterestelar/
 *.iml
 *.jws
 *.jpr
