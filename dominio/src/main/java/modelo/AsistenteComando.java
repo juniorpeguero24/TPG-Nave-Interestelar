@@ -7,6 +7,10 @@ import modelo.bitacora.Bitacora;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
 import modelo.nave.Nave;
+import modelo.tripulacion.Tripulante;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class AsistenteComando {
     private final Nave nave;
@@ -25,6 +29,10 @@ public class AsistenteComando {
     
     public String generarInformeBitacora() {
         return bitacora.toString();
+    }
+
+    public ArrayList<Evento> getEventos(LocalDateTime desde, LocalDateTime hasta) {
+        return bitacora.consultarEvento(desde, hasta);
     }
 
     // ----- MOTOR WARP ----- //
@@ -71,6 +79,10 @@ public class AsistenteComando {
         this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se realizo el mantenimiento de la nave"));
     }
 
+    public boolean requiereMantenimiento(){
+        return nave.requiereMantenimiento();
+    }
+
     // ----- CONSULTAS DE ESTADO Y DISPONIBILIDAD ----- //
 
     public boolean estaDisponibleParaSalto() {
@@ -110,5 +122,42 @@ public class AsistenteComando {
         this.prepararSalto();
         this.saltar();
         this.enfriar();
+    }
+
+    public String getNombreNave(){
+        return nave.getNombre();
+    }
+
+    public String getEstadoNave() {
+        return nave.getEstadoActual();
+    }
+
+    public void agregarTripulante(Tripulante tripulante) {
+        if(tripulante != null)
+            nave.agregarTripulante(tripulante);
+    }
+
+    public ArrayList<Tripulante> getTripulantes() {
+        return nave.getTripulantes();
+    }
+
+    public boolean naveTieneTripulacionValida() {
+        return nave.tieneTripulacionValida();
+    }
+
+    public int getCombustible() {
+        return nave.getCombustible();
+    }
+
+    public int getEnergia() {
+        return nave.getEnergia();
+    }
+
+    public int getDesgaste() {
+        return nave.getDesgaste();
+    }
+
+    public String obtenerEstadoActualMotor() {
+        return nave.obtenerEstadoActualMotor();
     }
 }

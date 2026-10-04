@@ -29,7 +29,7 @@ public abstract class Nave {
         return nombre;
     }
     
-    public String obtenerEstadoActual() {
+    public String getEstadoActual() {
         return " Combustible: " + recursos.getCombustible()
                 + ", Energia: " + recursos.getEnergia()
                 + ", Desgaste: " + recursos.getDesgaste()

@@ -6,6 +6,8 @@ import modelo.bitacora.TipoEvento;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
 
+import java.util.ArrayList;
+
 public abstract class Mision {
     private final String nombre;
     private final int combustibleNecesario, energiaNecesaria, desgasteGenerado;
@@ -54,5 +56,13 @@ public abstract class Mision {
     }
     public int getDesgasteGenerado() {
         return desgasteGenerado;
+    }
+    public String getInforme(
+            int combustibleConsumido,
+            int energiaConsumida,
+            int desgasteGenerado,
+            String estadoFinalNave) {
+        return "La mision " + getNombre() + " fue un " + resultado.toString() + ". Se consumio " + combustibleConsumido + " de combustible y " +
+                energiaConsumida + " de energia. El desgaste generado fue de " + desgasteGenerado + " y la nave quedo en estado " + estadoFinalNave;
     }
 }
