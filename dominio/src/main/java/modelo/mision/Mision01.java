@@ -27,7 +27,5 @@ public class Mision01 extends Mision {
     protected void evaluar(AsistenteComando asistente) {
         if (this.asistenciaRealizada)
             this.resultado = ResultadoMision.EXITO;
-        else
-            this.resultado = ResultadoMision.FALLO;
     }
 }

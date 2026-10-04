@@ -4,6 +4,7 @@ import modelo.bitacora.Evento;
 import modelo.bitacora.TipoEvento;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
+import modelo.haberes.Liquidacion;
 import modelo.mision.Mision;
 import modelo.mision.Mision01;
 import modelo.mision.Mision02;
@@ -13,9 +14,7 @@ import modelo.nave.NaveFactory;
 import modelo.tripulacion.Cargo;
 import modelo.tripulacion.Origen;
 import modelo.tripulacion.Tripulante;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 public class Prueba {
 
@@ -60,9 +59,15 @@ public class Prueba {
             return;
         }
 
+        // Liquidacion haberes tripulacion
+        for(Liquidacion l:asistente1.liquidarHaberesTripulacion()) {
+            System.out.println(l.obtenerDetalle());
+            System.out.println("Total: " + l.calcularTotal() + " PG\n");
+        }
+
         // Ejecucion de Mision 01
         Mision mision = new Mision01();
-        System.out.println("--- ENCOMENDANDO " + mision.getNombre() + " ---");
+        System.out.println("\n--- ENCOMENDANDO " + mision.getNombre() + " ---");
         LocalDateTime inicioMision = LocalDateTime.now();
 
         try {
@@ -155,10 +160,56 @@ public class Prueba {
         System.out.println(mision.getInforme(combustibleAntes - combustibleAhora,
                 energiaAntes - energiaAhora,
                 desgasteAhora - desgasteAntes,
-                asistente1.obtenerEstadoActualMotor()));
+                asistente1.obtenerEstadoActualMotor()) + "\n");
 
         combustibleAntes = combustibleAhora;
         energiaAntes = energiaAhora;
         desgasteAntes = desgasteAhora;
+
+
+        // ESCENARIO DE FALLOS Y ERRORES !!
+        Thread.sleep(1000);
+        inicioMision = LocalDateTime.now();
+
+        try {
+            asistente1.consumirCombustible(80); // Cantidad de combustible a consumir invalida: queda por debajo del limite inferior !!
+        } catch (RecursoInsuficienteExcepcion | OperacionRecursoInvalidaExcepcion e) {
+            System.err.println("Error: no se pudo consumir combustible ("+e.getMessage()+")");
+        }
+
+        try {
+            asistente1.consumirCombustible(40); // Se drena combustible antes de iniciar mision (valido)
+            combustibleAntes = asistente1.getCombustible();
+        } catch (RecursoInsuficienteExcepcion | OperacionRecursoInvalidaExcepcion e) {
+            System.err.println("Error: no se pudo consumir combustible ("+e.getMessage()+")");
+        }
+
+        mision = new Mision01();
+        System.out.println("--- ENCOMENDANDO " + mision.getNombre() + " ---");
+        asistente1.enfriar(); // Transicion invalida !!
+
+        try {
+            mision.realizarMision(asistente1); // Combustible insuficiente !!
+            System.out.println("Mision 01 finalizada.");
+        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion e) {
+            System.out.println("Fallo al ejecutar Mision 01: " + e.getMessage());
+            asistente1.registrarEvento(new Evento(TipoEvento.ERROR, e.getMessage()));
+        }
+        finMision = LocalDateTime.now();
+
+        System.out.println("Estado tras Mision 01:\n" + asistente1.getEstadoNave() + "\n");
+
+        System.out.println("REGISTROS BITACORA");
+        for(Evento e:asistente1.getEventos(inicioMision, finMision))
+            System.out.print(e.toString());
+
+        combustibleAhora = asistente1.getCombustible();
+        energiaAhora = asistente1.getEnergia();
+        desgasteAhora  = asistente1.getDesgaste();
+
+        System.out.println(mision.getInforme(combustibleAntes - combustibleAhora,
+                energiaAntes - energiaAhora,
+                desgasteAhora - desgasteAntes,
+                asistente1.obtenerEstadoActualMotor()));
     }
 }

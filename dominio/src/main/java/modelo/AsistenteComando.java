@@ -6,6 +6,7 @@ import modelo.bitacora.Bitacora;
 
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
+import modelo.haberes.Liquidacion;
 import modelo.nave.Nave;
 import modelo.tripulacion.Tripulante;
 
@@ -110,6 +111,8 @@ public class AsistenteComando {
         this.nave.aumentarDesgaste(cantidad);
     }
 
+
+
     public void verificarDisponibilidadParaMision(int combustibleNecesario, int energiaNecesaria,int desgasteGenerado) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         if (!this.estaDisponibleParaSalto())
             throw new OperacionRecursoInvalidaExcepcion("\n[ERROR] Operacion Recurso Invalida." +
@@ -143,6 +146,10 @@ public class AsistenteComando {
 
     public boolean naveTieneTripulacionValida() {
         return nave.tieneTripulacionValida();
+    }
+
+    public ArrayList<Liquidacion> liquidarHaberesTripulacion() {
+        return nave.liquidarHaberesTripulacion();
     }
 
     public int getCombustible() {

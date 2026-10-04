@@ -3,6 +3,7 @@ package modelo.nave;
 import java.util.ArrayList;
 
 import modelo.Recursos;
+import modelo.haberes.Liquidacion;
 import modelo.tripulacion.Tripulacion;
 import modelo.tripulacion.Tripulante;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
@@ -48,6 +49,10 @@ public abstract class Nave {
     
     public boolean tieneTripulacionValida() {
         return tripulacion.esValida();
+    }
+
+    public ArrayList<Liquidacion> liquidarHaberesTripulacion() {
+        return tripulacion.liquidarHaberes();
     }
     
     // Operaciones delegadas sobre Recursos 

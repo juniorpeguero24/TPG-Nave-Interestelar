@@ -18,6 +18,7 @@ public abstract class Mision {
         this.combustibleNecesario = combustibleNecesario;
         this.energiaNecesaria = energiaNecesaria;
         this.desgasteGenerado = desgasteGenerado;
+        resultado = ResultadoMision.FALLO; // se asume fallo en principio
     }
 
     public final void realizarMision(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
