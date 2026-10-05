@@ -2,3 +2,7 @@
 .metadata/
 dominio/target/
 *.class
+.idea/
+*.iml
+*.jws
+*.jpr

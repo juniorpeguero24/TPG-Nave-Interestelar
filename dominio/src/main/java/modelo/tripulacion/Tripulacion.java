@@ -1,5 +1,7 @@
 package modelo.tripulacion;
 
+import modelo.haberes.Liquidacion;
+
 import java.util.ArrayList;
 
 public class Tripulacion {
@@ -39,6 +41,15 @@ public class Tripulacion {
 
     public ArrayList<Tripulante> getTripulantes() {
         return tripulantes;
+    }
+
+    public ArrayList<Liquidacion> liquidarHaberes() {
+        ArrayList<Liquidacion> liquidaciones = new ArrayList<>();
+
+        for(Tripulante t: tripulantes)
+            liquidaciones.add(t.liquidarHaberes());
+
+        return liquidaciones;
     }
 
     public int getCantidadTripulantes() {

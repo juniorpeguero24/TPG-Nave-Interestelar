@@ -28,7 +28,7 @@ public class Tripulante {
     }
 
     public Liquidacion liquidarHaberes(){
-        Liquidacion liquidacion = new SueldoBase(this.cargo);
+        Liquidacion liquidacion = new SueldoBase(this.nombre, this.cargo);
         liquidacion = new Antiguedad(liquidacion,this.cargo,this.antiguedad);
         liquidacion = new SubsidioOrigen(liquidacion,this.planetaOrigen);
         if (this.cargo.equals(Cargo.CONSEJERO))
