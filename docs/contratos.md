@@ -2,6 +2,8 @@
 
 Este documento describe las responsabilidades, precondiciones, postcondiciones e invariantes de todas las clases.
 
+<br><br>
+
 ## `Bitacora`
 
 ### Responsabilidad
@@ -81,6 +83,9 @@ public ArrayList<Evento> consultaEvento(LocalDateTime desde, LocalDateTime hasta
   registrados.
 
 
+<br><br>
+
+
 ## `EstadoWarp`
 
 ### Responsabilidad
@@ -139,6 +144,8 @@ Evento enfriar();
 - Una operación inválida no modifica el estado del motor.
 - Todas las operaciones definidas por la interfaz devuelven un evento
   `Evento`.
+
+<br><br>
 
 ## `MotorWarp`
 
@@ -265,6 +272,8 @@ cuando una operación no está permitida.
 #### Invariantes
 
 - Una operación inválida nunca altera el estado del motor.
+
+<br><br>
 
 ## `Liquidacion`
 
@@ -407,6 +416,8 @@ public AdicionalConsejeros(Liquidacion envoltorio, int cantidadConsejos);
 - Agrega 2 PG por cada consejo registrado al monto total.
 - Incorpora la cantidad de consejos computados al detalle.
 
+<br><br>
+
 ## `Universo`
 
 ### Responsabilidad
@@ -461,6 +472,8 @@ public AsistenteComando seleccionarNaveParaOperar(int indice);
 
 ### Invariantes
 - No modifica la cantidad ni el orden de los asistentes almacenados.   
+
+<br><br>
 
 ### `AsistenteComando`
 

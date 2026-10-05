@@ -25,7 +25,19 @@ Proyecto Maven en Java. Programacion C.
 
 ```
 
+## Documentacion: 
 
+Patrones:
+[docs/patrones.md](./docs/patrones.md).
+
+Contratos:
+[docs/contratos.md](./docs/contratos.md).
+
+Uso de ia:
+[docs/uso-ia.md](./docs/uso-ia.md).
+
+Diagrama de clases:
+[docs/diagrama.jpg](./docs/diagrama.jpg).
 
 ## Requisitos
 
