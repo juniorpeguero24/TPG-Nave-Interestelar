@@ -96,25 +96,6 @@ Cada implementación determina qué operaciones son válidas para el estado actu
 Las clases que implementan esta interfaz son `Disponible`,
 `PreparandoSalto`, `EnWarp` y `Enfriamiento`.
 
-### `nombre`
-
-```java
-String nombre();
-```
-
-#### Precondiciones
-
-- El estado debe estar correctamente inicializado.
-
-#### Postcondiciones
-
-- Devuelve un nombre no nulo que identifica el estado actual.
-
-#### Invariantes
-
-- El nombre identifica al estado que implementa la interfaz.
-- No modifica el estado del motor.
-
 ### Operaciones de transición
 
 ```java
@@ -225,7 +206,7 @@ public Evento enfriar();
 
 - El motor siempre permanece en uno de los estados definidos.
 - Una transición inválida no cambia el estado.
-- Cada invocación devuelve un evento que puede ser registrado por `Nave`.
+- Cada invocación devuelve un evento que puede ser registrado en la bitacora.
 
 ### `cambiarEstado`
 
