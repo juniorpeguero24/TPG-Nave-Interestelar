@@ -37,7 +37,7 @@ public abstract class Mision {
             preparar(asistente);
             ejecutar(asistente);
             evaluar(asistente);
-        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion e) {
+        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion e) {
             this.resultado = ResultadoMision.FALLO;
             observaciones.add(e.getMessage());
         }
@@ -46,6 +46,9 @@ public abstract class Mision {
     }
 
     protected void preparar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
+        if (!asistente.tieneTripulacionValida()) {
+            throw new TripulacionInvalidaExcepcion("No se puede realizar una mision con una tripulacion invalida");
+        }
         asistente.verificarDisponibilidadParaMision(combustibleNecesario,energiaNecesaria,desgasteNecesario);
         asistente.registrarEvento(new Evento(TipoEvento.MISION, "Iniciando preparativos de misión: " + nombre));
     }

@@ -13,7 +13,6 @@ public class AsistenteComando {
 
     public AsistenteComando(Nave nave){
         this.nave = nave;
-        bitacora = new Bitacora();
         this.bitacora = new Bitacora();
     }
 
@@ -35,6 +34,9 @@ public class AsistenteComando {
         nave.agregarTripulante(tripulante);
     }
 
+    public boolean tieneTripulacionValida() {
+        return nave.tieneTripulacionValida();
+    }
 
     // ----- BITACORA ----- //
 
@@ -80,7 +82,6 @@ public class AsistenteComando {
 
     // ----- RECURSOS ----- //
 
-    public void cargarCombustible(int cantidad) {
     public int getCombustible() {
         return nave.getCombustible();
     }
@@ -108,7 +109,6 @@ public class AsistenteComando {
         }
     }
 
-    public void cargarEnergia(int cantidad) {
     public void cargarEnergia(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         try {
             nave.cargarEnergia(cantidad);
@@ -118,7 +118,6 @@ public class AsistenteComando {
             this.registrarEvento(new Evento(TipoEvento.ERROR, e.getMessage()));
             throw e;
         }
-    }s
     }
 
     public void realizarMantenimiento() {
@@ -133,9 +132,6 @@ public class AsistenteComando {
         return "Disponible".equalsIgnoreCase(this.nave.obtenerEstadoActualMotor());
     }
 
-    public void verificarDisponibilidadRecursos(int combustible, int energia, int desgaste)
-            throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
-        this.nave.verificarDisponibilidadRecursos(combustible, energia, desgaste);
     public void verificarDisponibilidadRecursos(int combustible, int energia, int desgaste) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
         try {
             this.nave.verificarDisponibilidadRecursos(combustible, energia, desgaste);
@@ -149,8 +145,6 @@ public class AsistenteComando {
 // ----- CONSUMO DE RECURSOS DURANTE LA MISIÓN ----- //
 
     public void consumirCombustible(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        this.nave.consumirCombustible(cantidad);
-        this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se consumieron " + cantidad + " unidades de combustible"));
         try {
             this.nave.consumirCombustible(cantidad);
             this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se consumieron " + cantidad + " unidades de combustible"));
@@ -162,8 +156,6 @@ public class AsistenteComando {
     }
 
     public void consumirEnergia(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        this.nave.consumirEnergia(cantidad);
-        this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se consumieron " + cantidad + " unidades de energía"));
         try {
             this.nave.consumirEnergia(cantidad);
             this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se consumieron " + cantidad + " unidades de energía"));
@@ -175,7 +167,6 @@ public class AsistenteComando {
     }
 
     public void aumentarDesgaste(int cantidad) throws OperacionRecursoInvalidaExcepcion {
-        this.nave.aumentarDesgaste(cantidad);
         try {
             this.nave.aumentarDesgaste(cantidad);
         }
@@ -186,11 +177,6 @@ public class AsistenteComando {
     }
 
     public void verificarDisponibilidadParaMision(int combustibleNecesario, int energiaNecesaria,int desgasteGenerado) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        if (!this.estaDisponibleParaSalto())
-            throw new OperacionRecursoInvalidaExcepcion("\n[ERROR] Operacion Recurso Invalida." +
-                    "\nLa nave no esta disponible para iniciar la mision." +
-                    "\n Motor en estado: "+this.nave.obtenerEstadoActualMotor());
-        this.nave.verificarDisponibilidadRecursos(combustibleNecesario,energiaNecesaria,desgasteGenerado);
         try {
             if (!this.estaDisponibleParaSalto())
                 throw new OperacionRecursoInvalidaExcepcion("\n[ERROR] Operacion Recurso Invalida." +
@@ -204,9 +190,4 @@ public class AsistenteComando {
         }
     }
 
-    public void ordenarSaltoWarp() {
-        this.prepararSalto();
-        this.iniciarWarp();
-        this.finalizarWarp();
-    }
 }

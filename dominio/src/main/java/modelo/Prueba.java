@@ -9,8 +9,8 @@ import modelo.mision.Mision03;
 import modelo.mision.InformeMision;
 import modelo.mision.ResultadoMision;
 import modelo.haberes.Liquidacion;
-import modelo.nave;
-import modelo.tripulacion;
+import modelo.nave.Nave;
+import modelo.tripulacion.Tripulante;
 
 public class Prueba {
 
