@@ -43,7 +43,7 @@ public class InformeMision {
     }
     
     public ArrayList<String> getAccionesPrincipales() {
-        return accionesPrincipales;
+        return new ArrayList<>(accionesPrincipales);
     }
     
     public int getCombustibleConsumido() {
@@ -63,7 +63,7 @@ public class InformeMision {
     }
     
     public ArrayList<String> getObservaciones() {
-        return observaciones;
+        return new ArrayList<>(observaciones);
     }
     
     protected void agregarAccionPrincipal(String accion) {

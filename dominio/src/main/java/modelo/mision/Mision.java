@@ -46,7 +46,7 @@ public abstract class Mision {
     }
 
     protected void preparar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
-        asistente.verificarDisponibilidadParaMision(combustibleNecesario,energiaNecesaria,desgasteGenerado);
+        asistente.verificarDisponibilidadParaMision(combustibleNecesario,energiaNecesaria,desgasteNecesario);
         asistente.registrarEvento(new Evento(TipoEvento.MISION, "Iniciando preparativos de misión: " + nombre));
     }
     

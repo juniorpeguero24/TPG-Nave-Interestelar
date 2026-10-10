@@ -2,23 +2,18 @@ package modelo;
 
 import modelo.bitacora.Evento;
 import modelo.bitacora.TipoEvento;
-import modelo.bitacora.Bitacora;
 
+import modelo.bitacora.Bitacora;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
-import modelo.haberes.Liquidacion;
-import modelo.nave.Nave;
-import modelo.tripulacion.Tripulante;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 public class AsistenteComando {
     private final Nave nave;
-    private final Bitacora bitacora;
+    private Bitacora bitacora;
 
     public AsistenteComando(Nave nave){
         this.nave = nave;
+        bitacora = new Bitacora();
         this.bitacora = new Bitacora();
     }
 
@@ -46,13 +41,9 @@ public class AsistenteComando {
     public void registrarEvento(Evento evento) {
         bitacora.registrarEvento(evento);
     }
-    
+
     public String generarInformeBitacora() {
         return bitacora.toString();
-    }
-
-    public ArrayList<Evento> getEventos(LocalDateTime desde, LocalDateTime hasta) {
-        return bitacora.consultarEvento(desde, hasta);
     }
 
     // ----- MOTOR WARP ----- //
@@ -66,13 +57,18 @@ public class AsistenteComando {
         this.registrarEvento(evento);
     }
 
-    public void saltar(){
-        Evento evento = nave.saltar();
+    public void iniciarWarp(){
+        Evento evento = nave.iniciarWarp();
         this.registrarEvento(evento);
     }
 
-    public void enfriar(){
-        Evento evento = nave.enfriar();
+    public void finalizarWarp(){
+        Evento evento = nave.finalizarWarp();
+        this.registrarEvento(evento);
+    }
+
+    public void finalizarEnfriamiento(){
+        Evento evento = nave.finalizarEnfriamiento();
         this.registrarEvento(evento);
     }
 
@@ -83,7 +79,8 @@ public class AsistenteComando {
     }
 
     // ----- RECURSOS ----- //
-    
+
+    public void cargarCombustible(int cantidad) {
     public int getCombustible() {
         return nave.getCombustible();
     }
@@ -110,7 +107,8 @@ public class AsistenteComando {
             throw e;
         }
     }
-    
+
+    public void cargarEnergia(int cantidad) {
     public void cargarEnergia(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         try {
             nave.cargarEnergia(cantidad);
@@ -120,23 +118,24 @@ public class AsistenteComando {
             this.registrarEvento(new Evento(TipoEvento.ERROR, e.getMessage()));
             throw e;
         }
+    }s
     }
-    
+
     public void realizarMantenimiento() {
         nave.realizarMantenimiento();
         this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se realizo el mantenimiento de la nave"));
     }
 
-    public boolean requiereMantenimiento(){
-        return nave.requiereMantenimiento();
-    }
-
     // ----- CONSULTAS DE ESTADO Y DISPONIBILIDAD ----- //
+
  
     public boolean estaDisponibleParaSalto() {
         return "Disponible".equalsIgnoreCase(this.nave.obtenerEstadoActualMotor());
     }
 
+    public void verificarDisponibilidadRecursos(int combustible, int energia, int desgaste)
+            throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
+        this.nave.verificarDisponibilidadRecursos(combustible, energia, desgaste);
     public void verificarDisponibilidadRecursos(int combustible, int energia, int desgaste) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
         try {
             this.nave.verificarDisponibilidadRecursos(combustible, energia, desgaste);
@@ -150,6 +149,8 @@ public class AsistenteComando {
 // ----- CONSUMO DE RECURSOS DURANTE LA MISIÓN ----- //
 
     public void consumirCombustible(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        this.nave.consumirCombustible(cantidad);
+        this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se consumieron " + cantidad + " unidades de combustible"));
         try {
             this.nave.consumirCombustible(cantidad);
             this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se consumieron " + cantidad + " unidades de combustible"));
@@ -161,6 +162,8 @@ public class AsistenteComando {
     }
 
     public void consumirEnergia(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        this.nave.consumirEnergia(cantidad);
+        this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se consumieron " + cantidad + " unidades de energía"));
         try {
             this.nave.consumirEnergia(cantidad);
             this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se consumieron " + cantidad + " unidades de energía"));
@@ -172,6 +175,7 @@ public class AsistenteComando {
     }
 
     public void aumentarDesgaste(int cantidad) throws OperacionRecursoInvalidaExcepcion {
+        this.nave.aumentarDesgaste(cantidad);
         try {
             this.nave.aumentarDesgaste(cantidad);
         }
@@ -181,9 +185,12 @@ public class AsistenteComando {
         }
     }
 
-
-
     public void verificarDisponibilidadParaMision(int combustibleNecesario, int energiaNecesaria,int desgasteGenerado) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        if (!this.estaDisponibleParaSalto())
+            throw new OperacionRecursoInvalidaExcepcion("\n[ERROR] Operacion Recurso Invalida." +
+                    "\nLa nave no esta disponible para iniciar la mision." +
+                    "\n Motor en estado: "+this.nave.obtenerEstadoActualMotor());
+        this.nave.verificarDisponibilidadRecursos(combustibleNecesario,energiaNecesaria,desgasteGenerado);
         try {
             if (!this.estaDisponibleParaSalto())
                 throw new OperacionRecursoInvalidaExcepcion("\n[ERROR] Operacion Recurso Invalida." +
@@ -199,48 +206,7 @@ public class AsistenteComando {
 
     public void ordenarSaltoWarp() {
         this.prepararSalto();
-        this.saltar();
-        this.enfriar();
-    }
-
-    public String getNombreNave(){
-        return nave.getNombre();
-    }
-
-    public String getEstadoNave() {
-        return nave.getEstadoActual();
-    }
-
-    public void agregarTripulante(Tripulante tripulante) {
-        if(tripulante != null)
-            nave.agregarTripulante(tripulante);
-    }
-
-    public ArrayList<Tripulante> getTripulantes() {
-        return nave.getTripulantes();
-    }
-
-    public boolean naveTieneTripulacionValida() {
-        return nave.tieneTripulacionValida();
-    }
-
-    public ArrayList<Liquidacion> liquidarHaberesTripulacion() {
-        return nave.liquidarHaberesTripulacion();
-    }
-
-    public int getCombustible() {
-        return nave.getCombustible();
-    }
-
-    public int getEnergia() {
-        return nave.getEnergia();
-    }
-
-    public int getDesgaste() {
-        return nave.getDesgaste();
-    }
-
-    public String obtenerEstadoActualMotor() {
-        return nave.obtenerEstadoActualMotor();
+        this.iniciarWarp();
+        this.finalizarWarp();
     }
 }

@@ -2,13 +2,16 @@ package modelo.nave;
 
 import java.util.ArrayList;
 
-import paquete.bitacora.Bitacora;
-import paquete.excepciones.OperacionRecursoInvalidaExcepcion;
-import paquete.excepciones.RecursoInsuficienteExcepcion;
-import paquete.bitacora.Evento;
-import paquete.bitacora.TipoEvento;
-import paquete.motorwarp.MotorWarp;
-import paquete.tripulacion.Tripulacion;
+import modelo.bitacora.Bitacora;
+import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
+import modelo.excepciones.RecursoInsuficienteExcepcion;
+import modelo.bitacora.Evento;
+import modelo.bitacora.TipoEvento;
+import modelo.motorwarp.MotorWarp;
+import modelo.tripulacion.Tripulacion;
+import modelo.Recursos;
+import modelo.haberes.Liquidacion;
+import modelo.tripulacion.Tripulante;
 
 public abstract class Nave {
     private String nombre;

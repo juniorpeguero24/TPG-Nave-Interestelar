@@ -1,14 +1,16 @@
-package paquete;
+package modelo;
 
-import paquete.excepciones.OperacionRecursoInvalidaExcepcion;
-import paquete.excepciones.RecursoInsuficienteExcepcion;
-import paquete.mision.Mision;
-import paquete.mision.Mision01;
-import paquete.mision.Mision02;
-import paquete.mision.Mision03;
-import paquete.mision.InformeMision;
-import paquete.mision.ResultadoMision;
-import paquete.haberes.Liquidacion;
+import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
+import modelo.excepciones.RecursoInsuficienteExcepcion;
+import modelo.mision.Mision;
+import modelo.mision.Mision01;
+import modelo.mision.Mision02;
+import modelo.mision.Mision03;
+import modelo.mision.InformeMision;
+import modelo.mision.ResultadoMision;
+import modelo.haberes.Liquidacion;
+import modelo.nave;
+import modelo.tripulacion;
 
 public class Prueba {
 
@@ -236,6 +238,24 @@ public class Prueba {
         verificar("Una carga invalida conserva el estado anterior", combustibleAntes == combustibleDespues);
     }
 
+    private static void probarMantenimiento() {
+        System.out.println("\n===== PRUEBA MANTENIMIENTO =====");
+
+        AsistenteComando asistente = crearAsistenteOperativo();
+
+        try {
+            asistente.aumentarDesgaste(80);
+        } catch (OperacionRecursoInvalidaExcepcion e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        verificar("Con desgaste 80 requiere mantenimiento", asistente.requiereMantenimiento());
+        asistente.realizarMantenimiento();
+        verificar("El mantenimiento deja el desgaste en 0",asistente.getDesgaste() == 0);
+        verificar("Luego del mantenimiento deja de requerirlo", !asistente.requiereMantenimiento());
+    }
+
     public static void main(String[] args) {
         probarFactory();
         probarHaberes();
@@ -243,5 +263,6 @@ public class Prueba {
         probarRecursosInsuficientes();
         probarMotorWarp();
         probarContratoInvalido();
+        probarMantenimiento();
     }
 }
