@@ -2,15 +2,16 @@ package modelo.nave;
 
 import java.util.ArrayList;
 
-import modelo.Recursos;
-import modelo.haberes.Liquidacion;
-import modelo.tripulacion.Tripulacion;
-import modelo.tripulacion.Tripulante;
+import modelo.bitacora.Bitacora;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
-
 import modelo.bitacora.Evento;
+import modelo.bitacora.TipoEvento;
 import modelo.motorwarp.MotorWarp;
+import modelo.tripulacion.Tripulacion;
+import modelo.Recursos;
+import modelo.haberes.Liquidacion;
+import modelo.tripulacion.Tripulante;
 
 public abstract class Nave {
     private String nombre;
@@ -101,6 +102,10 @@ public abstract class Nave {
     }
     
     // Operaciones delegadas sobre el Motor Warp
+    public String getEstadoMotorWarp() {
+        return motorWarp.getEstado();
+    }
+
     public Evento prepararSalto(){
         return motorWarp.prepararSalto();
     }
@@ -111,9 +116,5 @@ public abstract class Nave {
 
     public Evento enfriar(){
         return motorWarp.enfriar();
-    }
-
-    public String obtenerEstadoActualMotor() {
-        return this.motorWarp.getEstado();
     }
 }

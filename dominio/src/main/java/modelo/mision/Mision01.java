@@ -15,11 +15,9 @@ public class Mision01 extends Mision {
 
     @Override
     protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
-        asistente.consumirCombustible(getCombustibleNecesario());
-        asistente.consumirEnergia(getEnergiaNecesaria());
-        asistente.aumentarDesgaste(getDesgasteGenerado());
+        super.ejecutar(asistente);
 
-        asistente.registrarEvento(new Evento(TipoEvento.MISION,"Ejecutando maniobra de asistencia táctica..."));
+        agregarAccionPrincipal("Ejecutando maniobra de asistencia táctica");
         this.asistenciaRealizada=true;
     }
 

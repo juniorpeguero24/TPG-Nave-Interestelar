@@ -18,6 +18,15 @@ public class Tripulante {
         if (antiguedad < 0) {
             throw new IllegalArgumentException("La antiguedad no puede ser negativa");
         }
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("El nombre no puede ser nulo ni vacio");
+        }
+        if (cargo == null) {
+            throw new IllegalArgumentException("El cargo no puede ser nulo");
+        }
+        if (planetaOrigen == null) {
+            throw new IllegalArgumentException("El origen no puede ser nulo");
+        }
 
         this.id = id;
         this.antiguedad = antiguedad;

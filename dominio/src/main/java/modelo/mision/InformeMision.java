@@ -43,7 +43,7 @@ public class InformeMision {
     }
     
     public ArrayList<String> getAccionesPrincipales() {
-        return accionesPrincipales;
+        return new ArrayList<>(accionesPrincipales);
     }
     
     public int getCombustibleConsumido() {
@@ -63,7 +63,7 @@ public class InformeMision {
     }
     
     public ArrayList<String> getObservaciones() {
-        return observaciones;
+        return new ArrayList<>(observaciones);
     }
     
     protected void agregarAccionPrincipal(String accion) {
@@ -72,5 +72,19 @@ public class InformeMision {
 
     protected void agregarObservacion(String observacion) {
         observaciones.add(observacion);
+    }
+
+    @Override
+    public String toString() {
+        return "Informe de Mision\n"
+                + "Mision ejecutada: " + misionEjecutada + "\n"
+                + "Resultado: " + resultado + "\n"
+                + "Acciones principales: " + accionesPrincipales + "\n"
+                + "Recursos consumidos:\n"
+                + "  Combustible: " + combustibleConsumido + "\n"
+                + "  Energia: " + energiaConsumida + "\n"
+                + "  Desgaste generado: " + desgasteGenerado + "\n"
+                + "Estado final de la nave: " + estadoFinalNave + "\n"
+                + "Observaciones: " + observaciones;
     }
 }

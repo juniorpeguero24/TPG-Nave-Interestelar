@@ -40,7 +40,7 @@ public class Tripulacion {
     }
 
     public ArrayList<Tripulante> getTripulantes() {
-        return tripulantes;
+        return new ArrayList<>(tripulantes); // devuelve una copia
     }
 
     public ArrayList<Liquidacion> liquidarHaberes() {
