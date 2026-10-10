@@ -257,9 +257,9 @@ Cada una define sus propios requisitos de recursos en el constructor y concreta 
 
 ## Intermediación y Desacoplamiento (`AsistenteComando`)
 
-El diseño cumple estrictamente con el principio de mínima sorpresa y bajo acoplamiento: `Mision` no conoce ni interactúa directamente con `Nave`. Toda consulta de estado, verificación y consumo de combustible/energía se le solicita al `AsistenteComando`, quien gobierna la nave y asienta los sucesos en la bitácora.
+`Mision` no conoce ni interactúa directamente con `Nave`. Toda consulta de estado, verificación y consumo de combustible/energía se le solicita al `AsistenteComando`, quien gobierna la nave y asienta los sucesos en la bitácora.
 
 ## Ventajas de esta aplicación
 
-- **Principio Abierto/Cerrado (OCP):** Permite añadir nuevos tipos de misiones sin tocar la estructura del algoritmo ni las misiones existentes.
+- **Permite añadir nuevos tipos de misiones sin tocar la estructura del algoritmo ni las misiones existentes.
 - **Control centralizado:** Asegura que ninguna misión comience sin recursos ni omita el registro en la bitácora o la transición del motor warp ante un éxito.
