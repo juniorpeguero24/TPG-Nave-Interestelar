@@ -631,7 +631,8 @@ public Nave getNave();
 
 #### Postcondiciones
 
-- Ninguna.
+- Devuelve la nave manejada por el asistente.
+
 ### `getNombreNave`
 
 ```java
