@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Universo {
     private final ArrayList<AsistenteComando> asistentes;
-    private AsistenteComando naveEnOperacion;
+    private AsistenteComando asistenteEnOperacion;
 
     public Universo() {
         this.asistentes = new ArrayList<>();
@@ -17,19 +17,21 @@ public class Universo {
         this.asistentes.add(asistente);
     }
 
-    public AsistenteComando seleccionarNaveParaOperar(int indice) {
-        if (indice < 0 || indice >= asistentes.size()) {
-            throw new IndexOutOfBoundsException("Índice de nave fuera de rango.");
+    public AsistenteComando seleccionarNave(String nombreNave) {
+        for (AsistenteComando asistente : asistentes) {
+            if (asistente.getNombreNave().equals(nombreNave)) {
+                asistenteEnOperacion = asistente;
+                return asistente;
+            }
         }
-        this.naveEnOperacion = asistentes.get(indice);
-        return this.naveEnOperacion;
+        return null;
     }
 
-    public AsistenteComando getNaveEnOperacion() {
-        return this.naveEnOperacion;
+    public AsistenteComando getAsistenteEnOperacion() {
+        return asistenteEnOperacion;
     }
 
-    public int getCantidadNaves() {
+    public int getCantidadAsistentes() {
         return this.asistentes.size();
     }
 }
