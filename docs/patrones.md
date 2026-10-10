@@ -1,3 +1,61 @@
+# Patrón Factory aplicado a `Nave`
+
+## ¿Qué problema resuelve?
+
+El sistema puede operar con distintos tipos de nave, cada uno con recursos
+iniciales diferentes. Sin una fábrica, el código que necesita crear una nave
+tendría que conocer las clases concretas (`NaveExploradora`, `NaveCarguero` y
+`NaveCombate`) y decidir cuál instanciar. Si esa decisión se repitiera en
+varios lugares, la selección y la creación quedarían dispersas.
+
+`NaveFactory` centraliza esa decisión: recibe el nombre y la clase solicitada,
+y devuelve una instancia del tipo concreto correspondiente.
+
+## Participantes del patrón
+
+### Producto abstracto: `Nave`
+
+`Nave` define el tipo común que heredan el resto de las naves. Reúne el nombre,
+los recursos, el motor Warp y la tripulación, además de las operaciones
+comunes a todas las naves.
+
+### Productos concretos
+
+Las subclases representan los tipos disponibles y configuran sus recursos
+iniciales al llamar al constructor de `Nave`:
+
+| Tipo | Clase concreta | Combustible inicial | Energía inicial |
+| --- | --- | ---: | ---: |
+| Exploradora | `NaveExploradora` | 60 | 80 |
+| Carguero | `NaveCarguero` | 100 | 60 |
+| Combate | `NaveCombate` | 80 | 100 |
+
+### Fábrica: `NaveFactory`
+
+`NaveFactory.crearNave(String nombre, String clase)` es un método estático que
+interpreta el tipo solicitado y crea el producto concreto. El cliente trabaja
+con el tipo abstracto `Nave`, sin tener que instanciar directamente las
+subclases:
+
+```java
+Nave nave = NaveFactory.crearNave("USS Discovery", "exploradora");
+```
+
+### Manejo de tipos no reconocidos
+
+Si `clase` es `null` o no coincide con uno de los tipos admitidos,
+`crearNave` devuelve `null`. Por eso, quien llama a la fábrica debe comprobar
+el resultado antes de utilizar la nave.
+
+### Ventajas de esta aplicación
+
+- Centraliza la creación y selección del tipo de nave.
+- Desacopla al cliente de los constructores concretos; puede conservar la
+  referencia como `Nave`.
+- Mantiene en cada subtipo la configuración de sus recursos iniciales.
+
+<br><br>
+
 # Patrón State aplicado a `MotorWarp`
 
 ## ¿Qué problema resuelve?
@@ -29,7 +87,7 @@ private EstadoWarp estado;
 También expone las operaciones del motor y las delega al estado:
 
 ```java
-public EventoMotorWarp prepararSalto() {
+public Evento prepararSalto() {
     return this.estado.prepararSalto();
 }
 ```
@@ -44,11 +102,9 @@ permitir el cambio de estado.
 
 ```java
 public interface EstadoWarp {
-    String nombre();
-    EventoMotorWarp prepararSalto();
-    EventoMotorWarp iniciarWarp();
-    EventoMotorWarp finalizarWarp();
-    EventoMotorWarp finalizarEnfriamiento();
+    Evento prepararSalto();
+    Evento saltar();
+    Evento enfriar();
 }
 ```
 
@@ -83,11 +139,11 @@ Las transiciones válidas son:
 Disponible
     -- prepararSalto() -->
 Preparando salto
-    -- iniciarWarp() -->
+    -- saltar() -->
 En Warp
-    -- finalizarWarp() -->
+    -- enfriar() -->
 Enfriamiento
-    -- finalizarEnfriamiento() -->
+    -- pasa un tiempo -->
 Disponible
 ```
 
@@ -111,8 +167,10 @@ private final MotorWarp motor;
 
 Esto permite que un estado solicite una transición sin exponer las
 operaciones internas de cambio de estado fuera del paquete
-`paquete.motorwarp`. Es una decisión adecuada para mantener encapsulada la
+`motorwarp`. Es una decisión adecuada para mantener encapsulada la
 implementación del patrón.
+
+<br><br>
 
 # Patrón Decorator aplicado a Liquidación de Haberes
 
@@ -151,6 +209,8 @@ Añaden su propio concepto al acumulado:
 
 - Permite agregar o combinar nuevos conceptos sin modificar las clases existentes.
 - Mantiene identificable el aporte individual de cada concepto junto con el total final.
+
+<br><br>
 
 # Patrón Template Method aplicado a `Mision`
 

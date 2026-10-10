@@ -2,6 +2,8 @@
 
 Este documento describe las responsabilidades, precondiciones, postcondiciones e invariantes de todas las clases.
 
+<br><br>
+
 ## `Bitacora`
 
 ### Responsabilidad
@@ -81,6 +83,9 @@ public ArrayList<Evento> consultaEvento(LocalDateTime desde, LocalDateTime hasta
   registrados.
 
 
+<br><br>
+
+
 ## `EstadoWarp`
 
 ### Responsabilidad
@@ -91,32 +96,13 @@ Cada implementación determina qué operaciones son válidas para el estado actu
 Las clases que implementan esta interfaz son `Disponible`,
 `PreparandoSalto`, `EnWarp` y `Enfriamiento`.
 
-### `nombre`
-
-```java
-String nombre();
-```
-
-#### Precondiciones
-
-- El estado debe estar correctamente inicializado.
-
-#### Postcondiciones
-
-- Devuelve un nombre no nulo que identifica el estado actual.
-
-#### Invariantes
-
-- El nombre identifica al estado que implementa la interfaz.
-- No modifica el estado del motor.
-
 ### Operaciones de transición
 
 ```java
-EventoMotorWarp prepararSalto();
-EventoMotorWarp iniciarWarp();
-EventoMotorWarp finalizarWarp();
-EventoMotorWarp finalizarEnfriamiento();
+Evento prepararSalto();
+Evento saltar();
+Evento enfriar();
+
 ```
 
 #### Precondiciones
@@ -139,6 +125,8 @@ EventoMotorWarp finalizarEnfriamiento();
 - Una operación inválida no modifica el estado del motor.
 - Todas las operaciones definidas por la interfaz devuelven un evento
   `Evento`.
+
+<br><br>
 
 ## `MotorWarp`
 
@@ -193,10 +181,10 @@ public String getEstado();
 ### Operaciones de transición
 
 ```java
-public EventoMotorWarp prepararSalto();
-public EventoMotorWarp iniciarWarp();
-public EventoMotorWarp finalizarWarp();
-public EventoMotorWarp finalizarEnfriamiento();
+public Evento prepararSalto();
+public Evento saltar();
+public Evento enfriar();
+
 ```
 
 #### Precondiciones
@@ -218,12 +206,12 @@ public EventoMotorWarp finalizarEnfriamiento();
 
 - El motor siempre permanece en uno de los estados definidos.
 - Una transición inválida no cambia el estado.
-- Cada invocación devuelve un evento que puede ser registrado por `Nave`.
+- Cada invocación devuelve un evento que puede ser registrado en la bitacora.
 
 ### `cambiarEstado`
 
 ```java
-EventoMotorWarp cambiarEstado(EstadoWarp estado);
+Evento cambiarEstado(EstadoWarp estado);
 ```
 
 Este método tiene visibilidad de paquete y es utilizado por los estados
@@ -247,7 +235,7 @@ concretos para solicitar una transición.
 ### `registrarError`
 
 ```java
-EventoMotorWarp registrarError();
+Evento registrarError();
 ```
 
 Este método tiene visibilidad de paquete y es utilizado por los estados
@@ -265,6 +253,8 @@ cuando una operación no está permitida.
 #### Invariantes
 
 - Una operación inválida nunca altera el estado del motor.
+
+<br><br>
 
 ## `Liquidacion`
 
@@ -407,6 +397,8 @@ public AdicionalConsejeros(Liquidacion envoltorio, int cantidadConsejos);
 - Agrega 2 PG por cada consejo registrado al monto total.
 - Incorpora la cantidad de consejos computados al detalle.
 
+<br><br>
+
 ## `Universo`
 
 ### Responsabilidad
@@ -462,6 +454,8 @@ public AsistenteComando seleccionarNaveParaOperar(int indice);
 ### Invariantes
 - No modifica la cantidad ni el orden de los asistentes almacenados.   
 
+<br><br>
+
 ### `AsistenteComando`
 
 ### Responsabilidad
@@ -512,7 +506,7 @@ public void ordenarSaltoWarp();
 - El motor de la nave debe encontrarse en estado "Disponible".   
 
 ### Postcondiciones
-- Ejecuta en secuencia: prepararSalto() -> iniciarWarp() -> finalizarWarp().   
+- Ejecuta en secuencia: prepararSalto() -> saltar() -> enfriar().   
 - El motor concluye en estado "Disponible".   
 - Registra cada transición como un Evento inmutable en la bitácora.   
 
