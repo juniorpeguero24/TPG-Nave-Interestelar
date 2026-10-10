@@ -6,8 +6,11 @@ import modelo.bitacora.TipoEvento;
 import modelo.bitacora.Bitacora;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
+import modelo.haberes.Liquidacion;
 import modelo.nave.Nave;
 import modelo.tripulacion.Tripulante;
+
+import java.util.ArrayList;
 
 public class AsistenteComando {
     private final Nave nave;
@@ -18,7 +21,7 @@ public class AsistenteComando {
         this.bitacora = new Bitacora();
     }
 
-    // ----- NAVE ----- //
+    // ----- NAVE Y TRIPULACION ----- //
 
     public Nave getNave() {
         return nave;
@@ -38,6 +41,10 @@ public class AsistenteComando {
 
     public boolean tieneTripulacionValida() {
         return nave.tieneTripulacionValida();
+    }
+
+    public ArrayList<Liquidacion> liquidarHaberesTripulacion() {
+        return nave.liquidarHaberesTripulacion();
     }
 
     // ----- BITACORA ----- //

@@ -29,6 +29,6 @@ public class Bitacora {
 
     @Override
     public String toString(){
-        return "BITACORA: \n\n" + eventos.toString();
+        return "BITACORA: \n" + eventos.toString();
     }
 }
