@@ -32,6 +32,6 @@ public class Evento {
 
     @Override
     public String toString() {
-        return getFecha().format(FORMATO_FECHA) + " " + tipo + ": " + descripcion + "\n";
+        return getFecha().format(FORMATO_FECHA) + " " + tipo.toString() + ": " + descripcion + "\n";
     }
 }
