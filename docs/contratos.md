@@ -2,6 +2,8 @@
 
 Este documento describe las responsabilidades, precondiciones, postcondiciones e invariantes de todas las clases.
 
+<br><br>
+
 ## `Bitacora`
 
 ### Responsabilidad
@@ -81,6 +83,9 @@ public ArrayList<Evento> consultaEvento(LocalDateTime desde, LocalDateTime hasta
   registrados.
 
 
+<br><br>
+
+
 ## `EstadoWarp`
 
 ### Responsabilidad
@@ -90,25 +95,6 @@ Cada implementación determina qué operaciones son válidas para el estado actu
 
 Las clases que implementan esta interfaz son `Disponible`,
 `PreparandoSalto`, `EnWarp` y `Enfriamiento`.
-
-### `nombre`
-
-```java
-String nombre();
-```
-
-#### Precondiciones
-
-- El estado debe estar correctamente inicializado.
-
-#### Postcondiciones
-
-- Devuelve un nombre no nulo que identifica el estado actual.
-
-#### Invariantes
-
-- El nombre identifica al estado que implementa la interfaz.
-- No modifica el estado del motor.
 
 ### Operaciones de transición
 
@@ -139,6 +125,8 @@ Evento enfriar();
 - Una operación inválida no modifica el estado del motor.
 - Todas las operaciones definidas por la interfaz devuelven un evento
   `Evento`.
+
+<br><br>
 
 ## `MotorWarp`
 
@@ -218,7 +206,7 @@ public Evento enfriar();
 
 - El motor siempre permanece en uno de los estados definidos.
 - Una transición inválida no cambia el estado.
-- Cada invocación devuelve un evento que puede ser registrado por `Nave`.
+- Cada invocación devuelve un evento que puede ser registrado en la bitacora.
 
 ### `cambiarEstado`
 
@@ -265,6 +253,8 @@ cuando una operación no está permitida.
 #### Invariantes
 
 - Una operación inválida nunca altera el estado del motor.
+
+<br><br>
 
 ## `Liquidacion`
 
@@ -407,6 +397,8 @@ public AdicionalConsejeros(Liquidacion envoltorio, int cantidadConsejos);
 - Agrega 2 PG por cada consejo registrado al monto total.
 - Incorpora la cantidad de consejos computados al detalle.
 
+<br><br>
+
 ## `Universo`
 
 ### Responsabilidad
@@ -461,6 +453,8 @@ public AsistenteComando seleccionarNaveParaOperar(int indice);
 
 ### Invariantes
 - No modifica la cantidad ni el orden de los asistentes almacenados.   
+
+<br><br>
 
 ### `AsistenteComando`
 

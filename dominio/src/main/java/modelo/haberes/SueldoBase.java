@@ -5,8 +5,10 @@ import modelo.tripulacion.Cargo;
 public class SueldoBase implements Liquidacion{
     private final double sueldo;
     private final Cargo cargo;
+    private final String nombre;
 
-    public SueldoBase(Cargo cargo){
+    public SueldoBase(String nombre, Cargo cargo){
+        this.nombre = nombre;
         this.cargo=cargo;
         if (cargo.equals(Cargo.CAPITAN))
             this.sueldo=1000;
@@ -20,10 +22,6 @@ public class SueldoBase implements Liquidacion{
             this.sueldo=0;
     }
 
-    public double getSueldo() {
-        return sueldo;
-    }
-
     @Override
     public double calcularTotal() {
         return this.sueldo;
@@ -31,6 +29,6 @@ public class SueldoBase implements Liquidacion{
 
     @Override
     public String obtenerDetalle() {
-        return "Sueldo base ("+this.cargo+"): " + this.sueldo + " PG";
+        return "Sueldo base ("+this.cargo+" "+this.nombre+"): " + this.sueldo + " PG";
     }
 }

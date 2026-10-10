@@ -36,6 +36,6 @@ public class Antiguedad extends LiquidacionDecorator{
 
     @Override
     public String obtenerDetalle() {
-        return super.obtenerDetalle()+"\n Adicional por "+this.antiguedad+" años de antiguedad: "+this.adicional+" PG";
+        return super.obtenerDetalle()+"\nAdicional por "+this.antiguedad+" años de antiguedad: "+this.adicional+" PG";
     }
 }
