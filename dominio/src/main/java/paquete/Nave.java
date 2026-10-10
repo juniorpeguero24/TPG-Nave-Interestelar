@@ -2,10 +2,11 @@ package paquete;
 
 import java.util.ArrayList;
 
-
+import paquete.bitacora.Bitacora;
 import paquete.excepciones.OperacionRecursoInvalidaExcepcion;
 import paquete.excepciones.RecursoInsuficienteExcepcion;
-
+import paquete.bitacora.Evento;
+import paquete.bitacora.TipoEvento;
 import paquete.motorwarp.MotorWarp;
 
 public abstract class Nave {
@@ -19,7 +20,6 @@ public abstract class Nave {
         this.nombre = nombre;
         this.motorWarp = new MotorWarp();
         this.tripulacion = new Tripulacion();
-        this.bitacora = new Bitacora();
         this.recursos = new Recursos(combustible, energia);
     }
 
@@ -94,6 +94,10 @@ public abstract class Nave {
     }
     
     // Operaciones delegadas sobre el Motor Warp
+    public String getEstadoMotorWarp() {
+        return motorWarp.getEstado();
+    }
+
     public Evento prepararSalto(){
         return motorWarp.prepararSalto();
     }
