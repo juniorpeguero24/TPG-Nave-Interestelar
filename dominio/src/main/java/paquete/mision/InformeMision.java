@@ -73,4 +73,18 @@ public class InformeMision {
     protected void agregarObservacion(String observacion) {
         observaciones.add(observacion);
     }
+
+    @Override
+    public String toString() {
+        return "Informe de Mision\n"
+                + "Mision ejecutada: " + misionEjecutada + "\n"
+                + "Resultado: " + resultado + "\n"
+                + "Acciones principales: " + accionesPrincipales + "\n"
+                + "Recursos consumidos:\n"
+                + "  Combustible: " + combustibleConsumido + "\n"
+                + "  Energia: " + energiaConsumida + "\n"
+                + "  Desgaste generado: " + desgasteGenerado + "\n"
+                + "Estado final de la nave: " + estadoFinalNave + "\n"
+                + "Observaciones: " + observaciones;
+    }
 }
