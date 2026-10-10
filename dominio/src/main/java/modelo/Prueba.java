@@ -8,6 +8,15 @@ import modelo.nave.*;
 import modelo.tripulacion.*;
 
 public class Prueba {
+    public static void main(String[] args) {
+        probarFactory();
+        probarHaberes();
+        probarMisiones();
+        probarRecursosInsuficientes();
+        probarMotorWarp();
+        probarContratoInvalido();
+        probarMantenimiento();
+    }
 
     // Creo un universo base para las pruebas
     private static Universo crearUniversoBase() {
@@ -249,15 +258,5 @@ public class Prueba {
         asistente.realizarMantenimiento();
         verificar("El mantenimiento deja el desgaste en 0",asistente.getDesgaste() == 0);
         verificar("Luego del mantenimiento deja de requerirlo", !asistente.requiereMantenimiento());
-    }
-
-    public static void main(String[] args) {
-        probarFactory();
-        probarHaberes();
-        probarMisiones();
-        probarRecursosInsuficientes();
-        probarMotorWarp();
-        probarContratoInvalido();
-        probarMantenimiento();
     }
 }

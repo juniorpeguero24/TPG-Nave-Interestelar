@@ -4,9 +4,6 @@ import modelo.AsistenteComando;
 import modelo.bitacora.Evento;
 import modelo.bitacora.TipoEvento;
 import modelo.excepciones.*;
-
-import java.util.ArrayList;
-
 import java.util.ArrayList;
 
 public abstract class Mision {
@@ -52,7 +49,19 @@ public abstract class Mision {
         asistente.registrarEvento(new Evento(TipoEvento.MISION, "Iniciando preparativos de misión: " + nombre));
     }
     
-    protected abstract void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion;
+    protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
+        int combustibleNecesario = getCombustibleNecesario();
+        asistente.consumirCombustible(combustibleNecesario);
+        setCombustibleConsumido(combustibleNecesario);
+
+        int energiaNecesaria = getEnergiaNecesaria();
+        asistente.consumirEnergia(energiaNecesaria);
+        setEnergiaConsumida(energiaNecesaria);
+
+        int desgasteGenerado = getDesgasteNecesario();
+        asistente.aumentarDesgaste(desgasteGenerado);
+        setDesgasteGenerado(desgasteGenerado);
+    }
 
     protected abstract void evaluar(AsistenteComando asistente);
 
