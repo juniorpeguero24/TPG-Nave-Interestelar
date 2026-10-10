@@ -10,21 +10,28 @@ public class Evento {
     private final TipoEvento tipo;
     private final String descripcion;
 
-     public Evento(TipoEvento tipo, String descripcion) {
+    public Evento(TipoEvento tipo, String descripcion) {
 
-         fecha = LocalDateTime.now();
-         this.tipo = tipo;
-         this.descripcion = descripcion;
+        fecha = LocalDateTime.now();
+        this.tipo = tipo;
+        this.descripcion = descripcion;
 
-     }
+    }
 
-     public LocalDateTime getFecha() {
-            return fecha;
+    public LocalDateTime getFecha() {
+        return fecha;
+    }
+
+    public TipoEvento getTipo(){
+        return this.tipo;
+    }
+
+    public boolean esValido() {
+        if (descripcion == null || descripcion.isBlank()) {
+            return false;
         }
-
-     public TipoEvento getTipo(){
-         return this.tipo;
-     }
+        return true;
+    }
 
     @Override
     public String toString() {
