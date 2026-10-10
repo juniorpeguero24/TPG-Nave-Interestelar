@@ -3,8 +3,7 @@ package modelo.mision;
 import modelo.AsistenteComando;
 import modelo.bitacora.Evento;
 import modelo.bitacora.TipoEvento;
-import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
-import modelo.excepciones.RecursoInsuficienteExcepcion;
+import modelo.excepciones.*;
 
 import java.util.ArrayList;
 
@@ -45,7 +44,7 @@ public abstract class Mision {
         return finalizar(asistente);
     }
 
-    protected void preparar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
+    protected void preparar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion, TripulacionInvalidaExcepcion {
         if (!asistente.tieneTripulacionValida()) {
             throw new TripulacionInvalidaExcepcion("No se puede realizar una mision con una tripulacion invalida");
         }

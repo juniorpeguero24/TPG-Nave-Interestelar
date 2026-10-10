@@ -117,8 +117,4 @@ public abstract class Nave {
     public Evento enfriar(){
         return motorWarp.enfriar();
     }
-
-    public String obtenerEstadoActualMotor() {
-        return this.motorWarp.getEstado();
-    }
 }

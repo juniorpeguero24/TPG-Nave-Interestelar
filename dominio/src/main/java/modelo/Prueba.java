@@ -2,15 +2,10 @@ package modelo;
 
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
-import modelo.mision.Mision;
-import modelo.mision.Mision01;
-import modelo.mision.Mision02;
-import modelo.mision.Mision03;
-import modelo.mision.InformeMision;
-import modelo.mision.ResultadoMision;
+import modelo.mision.*;
 import modelo.haberes.Liquidacion;
-import modelo.nave.Nave;
-import modelo.tripulacion.Tripulante;
+import modelo.nave.*;
+import modelo.tripulacion.*;
 
 public class Prueba {
 

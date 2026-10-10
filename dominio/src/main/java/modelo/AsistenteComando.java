@@ -6,6 +6,8 @@ import modelo.bitacora.TipoEvento;
 import modelo.bitacora.Bitacora;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
+import modelo.nave.Nave;
+import modelo.tripulacion.Tripulante;
 
 public class AsistenteComando {
     private final Nave nave;
@@ -27,7 +29,7 @@ public class AsistenteComando {
     }
 
     public String obtenerEstadoNaveActual() {
-        return nave.obtenerEstadoActual();
+        return nave.getEstadoActual();
     }
 
     public void agregarTripulante(Tripulante tripulante) {
@@ -59,25 +61,20 @@ public class AsistenteComando {
         this.registrarEvento(evento);
     }
 
-    public void iniciarWarp(){
-        Evento evento = nave.iniciarWarp();
+    public void saltar(){
+        Evento evento = nave.saltar();
         this.registrarEvento(evento);
     }
 
-    public void finalizarWarp(){
-        Evento evento = nave.finalizarWarp();
-        this.registrarEvento(evento);
-    }
-
-    public void finalizarEnfriamiento(){
-        Evento evento = nave.finalizarEnfriamiento();
+    public void enfriar(){
+        Evento evento = nave.enfriar();
         this.registrarEvento(evento);
     }
 
     public void ordenarSaltoWarp() {
         this.prepararSalto();
-        this.iniciarWarp();
-        this.finalizarWarp();
+        this.saltar();
+        this.enfriar();
     }
 
     // ----- RECURSOS ----- //
@@ -129,7 +126,7 @@ public class AsistenteComando {
 
  
     public boolean estaDisponibleParaSalto() {
-        return "Disponible".equalsIgnoreCase(this.nave.obtenerEstadoActualMotor());
+        return "Disponible".equalsIgnoreCase(this.nave.getEstadoMotorWarp());
     }
 
     public void verificarDisponibilidadRecursos(int combustible, int energia, int desgaste) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
@@ -181,7 +178,7 @@ public class AsistenteComando {
             if (!this.estaDisponibleParaSalto())
                 throw new OperacionRecursoInvalidaExcepcion("\n[ERROR] Operacion Recurso Invalida." +
                         "\nLa nave no esta disponible para iniciar la mision." +
-                        "\n Motor en estado: "+this.nave.obtenerEstadoActualMotor());
+                        "\n Motor en estado: "+this.nave.getEstadoMotorWarp());
             this.nave.verificarDisponibilidadRecursos(combustibleNecesario,energiaNecesaria,desgasteGenerado);
         }
         catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion e) {
