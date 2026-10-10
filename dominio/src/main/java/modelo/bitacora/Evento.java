@@ -27,10 +27,7 @@ public class Evento {
     }
 
     public boolean esValido() {
-        if (descripcion == null || descripcion.isBlank()) {
-            return false;
-        }
-        return true;
+        return tipo != null && descripcion == null || descripcion.isBlank();
     }
 
     @Override
