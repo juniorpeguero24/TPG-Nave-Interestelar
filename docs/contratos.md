@@ -1430,33 +1430,361 @@ public Nave(String nombre, int combustible, int energia);
 
 #### Postcondiciones
 
-- Almacena el nombre y los recursos iniciales recibidos.
-- Inicializa el desgaste en 0, la tripulación vacía y el motor Warp en estado `Disponible`.
-- No valida el nombre; puede ser `null`.
-- Si `combustible` o `energia` quedan fuera del rango de 0 a 100 inclusive, lanza `IllegalArgumentException`.
+- El nombre recibido queda almacenado en la nave.
+- Se crea un `MotorWarp` asociado a la nave y se inicializa en el estado `Disponible`.
+- Se crea una `Tripulacion` vacía.
+- Se crea un `Recursos` con el combustible y la energía iniciales recibidos.
+- Si `combustible` o `energia` quedan fuera del rango de 0 a 100, la construcción lanza `IllegalArgumentException`.
 
-### Consulta y tripulación
+#### Invariantes
 
-- `getNombre()` devuelve el nombre almacenado.
-- `getEstadoActual()` devuelve una representación textual del combustible, la energía, el desgaste, si requiere mantenimiento y el estado Warp actuales.
-- `getTripulantes()` devuelve una copia de la lista de tripulantes.
-- `agregarTripulante(Tripulante)` agrega el tripulante; lanza `IllegalArgumentException` si es `null`, ya está en la tripulación o intenta agregarse un segundo capitán.
-- `tieneTripulacionValida()` devuelve `true` si hay al menos cinco tripulantes y uno es capitán.
-- `liquidarHaberesTripulacion()` devuelve una liquidación por cada tripulante, en el orden de la tripulación.
+- La nave siempre mantiene referencias no nulas a `Recursos`, `Tripulacion` y `MotorWarp`.
+- El desgaste actual de la nave nunca es negativo y queda controlado por `Recursos`.
+- La tripulación y el motor Warp no pueden quedar en un estado no inicializado.
 
-### Operaciones de recursos
+### `getNombre`
 
-- Los getters de combustible, energía y desgaste devuelven sus valores actuales.
-- `cargarCombustible(int)` y `cargarEnergia(int)` requieren una cantidad positiva y no pueden superar 100 unidades; ante incumplimiento lanzan `OperacionRecursoInvalidaExcepcion`.
-- `consumirCombustible(int)` y `consumirEnergia(int)` aceptan cantidades mayores o iguales a cero. Una cantidad negativa lanza `OperacionRecursoInvalidaExcepcion`; una cantidad mayor a la disponible lanza `RecursoInsuficienteExcepcion`.
-- `aumentarDesgaste(int)` acepta cantidades mayores o iguales a cero y no permite superar 100 unidades de desgaste; ante incumplimiento lanza `OperacionRecursoInvalidaExcepcion`.
-- `realizarMantenimiento()` reinicia el desgaste a 0.
-- `requiereMantenimiento()` devuelve `true` cuando el desgaste es igual o superior a 80.
+```java
+public String getNombre();
+```
 
-### Operaciones del motor Warp
+#### Precondiciones
 
-- `getEstadoMotorWarp()` devuelve el nombre del estado actual del motor.
-- `prepararSalto()`, `saltar()` y `enfriar()` delegan en el motor Warp y devuelven el evento producido, sin registrarlo en una bitácora.
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelve el nombre asignado a la nave en el constructor.
+- No modifica el estado interno de la nave.
+
+### `getEstadoActual`
+
+```java
+public String getEstadoActual();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelve una representación textual con el combustible, la energía, el desgaste, si requiere mantenimiento y el estado actual del motor Warp.
+- No altera el estado de la nave.
+
+#### Invariantes
+
+- El texto devuelto refleja el estado actual de la nave en el momento de la consulta.
+
+### `agregarTripulante`
+
+```java
+public void agregarTripulante(Tripulante tripulante);
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Delega la acción en la tripulación.
+- Si `tripulante` es `null`, ya está agregado o intenta agregar un segundo capitán, lanza `IllegalArgumentException`.
+- En caso contrario, el tripulante queda incorporado a la nave.
+
+#### Invariantes
+
+- La tripulación no contiene referencias `null`.
+- No puede existir más de un capitán en la tripulación.
+
+### `getTripulantes`
+
+```java
+public ArrayList<Tripulante> getTripulantes();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelve la lista de tripulantes actual de la nave.
+- No modifica la tripulación interna.
+
+### `tieneTripulacionValida`
+
+```java
+public boolean tieneTripulacionValida();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelve `true` si la tripulación tiene al menos cinco tripulantes y posee un capitán.
+- Devuelve `false` en caso contrario.
+- No modifica la tripulación.
+
+### `liquidarHaberesTripulacion`
+
+```java
+public ArrayList<Liquidacion> liquidarHaberesTripulacion();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelve una liquidación por cada tripulante, en el mismo orden en que se registran.
+- Si la tripulación está vacía, devuelve una lista vacía.
+- No altera la tripulación ni los datos de los tripulantes.
+
+### `getCombustible`
+
+```java
+public int getCombustible();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelve el combustible actual de la nave.
+- No modifica los recursos de la nave.
+
+### `cargarCombustible`
+
+```java
+public void cargarCombustible(int cantidad) throws OperacionRecursoInvalidaExcepcion;
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Si la cantidad es positiva y el combustible final no supera el máximo, aumenta el combustible de la nave.
+- Si la cantidad es negativa o excede la capacidad máxima, lanza `OperacionRecursoInvalidaExcepcion` y la nave no cambia.
+
+### `consumirCombustible`
+
+```java
+public void consumirCombustible(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion;
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Si la cantidad es válida y no supera el combustible disponible, reduce el combustible actual.
+- Si la cantidad es negativa, lanza `OperacionRecursoInvalidaExcepcion`.
+- Si la cantidad supera el combustible disponible, lanza `RecursoInsuficienteExcepcion`.
+- En ambos casos de error, el combustible no se modifica.
+
+### `getEnergia`
+
+```java
+public int getEnergia();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelve la energía actual de la nave.
+- No modifica el estado de los recursos.
+
+### `cargarEnergia`
+
+```java
+public void cargarEnergia(int cantidad) throws OperacionRecursoInvalidaExcepcion;
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Si la cantidad es positiva y la energía final no supera el máximo, aumenta la energía de la nave.
+- Si la cantidad es negativa o excede la capacidad máxima, lanza `OperacionRecursoInvalidaExcepcion` y la nave no cambia.
+
+### `consumirEnergia`
+
+```java
+public void consumirEnergia(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion;
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Si la cantidad es válida y no supera la energía disponible, reduce la energía actual.
+- Si la cantidad es negativa, lanza `OperacionRecursoInvalidaExcepcion`.
+- Si la cantidad supera la energía disponible, lanza `RecursoInsuficienteExcepcion`.
+- En ambos casos de error, la energía no se modifica.
+
+### `getDesgaste`
+
+```java
+public int getDesgaste();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelve el desgaste acumulado actual de la nave.
+- No modifica el estado de la nave.
+
+### `aumentarDesgaste`
+
+```java
+public void aumentarDesgaste(int cantidad) throws OperacionRecursoInvalidaExcepcion;
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Si la cantidad es positiva y el desgaste resultante no supera el máximo, aumenta el desgaste de la nave.
+- Si la cantidad es negativa o el desgaste resultante supera el máximo, lanza `OperacionRecursoInvalidaExcepcion` y no modifica el desgaste.
+
+### `realizarMantenimiento`
+
+```java
+public void realizarMantenimiento();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Reinicia el desgaste de la nave a 0.
+- No modifica el combustible ni la energía.
+
+### `requiereMantenimiento`
+
+```java
+public boolean requiereMantenimiento();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelve `true` si el desgaste es mayor o igual a 80.
+- Devuelve `false` en caso contrario.
+- No modifica el estado de la nave.
+
+### `verificarDisponibilidadRecursos`
+
+```java
+public void verificarDisponibilidadRecursos(int combustibleNecesario, int energiaNecesaria, int desgasteGenerado)
+  throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion;
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Si algún valor requerido es negativo, lanza `OperacionRecursoInvalidaExcepcion`.
+- Si el combustible o la energía disponibles no alcanzan los mínimos, lanza `RecursoInsuficienteExcepcion`.
+- Si el desgaste futuro supera el máximo permitido, lanza `OperacionRecursoInvalidaExcepcion`.
+- Si todo es válido, finaliza sin modificar los recursos de la nave.
+
+### `getEstadoMotorWarp`
+
+```java
+public String getEstadoMotorWarp();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelve el nombre del estado actual del motor Warp.
+- No modifica el estado del motor ni de la nave.
+
+### `prepararSalto`
+
+```java
+public Evento prepararSalto();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Delegada en `MotorWarp` la operación de preparación del salto.
+- Devuelve el `Evento` producido por la transición del motor.
+- No registra el evento en una `Bitacora`.
+
+### `saltar`
+
+```java
+public Evento saltar();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Delegada en `MotorWarp` la operación de salto.
+- Devuelve el `Evento` generado por la transición del motor.
+- No modifica los recursos de la nave de forma directa.
+
+### `enfriar`
+
+```java
+public Evento enfriar();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Delegada en `MotorWarp` la operación de enfriamiento.
+- Devuelve el `Evento` generado por la transición del motor.
+- No registra ni persiste el evento en una bitácora.
+
+#### Invariantes
+
+- La nave siempre conserva un `MotorWarp` válido.
+- Las operaciones del motor solo pueden cambiar su estado a través de la lógica definida por `MotorWarp`.
+- El estado de la tripulación y los recursos de la nave solo cambian cuando se ejecutan operaciones explícitas sobre ellos.
 
 ### Subclases
 
