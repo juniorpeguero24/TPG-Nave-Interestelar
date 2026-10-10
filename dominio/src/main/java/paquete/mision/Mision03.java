@@ -18,11 +18,19 @@ public class Mision03 extends Mision {
 
     @Override
     protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
-        asistente.consumirCombustible(getCombustibleNecesario());
-        asistente.consumirEnergia(getEnergiaNecesaria());
-        asistente.aumentarDesgaste(getDesgasteGenerado());
+        int combustibleNecesario = getCombustibleNecesario();
+        asistente.consumirCombustible(combustibleNecesario);
+        setCombustibleConsumido(combustibleNecesario);
 
-        asistente.registrarEvento(new Evento(TipoEvento.MISION,"Ejecutando maniobra de retorno..."));
+        int energiaNecesaria = getEnergiaNecesaria();
+        asistente.consumirEnergia(energiaNecesaria);
+        setEnergiaConsumida(energiaNecesaria);
+
+        int desgasteGenerado = getDesgasteNecesario();
+        asistente.aumentarDesgaste(desgasteGenerado);
+        setDesgasteGenerado(desgasteGenerado);
+
+        agregarAccionPrincipal("Ejecutando maniobra de retorno");
         this.regresoCompletado = true;
     }
 

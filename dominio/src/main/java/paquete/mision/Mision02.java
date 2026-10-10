@@ -15,11 +15,19 @@ public class Mision02 extends Mision {
 
     @Override
     protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
-        asistente.consumirCombustible(getCombustibleNecesario());
-        asistente.consumirEnergia(getEnergiaNecesaria());
-        asistente.aumentarDesgaste(getDesgasteGenerado());
+        int combustibleNecesario = getCombustibleNecesario();
+        asistente.consumirCombustible(combustibleNecesario);
+        setCombustibleConsumido(combustibleNecesario);
 
-        asistente.registrarEvento(new Evento(TipoEvento.MISION,"Ejecutando maniobra de recolección..."));
+        int energiaNecesaria = getEnergiaNecesaria();
+        asistente.consumirEnergia(energiaNecesaria);
+        setEnergiaConsumida(energiaNecesaria);
+
+        int desgasteGenerado = getDesgasteNecesario();
+        asistente.aumentarDesgaste(desgasteGenerado);
+        setDesgasteGenerado(desgasteGenerado);
+
+        agregarAccionPrincipal("Ejecutando maniobra de recolección");
         this.elementoObtenido = true;
     }
 
