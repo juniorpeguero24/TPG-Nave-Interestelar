@@ -619,20 +619,6 @@ public void ordenarSaltoWarp();
 #### Invariantes
 - La bitácora incrementa su tamaño según los eventos generados.   
 
-### `getNave`
-
-```java
-public Nave getNave();
-```
-
-#### Precondiciones
-
-- Ninguna.
-
-#### Postcondiciones
-
-- Devuelve la nave manejada por el asistente.
-
 ### `getNombreNave`
 
 ```java

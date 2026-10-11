@@ -23,10 +23,6 @@ public class AsistenteComando {
 
     // ----- NAVE Y TRIPULACION ----- //
 
-    public Nave getNave() {
-        return nave;
-    }
-
     public String getNombreNave() {
         return nave.getNombre();
     }
