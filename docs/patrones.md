@@ -223,7 +223,7 @@ Sin el patrón Template Method, cada misión concreta implementaría su propio f
 - Riesgo de alterar el orden de las etapas de ejecución.
 - Dispersión de la responsabilidad de asentar los eventos en la bitácora y ordenar el salto warp.
 
-El patrón Template Method permite fijar el esqueleto del algoritmo de ejecución en una clase abstracta (`Mision`), delegando únicamente los pasos variables (`ejecutar` y `evaluar`) en las subclases concretas.
+El patrón Template Method permite fijar el esqueleto del algoritmo de ejecución en una clase abstracta (`Mision`), delegando únicamente los pasos variables (parte de `ejecutar` y `evaluar`) en las subclases concretas.
 
 ## Participantes del patrón
 
@@ -232,12 +232,11 @@ El patrón Template Method permite fijar el esqueleto del algoritmo de ejecució
 Define el método plantilla `realizarMision` marcado como `final` para impedir que las subclases alteren la estructura del proceso:
 
 ```java
-public final void realizarMision(AsistenteComando asistente) 
-        throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
+public final InformeMision realizarMision(AsistenteComando asistente) {
     preparar(asistente);
     ejecutar(asistente);
     evaluar(asistente);
-    finalizar(asistente);
+    return finalizar(asistente);
 }
 ```
 - **Pasos concretos (invariantes):**
