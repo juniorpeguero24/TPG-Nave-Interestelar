@@ -4,7 +4,8 @@ import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
 import modelo.mision.*;
 import modelo.haberes.Liquidacion;
-import modelo.nave.*;
+import modelo.nave.Nave;
+import modelo.nave.NaveFactory;
 import modelo.tripulacion.*;
 
 public class Prueba {
@@ -35,9 +36,9 @@ public class Prueba {
         universo.registrarAsistente(new AsistenteComando(carguero));
         universo.registrarAsistente(new AsistenteComando(combate));
 
-        verificar("Factory creo una exploradora", exploradora instanceof NaveExploradora);
-        verificar("Factory creo un carguero", carguero instanceof NaveCarguero);
-        verificar("Factory creo una nave de combate", combate instanceof NaveCombate);
+        verificar("Factory creo una exploradora", exploradora != null && exploradora.getTipo().equals("exploradora"));
+        verificar("Factory creo un carguero", carguero != null && carguero.getTipo().equals("carguero"));
+        verificar("Factory creo una nave de combate", combate != null && combate.getTipo().equals("combate"));
         verificar("Se registraron las tres naves", universo.getCantidadAsistentes() == 3);
 
         return universo;

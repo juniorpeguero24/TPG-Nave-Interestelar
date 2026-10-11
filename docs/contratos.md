@@ -619,20 +619,6 @@ public void ordenarSaltoWarp();
 #### Invariantes
 - La bitácora incrementa su tamaño según los eventos generados.   
 
-### `getNave`
-
-```java
-public Nave getNave();
-```
-
-#### Precondiciones
-
-- Ninguna.
-
-#### Postcondiciones
-
-- Devuelve la nave manejada por el asistente.
-
 ### `getNombreNave`
 
 ```java
@@ -1456,6 +1442,20 @@ public String getNombre();
 
 - Devuelve el nombre asignado a la nave en el constructor.
 - No modifica el estado interno de la nave.
+
+### `getTipo`
+
+```java
+public String getTipo();
+```
+
+#### Precondiciones
+
+- Ninguna
+
+#### Postcondiciones
+
+- Devuelve un string con el tipo de nave asociada.
 
 ### `getEstadoActual`
 

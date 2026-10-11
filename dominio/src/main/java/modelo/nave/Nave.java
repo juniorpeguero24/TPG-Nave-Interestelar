@@ -30,6 +30,9 @@ public abstract class Nave {
     public String getNombre() {
         return nombre;
     }
+
+    // Usado en Prueba para validar las construcciones correctas
+    public abstract String getTipo();
     
     public String getEstadoActual() {
         return "\n  Combustible: " + recursos.getCombustible()
