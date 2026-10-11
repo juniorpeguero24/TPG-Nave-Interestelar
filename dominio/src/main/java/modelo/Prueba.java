@@ -106,16 +106,19 @@ public class Prueba {
         InformeMision informe1 = m1.realizarMision(asistente);
         System.out.println(informe1);
         verificar("M-01 genero un informe", informe1 != null);
+        System.out.println("");
 
         Mision m2 = new Mision02();
         InformeMision informe2 = m2.realizarMision(asistente);
         System.out.println(informe2);
         verificar("M-02 genero un informe", informe2 != null);
+        System.out.println("");
 
         Mision m3 = new Mision03();
         InformeMision informe3 = m3.realizarMision(asistente);
         System.out.println(informe3);
         verificar("M-03 genero un informe", informe3 != null);
+        System.out.println("");
     }
 
     // Valida un caso de intento de realizar una mision con recursos insuficientes
@@ -123,13 +126,14 @@ public class Prueba {
         System.out.println("\n===== PRUEBA RECURSOS INSUFICIENTES =====");
 
         try {
-            // Se drena combustible (valido)
-            asistente.consumirCombustible(asistente.getCombustible());
+            // Se deja en 1 el combustible (valido)
+            asistente.consumirCombustible(asistente.getCombustible() - 1);
         } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion e) {
             System.out.println(e.getMessage());
         }
 
         int combustibleAntes = asistente.getCombustible();
+        System.out.println("Combustible previo a la mision: " + combustibleAntes);
 
         Mision mision = new Mision01();
         InformeMision informe = mision.realizarMision(asistente);
@@ -137,6 +141,7 @@ public class Prueba {
         verificar("La mision fallo por recursos insuficientes", informe.getResultado() == ResultadoMision.FALLO);
 
         int combustibleDespues = asistente.getCombustible();
+        System.out.println("Combustible despues de la mision: " + combustibleDespues);
         verificar("El fallo no produjo consumo parcial", combustibleAntes == combustibleDespues);
     }
 
@@ -155,9 +160,12 @@ public class Prueba {
         // primero pasamos a Preparando salto (valido)
         asistente.prepararSalto();
         String antesInvalida = asistente.getEstadoMotorWarp();
+        System.out.println("Estado del Motor Warp antes de la transicion invalida: " + antesInvalida);
+
         // Intentamos preparar nuevamente estando ya en Preparando salto
         asistente.prepararSalto();
         String despuesInvalida = asistente.getEstadoMotorWarp();
+        System.out.println("Estado del Motor Warp despues de la transicion invalida: " + despuesInvalida);
         verificar("La transicion invalida no modifica el estado", antesInvalida.equals(despuesInvalida));
     }
 
@@ -166,6 +174,7 @@ public class Prueba {
         System.out.println("\n===== PRUEBA CONTRATO INVALIDO =====");
 
         int combustibleAntes = asistente.getCombustible();
+        System.out.println("Combustible antes de intentar cargar 500 unidades: " + combustibleAntes);
 
         try {
             asistente.cargarCombustible(500);
@@ -174,6 +183,7 @@ public class Prueba {
         }
 
         int combustibleDespues = asistente.getCombustible();
+        System.out.println("Combustible despues de intentar cargar 500 unidades: " + combustibleDespues);
 
         verificar("Una carga invalida conserva el estado anterior", combustibleAntes == combustibleDespues);
     }
@@ -187,10 +197,15 @@ public class Prueba {
             System.out.println(e.getMessage());
             return;
         }
+        System.out.println("Desgaste inicial: " + asistente.getDesgaste());
+        System.out.println("Evaluo si requiere mantenimiento: " + asistente.requiereMantenimiento());
+        verificar("Con desgaste mayor o igual a 80 requiere mantenimiento", asistente.requiereMantenimiento());
 
-        verificar("Con desgaste 80 requiere mantenimiento", asistente.requiereMantenimiento());
         asistente.realizarMantenimiento();
+        System.out.println("Desgaste luego del mantenimiento: " + asistente.getDesgaste());
         verificar("El mantenimiento deja el desgaste en 0",asistente.getDesgaste() == 0);
+
+        System.out.println("Evaluo si requiere mantenimiento: " + asistente.requiereMantenimiento());
         verificar("Luego del mantenimiento deja de requerirlo", !asistente.requiereMantenimiento());
     }
 }
