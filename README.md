@@ -37,7 +37,7 @@ Uso de ia:
 [docs/uso-ia.md](./docs/uso-ia.md).
 
 Diagrama de clases:
-[docs/diagrama.jpg](./docs/diagrama-Nave-Interestelar.svg).
+[docs/diagrama.svg](./docs/diagrama.svg).
 
 ## Requisitos
 
