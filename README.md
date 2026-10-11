@@ -25,6 +25,12 @@ Proyecto Maven en Java. Programacion C.
 
 ```
 
+## Entrega
+
+La Entrega 1 se encuentra identificada mediante la etiqueta Git:
+
+`entrega-e1`
+
 ## Documentacion: 
 
 Patrones:
@@ -37,7 +43,7 @@ Uso de ia:
 [docs/uso-ia.md](./docs/uso-ia.md).
 
 Diagrama de clases:
-[docs/diagrama.jpg](./docs/diagrama-Nave-Interestelar.svg).
+[docs/diagrama-Nave-Interestelar.svg](./docs/diagrama-Nave-Interestelar.svg).
 
 ## Requisitos
 
