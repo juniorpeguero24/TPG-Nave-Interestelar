@@ -32,11 +32,11 @@ public abstract class Nave {
     }
     
     public String getEstadoActual() {
-        return "\n Combustible: " + recursos.getCombustible()
-                + "\n Energia: " + recursos.getEnergia()
-                + "\n Desgaste: " + recursos.getDesgaste()
-                + "\n Requiere mantenimiento: " + recursos.requiereMantenimiento()
-                + "\n Motor Warp: " + motorWarp.getEstado();
+        return "\n  Combustible: " + recursos.getCombustible()
+                + "\n  Energia: " + recursos.getEnergia()
+                + "\n  Desgaste: " + recursos.getDesgaste()
+                + "\n  Requiere mantenimiento: " + recursos.requiereMantenimiento()
+                + "\n  Motor Warp: " + motorWarp.getEstado();
     }
     
     // Operaciones delegadas sobre Tripulacion
