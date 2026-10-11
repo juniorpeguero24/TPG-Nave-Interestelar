@@ -5,7 +5,7 @@ Este proyecto sigue una organización por dominios para mantener la lógica de n
 ## Decisiones de diseño
 
 - Modularización del dominio: cada paquete agrupa conceptos del negocio relacionados, lo que facilita mantenimiento, pruebas y evolución.
-- Uso de patrones de diseño: la fábrica `NaveFactory` encapsula la creación de tipos de nave; el patrón `Decorator` en `LiquidacionDecorator` permite sumar conceptos salariales sin alterar la lógica base; el motor warp usa estados para representar transiciones de comportamiento.
+- Uso de patrones de diseño: la fábrica `NaveFactory` encapsula la creación de tipos de nave; el patrón `Decorator` en `LiquidacionDecorator` permite sumar conceptos salariales sin alterar la lógica base; el motor warp con el patron `State` usa estados para representar transiciones de comportamiento. Las misiones utilizan el patron `Template` en la superclase Mision para seguir el paso a paso y luego especifican sus pasos particulares en las subclases.
 - Encapsulamiento y validación: entidades y servicios controlan su estado y rechazan entradas inválidas con excepciones específicas, reduciendo errores en tiempo de ejecución.
 - Cohesión en la coordinación: `Universo` actúa como orquestador de asistentes y simulación, evitando acoplar la lógica de decisiones a clases concretas.
 
@@ -17,4 +17,4 @@ Este proyecto sigue una organización por dominios para mantener la lógica de n
 - ISP (Interface Segregation Principle): las interfaces son específicas y enfocadas en comportamientos mínimos, evitando contratos inflados.
 - DIP (Dependency Inversion Principle): el dominio depende de abstracciones y no de implementaciones concretas, favoreciendo la flexibilidad y la prueba unitaria.
 
-En conjunto, el diseño busca un equilibrio entre claridad, extensibilidad y separación de responsabilidades, adecuado para una simulación de dominio con crecimiento incremental.
+En conjunto, el diseño busca un equilibrio entre claridad, extensibilidad y separación de responsabilidades.
