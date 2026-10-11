@@ -233,17 +233,24 @@ Define el método plantilla `realizarMision` marcado como `final` para impedir q
 
 ```java
 public final InformeMision realizarMision(AsistenteComando asistente) {
-    preparar(asistente);
-    ejecutar(asistente);
-    evaluar(asistente);
-    return finalizar(asistente);
-}
+        
+        try {
+            preparar(asistente);
+            ejecutar(asistente);
+            evaluar(asistente);
+        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion e) {
+            this.resultado = ResultadoMision.FALLO;
+            observaciones.add(e.getMessage());
+        }
+
+        return finalizar(asistente);
+    }
 ```
 - **Pasos concretos (invariantes):**
     - `preparar(AsistenteComando asistente)`: solicita al asistente validar que el motor esté disponible y existan los recursos suficientes (combustible, energía, tolerancia al desgaste) antes de iniciar. Asienta el evento de inicio en la bitácora.
     - `finalizar(AsistenteComando asistente)`: si la evaluación fue exitosa, ordena al asistente ejecutar el salto warp y registra el desenlace; si falló, asienta el evento de fallo.
 - **Pasos primitivos (abstractos):**
-    - `ejecutar(AsistenteComando asistente)`: implementado por cada misión concreta para consumir los recursos asignados y realizar su tarea específica.
+    - `ejecutar(AsistenteComando asistente)`: consume los recursos asignados y es implementado por sus subclases para realizar su tarea específica.
     - `evaluar(AsistenteComando asistente)`: determina y asigna el estado final (`ResultadoMision.EXITO` o `ResultadoMision.FALLO`).
 
 ### Clases Concretas

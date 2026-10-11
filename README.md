@@ -25,6 +25,12 @@ Proyecto Maven en Java. Programacion C.
 
 ```
 
+## Entrega
+
+La Entrega 1 se encuentra identificada mediante la etiqueta Git:
+
+`entrega-e1`
+
 ## Documentacion: 
 
 Patrones:
