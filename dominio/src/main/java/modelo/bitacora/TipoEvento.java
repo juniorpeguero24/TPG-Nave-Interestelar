@@ -5,5 +5,6 @@ public enum TipoEvento {
     RECURSOS,
     MISION,
     NAVEGACION,
-    ERROR
+    INFORME,
+    ERROR,
 }

@@ -11,7 +11,7 @@ public class Bitacora {
     }
 
     public void registrarEvento(Evento evento){
-        if (evento != null)
+        if (evento != null && evento.esValido())
             eventos.add(evento);
     }
 
@@ -29,6 +29,6 @@ public class Bitacora {
 
     @Override
     public String toString(){
-        return "BITACORA: \n\n" + eventos.toString();
+        return "BITACORA: \n" + eventos.toString();
     }
 }
