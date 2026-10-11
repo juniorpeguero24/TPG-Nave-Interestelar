@@ -1443,6 +1443,20 @@ public String getNombre();
 - Devuelve el nombre asignado a la nave en el constructor.
 - No modifica el estado interno de la nave.
 
+### `getTipo`
+
+```java
+public String getTipo();
+```
+
+#### Precondiciones
+
+- Ninguna
+
+#### Postcondiciones
+
+- Devuelve un string con el tipo de nave asociada.
+
 ### `getEstadoActual`
 
 ```java
