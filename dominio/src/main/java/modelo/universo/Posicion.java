@@ -20,7 +20,7 @@ public class Posicion {
     @Override
     public boolean equals(Object obj) { // se usa para verificar que dos elementos del universo esten en la misma casilla
         if (this == obj)
-            return true
+            return true;
         if (!(obj instanceof Posicion))
             return false;
         Posicion otra = (Posicion) obj;

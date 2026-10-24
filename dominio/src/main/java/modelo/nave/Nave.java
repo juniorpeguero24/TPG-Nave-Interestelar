@@ -92,8 +92,14 @@ public abstract class Nave implements ElementoDelUniverso {
         recursos.cargarEnergia(cantidad);
     }
     
+    // gasto voluntario
     public void consumirEnergia(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirEnergia(cantidad);
+    }
+    
+    // gasto involuntario
+    public void recibirDanioEnergia(int cantidad) {
+        recursos.reducirEnergia(cantidad);
     }
     
     public int getDesgaste() {
@@ -114,6 +120,21 @@ public abstract class Nave implements ElementoDelUniverso {
     
     public void verificarDisponibilidadRecursos(int combustibleNecesario, int energiaNecesaria, int desgasteGenerado) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
         recursos.verificarDisponibilidadRecursos(combustibleNecesario,energiaNecesaria,desgasteGenerado);
+    }
+    
+    // Encuentros entre naves
+    public abstract ResultadoEncuentro enfrentar(Nave otraNave);
+
+    protected abstract ResultadoEncuentro enfrentarConExploradora(NaveExploradora exploradora);
+
+    protected abstract ResultadoEncuentro enfrentarConCarguero(NaveCarguero carguero);
+
+    protected abstract ResultadoEncuentro enfrentarConCombate(NaveCombate combate);
+    
+    @Override
+    public void interactuarCon(Nave nave) {
+        ResultadoEncuentro resultado = nave.enfrentar(this);
+        // aplicamos las consecuencias si pierde
     }
     
     // Operaciones delegadas sobre el Motor Warp

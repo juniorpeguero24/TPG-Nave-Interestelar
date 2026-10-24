@@ -1,5 +1,9 @@
 package modelo.universo;
 
+import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
+
+import modelo.nave.Nave;
+
 public class EstacionCarga implements ElementoDelUniverso {
     private Posicion posicion;
     private int combustible;
@@ -27,5 +31,12 @@ public class EstacionCarga implements ElementoDelUniverso {
 
     public int getEnergia() {
         return energia;
+    }
+    
+    @Override
+    public void interactuarCon(Nave nave) {
+        // consultar si usar esos metodos o si crear otros
+        nave.cargarCombustible(combustible);
+        nave.cargarEnergia(energia);
     }
 }

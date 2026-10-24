@@ -75,6 +75,13 @@ public class Recursos {
         energia -= cantidad;
     }
     
+    public void reducirEnergia(int cantidad) {
+        energia -= cantidad;
+        if (energia < 0) {
+            energia = 0;
+        }
+    }
+    
     public void aumentarDesgaste(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         if (cantidad < 0) {
             throw new OperacionRecursoInvalidaExcepcion("El desgaste debe ser positivo");

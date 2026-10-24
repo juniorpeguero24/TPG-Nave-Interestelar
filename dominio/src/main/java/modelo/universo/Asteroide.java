@@ -1,5 +1,7 @@
 package modelo.universo;
 
+import modelo.nave.Nave;
+
 public class Asteroide implements ElementoDelUniverso {
     private Posicion posicion;
     private int danioEnergia;
@@ -21,5 +23,10 @@ public class Asteroide implements ElementoDelUniverso {
 
     public int getDanioEnergia() {
         return danioEnergia;
+    }
+    
+    @Override
+    public void interactuarCon(Nave nave) {
+        nave.recibirDanioEnergia(danioEnergia);
     }
 }
