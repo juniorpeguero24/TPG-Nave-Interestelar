@@ -2,35 +2,47 @@ package modelo.nave;
 
 import java.util.ArrayList;
 
-import modelo.bitacora.Bitacora;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
 import modelo.bitacora.Evento;
-import modelo.bitacora.TipoEvento;
 import modelo.motorwarp.MotorWarp;
 import modelo.tripulacion.Tripulacion;
 import modelo.Recursos;
 import modelo.haberes.Liquidacion;
 import modelo.tripulacion.Tripulante;
+import modelo.universo.ElementoDelUniverso;
+import modelo.universo.Posicion;
 
-public abstract class Nave {
+public abstract class Nave implements ElementoDelUniverso {
     private String nombre;
     private Recursos recursos;
     private MotorWarp motorWarp;
     private Tripulacion tripulacion;
+    private Posicion posicion;
 
 
-    public Nave( String nombre,int combustible,int energia) {
+    public Nave( String nombre,int combustible,int energia, Posicion posicion) {
         this.nombre = nombre;
         this.motorWarp = new MotorWarp();
         this.tripulacion = new Tripulacion();
         this.recursos = new Recursos(combustible, energia);
+        this.posicion = posicion;
     }
 
     public String getNombre() {
         return nombre;
     }
+    
+    @Override
+    public Posicion getPosicion() {
+        return posicion;
+    }
 
+    @Override
+    public void setPosicion(Posicion posicion) {
+        this.posicion = posicion;
+    }
+    
     // Usado en Prueba para validar las construcciones correctas
     public abstract String getTipo();
     

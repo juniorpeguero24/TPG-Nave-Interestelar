@@ -1,6 +1,8 @@
-package modelo;
+package modelo.universo;
 
 import java.util.ArrayList;
+
+import modelo.AsistenteComando;
 
 public class Universo {
     private final ArrayList<AsistenteComando> asistentes;
