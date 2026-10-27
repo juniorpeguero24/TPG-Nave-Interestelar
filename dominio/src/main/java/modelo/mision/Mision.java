@@ -1,24 +1,26 @@
 package modelo.mision;
 
-import modelo.AsistenteComando;
+import modelo.nave.AsistenteComando;
 import modelo.bitacora.Evento;
 import modelo.bitacora.TipoEvento;
 import modelo.excepciones.*;
 import java.util.ArrayList;
 
+import modelo.universo.Posicion;
+import modelo.universo.Ruta;
+
 public abstract class Mision {
     private final String nombre;
-    private final int combustibleNecesario, energiaNecesaria, desgasteNecesario;
     private int combustibleConsumido, energiaConsumida, desgasteGenerado;
     protected ResultadoMision resultado;
     private ArrayList<String> accionesPrincipales;
     private ArrayList<String> observaciones;
+    private Posicion destino;
+    private Ruta ruta;
 
-    public Mision(String nombre, int combustibleNecesario, int energiaNecesaria, int desgasteNecesario) {
+    public Mision(String nombre, Posicion destino) {
         this.nombre = nombre;
-        this.combustibleNecesario = combustibleNecesario;
-        this.energiaNecesaria = energiaNecesaria;
-        this.desgasteNecesario = desgasteNecesario;
+        this.destino = destino;
         this.accionesPrincipales = new ArrayList<>();
         this.observaciones = new ArrayList<>();
         this.resultado = ResultadoMision.FALLO;
@@ -45,22 +47,32 @@ public abstract class Mision {
         if (!asistente.tieneTripulacionValida()) {
             throw new TripulacionInvalidaExcepcion("No se puede realizar una mision con una tripulacion invalida");
         }
-        asistente.verificarDisponibilidadParaMision(combustibleNecesario,energiaNecesaria,desgasteNecesario);
         asistente.registrarEvento(new Evento(TipoEvento.MISION, "Iniciando preparativos de misión: " + nombre));
+        ruta = asistente.usarRadarLargoAlcance(destino);
+        energiaConsumida += CostosMision.COSTO_RADAR_LARGO;
     }
     
     protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
-        int combustibleNecesario = getCombustibleNecesario();
-        asistente.consumirCombustible(combustibleNecesario);
-        setCombustibleConsumido(combustibleNecesario);
+        while (ruta.tieneSiguiente() && !asistente.naveDestruida()) {
+               Posicion siguiente = ruta.siguiente();
 
-        int energiaNecesaria = getEnergiaNecesaria();
-        asistente.consumirEnergia(energiaNecesaria);
-        setEnergiaConsumida(energiaNecesaria);
+               // 1. Inspeccionar posición actual
+               // 2. Radar corto
+               // 3. Planificar y mover
 
-        int desgasteGenerado = getDesgasteNecesario();
-        asistente.aumentarDesgaste(desgasteGenerado);
-        setDesgasteGenerado(desgasteGenerado);
+               asistente.avanzarA(siguiente);
+               agregarAccionPrincipal("La nave avanzo a " + siguiente);
+
+               combustibleConsumido += CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE;
+               desgasteGenerado += CostosMision.COSTO_MOVIMIENTO_DESGASTE;
+            
+               // 4. Turno del tablero
+            
+               if (asistente.naveDestruida()) {
+                   resultado = ResultadoMision.FALLO;
+                   agregarObservacion("La nave fue destruida durante la mision");
+               }
+           }
     }
 
     protected abstract void evaluar(AsistenteComando asistente);
@@ -91,28 +103,16 @@ public abstract class Mision {
         return nombre;
     }
 
-    public int getCombustibleNecesario() {
-        return combustibleNecesario;
+    protected void sumarCombustibleConsumido(int cantidad) {
+        combustibleConsumido += cantidad;
     }
 
-    public int getEnergiaNecesaria() {
-        return energiaNecesaria;
+    protected void sumarEnergiaConsumida(int cantidad) {
+        energiaConsumida += cantidad;
     }
 
-    public int getDesgasteNecesario() {
-        return desgasteNecesario;
-    }
-
-    protected void setCombustibleConsumido(int cantidad) {
-        this.combustibleConsumido = cantidad;
-    }
-    
-    protected void setEnergiaConsumida(int cantidad) {
-        this.energiaConsumida = cantidad;
-    }
-
-    protected void setDesgasteGenerado(int cantidad) {
-        this.desgasteGenerado = cantidad;
+    protected void sumarDesgasteGenerado(int cantidad) {
+        desgasteGenerado += cantidad;
     }
 
     protected void agregarObservacion(String observacion) {
@@ -129,5 +129,13 @@ public abstract class Mision {
             String estadoFinalNave) {
         return "La mision " + getNombre() + " fue un " + resultado.toString() + ". Se consumio " + combustibleConsumido + " de combustible y " +
                 energiaConsumida + " de energia. El desgaste generado fue de " + desgasteGenerado + " y la nave quedo en estado " + estadoFinalNave;
+    }
+    
+    protected Ruta getRuta() {
+        return ruta;
+    }
+
+    protected Posicion getDestino() {
+        return destino;
     }
 }

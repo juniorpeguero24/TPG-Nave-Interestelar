@@ -1,17 +1,19 @@
 package modelo.mision;
 
-import modelo.AsistenteComando;
+import modelo.nave.AsistenteComando;
 
 import modelo.bitacora.Evento;
 import modelo.bitacora.TipoEvento;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
 
+import modelo.universo.Posicion;
+
 public class Mision03 extends Mision {
     private boolean regresoCompletado = false;
     
     public Mision03() {
-        super( "M-03 - Retorno seguro", 4, 0, 4);
+        super( "M-03 - Retorno seguro", new Posicion(3, 9));
     }
 
 

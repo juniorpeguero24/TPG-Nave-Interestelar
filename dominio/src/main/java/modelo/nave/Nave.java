@@ -7,11 +7,12 @@ import modelo.excepciones.RecursoInsuficienteExcepcion;
 import modelo.bitacora.Evento;
 import modelo.motorwarp.MotorWarp;
 import modelo.tripulacion.Tripulacion;
-import modelo.Recursos;
+import modelo.mision.CostosMision;
 import modelo.haberes.Liquidacion;
 import modelo.tripulacion.Tripulante;
 import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Posicion;
+import modelo.universo.Ruta;
 
 public abstract class Nave implements ElementoDelUniverso {
     private String nombre;
@@ -19,7 +20,8 @@ public abstract class Nave implements ElementoDelUniverso {
     private MotorWarp motorWarp;
     private Tripulacion tripulacion;
     private Posicion posicion;
-
+    private boolean destruida;
+    private RadarLargoAlcance radarLargoAlcance;
 
     public Nave( String nombre,int combustible,int energia, Posicion posicion) {
         this.nombre = nombre;
@@ -27,6 +29,8 @@ public abstract class Nave implements ElementoDelUniverso {
         this.tripulacion = new Tripulacion();
         this.recursos = new Recursos(combustible, energia);
         this.posicion = posicion;
+        this.destruida = false;
+        this.radarLargoAlcance = new RadarLargoAlcance();
     }
 
     public String getNombre() {
@@ -37,10 +41,19 @@ public abstract class Nave implements ElementoDelUniverso {
     public Posicion getPosicion() {
         return posicion;
     }
+    
+    public boolean estaDestruida() {
+        return destruida;
+    }
 
-    @Override
-    public void setPosicion(Posicion posicion) {
-        this.posicion = posicion;
+    public void destruir() {
+        destruida = true;
+    }
+    
+    public void verificarDestruccion() {
+        if (recursos.getEnergia() == 0 || recursos.getCombustible() == 0 || recursos.getDesgaste() >= 100) {
+            destruir();
+        }
     }
     
     // Usado en Prueba para validar las construcciones correctas
@@ -100,6 +113,7 @@ public abstract class Nave implements ElementoDelUniverso {
     // gasto involuntario
     public void recibirDanioEnergia(int cantidad) {
         recursos.reducirEnergia(cantidad);
+        verificarDestruccion();
     }
     
     public int getDesgaste() {
@@ -122,6 +136,15 @@ public abstract class Nave implements ElementoDelUniverso {
         recursos.verificarDisponibilidadRecursos(combustibleNecesario,energiaNecesaria,desgasteGenerado);
     }
     
+    // Devuelve cuanto espacio le queda para llenarse
+    public int getEspacioCombustible() {
+        return recursos.getEspacioCombustible();
+    }
+
+    public int getEspacioEnergia() {
+        return recursos.getEspacioEnergia();
+    }
+    
     // Encuentros entre naves
     public abstract ResultadoEncuentro enfrentar(Nave otraNave);
 
@@ -134,7 +157,9 @@ public abstract class Nave implements ElementoDelUniverso {
     @Override
     public void interactuarCon(Nave nave) {
         ResultadoEncuentro resultado = nave.enfrentar(this);
-        // aplicamos las consecuencias si pierde
+        if (resultado == ResultadoEncuentro.PIERDE) {
+            nave.destruir();
+        }
     }
     
     // Operaciones delegadas sobre el Motor Warp
@@ -152,5 +177,30 @@ public abstract class Nave implements ElementoDelUniverso {
 
     public Evento enfriar(){
         return motorWarp.enfriar();
+    }
+    
+    // Metodos usados para las Misiones
+    public Ruta usarRadarLargoAlcance(Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        recursos.consumirEnergia(CostosMision.COSTO_RADAR_LARGO);
+        verificarDestruccion();
+        return radarLargoAlcance.calcularRuta(posicion, destino);
+    }
+    
+    public void avanzarA(Posicion nuevaPosicion) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        if (recursos.getCombustible() < CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE) {
+            throw new RecursoInsuficienteExcepcion("Combustible insuficiente para avanzar");
+        }
+        if (recursos.getDesgaste() + CostosMision.COSTO_MOVIMIENTO_DESGASTE > 100) {
+            throw new OperacionRecursoInvalidaExcepcion("El desgaste superaria el maximo permitido");
+        }
+        recursos.consumirCombustible(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
+        recursos.aumentarDesgaste(CostosMision.COSTO_MOVIMIENTO_DESGASTE);
+        posicion = nuevaPosicion;
+        verificarDestruccion();
+    }
+    
+    public Ruta recalcularRuta(Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        recursos.consumirEnergia(CostosMision.COSTO_RECALCULO);
+        return radarLargoAlcance.calcularRuta(posicion, destino);
     }
 }
