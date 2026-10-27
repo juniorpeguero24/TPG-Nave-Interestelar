@@ -20,7 +20,6 @@ public class EstacionCarga implements ElementoDelUniverso {
         return posicion;
     }
 
-    @Override
     public void setPosicion(Posicion posicion) {
         this.posicion = posicion;
     }
@@ -35,8 +34,13 @@ public class EstacionCarga implements ElementoDelUniverso {
     
     @Override
     public void interactuarCon(Nave nave) {
-        // consultar si usar esos metodos o si crear otros
-        nave.cargarCombustible(combustible);
-        nave.cargarEnergia(energia);
+        int combustibleATransferir = Math.min(combustible, nave.getEspacioCombustible());
+        int energiaATransferir = Math.min(energia, nave.getEspacioEnergia());
+        try {
+            nave.cargarCombustible(combustibleATransferir);
+            nave.cargarEnergia(energiaATransferir);
+        } catch (OperacionRecursoInvalidaExcepcion e) {
+            throw new IllegalStateException("La estación calculó una carga inválida", e);
+        }
     }
 }

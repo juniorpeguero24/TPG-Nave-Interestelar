@@ -2,7 +2,7 @@ package modelo.universo;
 
 import java.util.ArrayList;
 
-import modelo.AsistenteComando;
+import modelo.nave.AsistenteComando;
 
 public class Universo {
     private final ArrayList<AsistenteComando> asistentes;
