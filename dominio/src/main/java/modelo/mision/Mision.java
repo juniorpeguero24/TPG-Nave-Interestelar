@@ -16,16 +16,22 @@ public abstract class Mision {
 
     public Mision(String nombre, int combustibleNecesario, int energiaNecesaria, int desgasteNecesario) {
         this.nombre = nombre;
-        this.combustibleNecesario = combustibleNecesario;
-        this.energiaNecesaria = energiaNecesaria;
-        this.desgasteNecesario = desgasteNecesario;
-        this.accionesPrincipales = new ArrayList<>();
-        this.observaciones = new ArrayList<>();
-        this.resultado = ResultadoMision.FALLO;
-        this.combustibleConsumido = 0;
-        this.energiaConsumida = 0;
-        this.desgasteGenerado = 0;
+        this.destino = destino;
+        
     }
+    public Mision(String nombre, Posicion destino) {
+    this.nombre = nombre;
+    this.destino = destino;
+
+    this.accionesPrincipales = new ArrayList<>();
+    this.observaciones = new ArrayList<>();
+
+    this.resultado = ResultadoMision.FALLO;
+
+    this.combustibleConsumido = 0;
+    this.energiaConsumida = 0;
+    this.desgasteGenerado = 0;
+}
 
     public final InformeMision realizarMision(AsistenteComando asistente) {
         
@@ -40,28 +46,60 @@ public abstract class Mision {
 
         return finalizar(asistente);
     }
-
+    
     protected void preparar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion, TripulacionInvalidaExcepcion {
         if (!asistente.tieneTripulacionValida()) {
-            throw new TripulacionInvalidaExcepcion("No se puede realizar una mision con una tripulacion invalida");
+            throw new TripulacionInvalidaExcepcion(
+                    "No se puede realizar una mision con una tripulacion invalida");
         }
-        asistente.verificarDisponibilidadParaMision(combustibleNecesario,energiaNecesaria,desgasteNecesario);
-        asistente.registrarEvento(new Evento(TipoEvento.MISION, "Iniciando preparativos de misión: " + nombre));
+
+        asistente.registrarEvento(
+                new Evento(
+                        TipoEvento.MISION,
+                        "Iniciando preparativos de misión: " + nombre));
+
+        ruta = asistente.usarRadarLargoAlcance(destino);
+
+        asistente.consumirEnergia(
+                CostosMision.COSTO_RADAR_LARGO);
+
+        energiaConsumida += CostosMision.COSTO_RADAR_LARGO;
+
+        agregarAccionPrincipal(
+                "Ruta calculada hacia destino " + destino);
+
+        agregarAccionPrincipal(
+                "Cantidad de pasos de la ruta: " +
+                        ruta.getCantidadPosiciones());
     }
+
     
-    protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
-        int combustibleNecesario = getCombustibleNecesario();
-        asistente.consumirCombustible(combustibleNecesario);
-        setCombustibleConsumido(combustibleNecesario);
+    protected void ejecutar(AsistenteComando asistente)
+        throws OperacionRecursoInvalidaExcepcion,
+               RecursoInsuficienteExcepcion {
 
-        int energiaNecesaria = getEnergiaNecesaria();
-        asistente.consumirEnergia(energiaNecesaria);
-        setEnergiaConsumida(energiaNecesaria);
+    while (ruta.tieneSiguiente()) {
 
-        int desgasteGenerado = getDesgasteNecesario();
-        asistente.aumentarDesgaste(desgasteGenerado);
-        setDesgasteGenerado(desgasteGenerado);
+        Posicion siguiente = ruta.siguiente();
+
+        asistente.avanzarA(siguiente);
+
+        asistente.consumirCombustible(
+                CostosMision.COSTO_MOVIMIENTO);
+
+        asistente.aumentarDesgaste(
+                CostosMision.DESGASTE_MOVIMIENTO);
+
+        combustibleConsumido +=
+                CostosMision.COSTO_MOVIMIENTO;
+
+        desgasteGenerado +=
+                CostosMision.DESGASTE_MOVIMIENTO;
+
+        agregarAccionPrincipal(
+                "Avanzando a posición " + siguiente);
     }
+}
 
     protected abstract void evaluar(AsistenteComando asistente);
 
