@@ -8,6 +8,9 @@ import modelo.nave.Nave;
 import modelo.nave.NaveFactory;
 import modelo.tripulacion.*;
 
+import modelo.universo.Posicion;
+import modelo.universo.Universo;
+
 public class Prueba {
     public static void main(String[] args) {
         Universo universo = crearUniversoBase();
@@ -28,9 +31,9 @@ public class Prueba {
     private static Universo crearUniversoBase() {
         Universo universo = new Universo();
 
-        Nave exploradora = NaveFactory.crearNave("Explorer-01", "exploradora");
-        Nave carguero = NaveFactory.crearNave("Cargo-01", "carguero");
-        Nave combate = NaveFactory.crearNave("Combat-01", "combate");
+        Nave exploradora = NaveFactory.crearNave("Explorer-01", "exploradora", new Posicion(2, 3));
+        Nave carguero = NaveFactory.crearNave("Cargo-01", "carguero", new Posicion(3, 3));
+        Nave combate = NaveFactory.crearNave("Combat-01", "combate", new Posicion(1, 3));
 
         universo.registrarAsistente(new AsistenteComando(exploradora));
         universo.registrarAsistente(new AsistenteComando(carguero));
