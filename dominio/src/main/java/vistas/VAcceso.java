@@ -3,16 +3,16 @@ package vistas;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Font;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
+
+import static vistas.Estilo.*;
 
 public class VAcceso extends JFrame {
 
@@ -55,14 +55,11 @@ public class VAcceso extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public VAcceso() {
+	public VAcceso()  {
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setBounds(200, 200, 600, 450);
 	    setResizable(false);
-
-	    Color fondo = new Color(20, 30, 48);
-	    Color celeste = new Color(80, 200, 230);
-	    Color blanco = new Color(235, 240, 245);
+		setLocationRelativeTo(null);
 
 	    this.contentPane = new JPanel();
 	    this.contentPane.setBackground(fondo);
@@ -75,7 +72,7 @@ public class VAcceso extends JFrame {
 	    this.contentPane.add(this.panelSuperior, BorderLayout.NORTH);
 
 	    this.lblTitulo = new JLabel("Nave Interestelar");
-	    this.lblTitulo.setFont(new Font("Monospaced", Font.BOLD, 24));
+	    this.lblTitulo.setFont(fuenteTitulo);
 	    this.lblTitulo.setForeground(celeste);
 	    this.panelSuperior.add(this.lblTitulo);
 
@@ -98,7 +95,7 @@ public class VAcceso extends JFrame {
 	    this.panelCentral.add(this.panelSubtitulo);
 	    
 	    this.lblSubtitulo = new JLabel("Identificacion");
-	    this.lblSubtitulo.setFont(new Font("Monospaced", Font.BOLD, 16));
+	    this.lblSubtitulo.setFont(fuenteSubtitulo);
 	    this.panelSubtitulo.add(this.lblSubtitulo);
 	    this.lblSubtitulo.setForeground(celeste);
 
@@ -108,12 +105,12 @@ public class VAcceso extends JFrame {
 
 	    this.lblNombre = new JLabel("Nombre:");
 	    this.lblNombre.setForeground(blanco);
-	    this.lblNombre.setFont(new Font("Monospaced", Font.PLAIN, 13));
+	    this.lblNombre.setFont(fuentePlain);
 	    this.panelNombre.add(this.lblNombre);
 
 	    this.tfNombre = new JTextField();
 	    this.tfNombre.setColumns(10);
-	    this.tfNombre.setFont(new Font("Monospaced", Font.PLAIN, 13));
+	    this.tfNombre.setFont(fuentePlain);
 	    this.panelNombre.add(this.tfNombre);
 
 	    this.panelContrasenia = new JPanel(new GridLayout(2, 1, 0, 4));
@@ -122,11 +119,11 @@ public class VAcceso extends JFrame {
 
 	    this.lblContrasenia = new JLabel("Contraseña:");
 	    this.lblContrasenia.setForeground(blanco);
-	    this.lblContrasenia.setFont(new Font("Monospaced", Font.PLAIN, 13));
+	    this.lblContrasenia.setFont(fuentePlain);
 	    this.panelContrasenia.add(this.lblContrasenia);
 
 	    this.passwordField = new JPasswordField();
-	    this.passwordField.setFont(new Font("Monospaced", Font.PLAIN, 13));
+	    this.passwordField.setFont(fuentePlain);
 	    this.panelContrasenia.add(this.passwordField);
 	    
 	    this.panelBtnLogin = new JPanel();
@@ -135,7 +132,7 @@ public class VAcceso extends JFrame {
 	    this.btnLogin = new JButton("Entrar");
 	    this.panelBtnLogin.add(this.btnLogin);
 	    this.panelBtnLogin.setBackground(fondo);
-	    this.btnLogin.setFont(new Font("Monospaced", Font.BOLD, 13));
+	    this.btnLogin.setFont(fuentePlain);
 	    this.btnLogin.setBackground(celeste);
 	    this.btnLogin.setForeground(Color.BLACK);
 	    this.btnLogin.setFocusPainted(false);
@@ -147,7 +144,7 @@ public class VAcceso extends JFrame {
 
 	    this.btnRegistro = new JButton("Registrarse");
 	    this.panelBtnRegistro.add(this.btnRegistro);
-	    this.btnRegistro.setFont(new Font("Monospaced", Font.BOLD, 13));
+	    this.btnRegistro.setFont(fuentePlain);
 	    this.btnRegistro.setBackground(blanco);
 	    this.btnRegistro.setFocusPainted(false);
 

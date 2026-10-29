@@ -1,7 +1,6 @@
 package vistas;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 
@@ -20,9 +19,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
-import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
-import java.awt.CardLayout;
+
+import static vistas.Estilo.*;
 
 public class VCreacion extends JFrame {
 
@@ -57,10 +55,6 @@ public class VCreacion extends JFrame {
     private JRadioButton rdbtnExploradora;
     private JRadioButton rdbtnCombate;
 
-    private final Color fondo = new Color(25, 35, 50);
-    private final Color fondoPanel = new Color(30, 42, 58);
-    private final Color celeste = new Color(100, 190, 215);
-    private final Color blanco = new Color(235, 240, 245);
     private JTextField tfNombreNave;
     private JPanel panelbtnCrearNave;
     private JPanel panelbtnIniciar;
@@ -88,7 +82,7 @@ public class VCreacion extends JFrame {
                 SwingConstants.CENTER
         );
 
-        lblTitulo.setFont(new Font("Monospaced", Font.BOLD, 19));
+        lblTitulo.setFont(fuenteTitulo);
         lblTitulo.setForeground(celeste);
 
         panelTitulo.add(lblTitulo, BorderLayout.CENTER);
@@ -106,9 +100,7 @@ public class VCreacion extends JFrame {
         panelNave = new JPanel();
         panelNave.setBorder(new TitledBorder("Nave"));
         ((TitledBorder) panelNave.getBorder()).setTitleColor(celeste);
-        ((TitledBorder) panelNave.getBorder()).setTitleFont(
-                new Font("Monospaced", Font.BOLD, 12)
-        );
+        ((TitledBorder) panelNave.getBorder()).setTitleFont(fuenteBold);
         panelNave.setBackground(fondo);
         this.panelNave.setLayout(new GridLayout(3, 1, 0, 0));
 
@@ -120,21 +112,21 @@ public class VCreacion extends JFrame {
         grupoTipoNave.add(this.rdbtnCarguero);
         rdbtnCarguero.setBackground(fondo);
         rdbtnCarguero.setForeground(blanco);
-        rdbtnCarguero.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        rdbtnCarguero.setFont(fuentePlain);
         panelOpcionesNave.add(rdbtnCarguero);
 
         rdbtnExploradora = new JRadioButton("Exploradora");
         grupoTipoNave.add(this.rdbtnExploradora);
         rdbtnExploradora.setBackground(fondo);
         rdbtnExploradora.setForeground(blanco);
-        rdbtnExploradora.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        rdbtnExploradora.setFont(fuentePlain);
         panelOpcionesNave.add(rdbtnExploradora);
 
         rdbtnCombate = new JRadioButton("Combate");
         grupoTipoNave.add(this.rdbtnCombate);
         rdbtnCombate.setBackground(fondo);
         rdbtnCombate.setForeground(blanco);
-        rdbtnCombate.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        rdbtnCombate.setFont(fuentePlain);
         panelOpcionesNave.add(rdbtnCombate);
 
         panelNave.add(panelOpcionesNave);
@@ -144,10 +136,10 @@ public class VCreacion extends JFrame {
 
         lblNombreNave = new JLabel("Nombre:");
         lblNombreNave.setForeground(blanco);
-        lblNombreNave.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        lblNombreNave.setFont(fuentePlain);
 
         tfNombreNave = new JTextField(10);
-        tfNombreNave.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tfNombreNave.setFont(fuentePlain);
         tfNombreNave.setBackground(blanco);
         tfNombreNave.setForeground(fondo);
         tfNombreNave.setCaretColor(fondo);
@@ -171,7 +163,7 @@ public class VCreacion extends JFrame {
         this.panelbtnCrearNave.add(this.btnCrearNave);
         btnCrearNave.setBackground(celeste);
         btnCrearNave.setForeground(fondo);
-        btnCrearNave.setFont(new Font("Monospaced", Font.BOLD, 12));
+        btnCrearNave.setFont(fuenteBold);
         btnCrearNave.setFocusPainted(false);
 
         // INFORMACION DE LA NAVE CREADA
@@ -179,18 +171,16 @@ public class VCreacion extends JFrame {
         JPanel panelInfoNave = new JPanel(new GridLayout(2, 1, 3, 3));
         panelInfoNave.setBorder(new TitledBorder("Nave creada"));
         ((TitledBorder) panelInfoNave.getBorder()).setTitleColor(celeste);
-        ((TitledBorder) panelInfoNave.getBorder()).setTitleFont(
-                new Font("Monospaced", Font.BOLD, 11)
-        );
+        ((TitledBorder) panelInfoNave.getBorder()).setTitleFont(fuenteBold);
         panelInfoNave.setBackground(fondoPanel);
 
         lblNombreCreada = new JLabel("Nombre: -");
         lblNombreCreada.setForeground(blanco);
-        lblNombreCreada.setFont(new Font("Monospaced", Font.PLAIN, 11));
+        lblNombreCreada.setFont(fuentePlain);
 
         lblTipoCreada = new JLabel("Tipo: -");
         lblTipoCreada.setForeground(blanco);
-        lblTipoCreada.setFont(new Font("Monospaced", Font.PLAIN, 11));
+        lblTipoCreada.setFont(fuentePlain);
 
         panelInfoNave.add(lblNombreCreada);
         panelInfoNave.add(lblTipoCreada);
@@ -204,53 +194,51 @@ public class VCreacion extends JFrame {
         panelTripulante = new JPanel(new GridLayout(8, 1, 4, 4));
         panelTripulante.setBorder(new TitledBorder("Crear tripulante"));
         ((TitledBorder) panelTripulante.getBorder()).setTitleColor(celeste);
-        ((TitledBorder) panelTripulante.getBorder()).setTitleFont(
-                new Font("Monospaced", Font.BOLD, 12)
-        );
+        ((TitledBorder) panelTripulante.getBorder()).setTitleFont(fuenteBold);
         panelTripulante.setBackground(fondo);
 
         JLabel lblNombreTripulante = new JLabel("Nombre:");
         lblNombreTripulante.setForeground(blanco);
-        lblNombreTripulante.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        lblNombreTripulante.setFont(fuentePlain);
 
         tfNombreTripulante = new JTextField();
-        tfNombreTripulante.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tfNombreTripulante.setFont(fuentePlain);
         tfNombreTripulante.setBackground(blanco);
         tfNombreTripulante.setForeground(fondo);
         tfNombreTripulante.setCaretColor(fondo);
 
         JLabel lblAntiguedad = new JLabel("Antiguedad:");
         lblAntiguedad.setForeground(blanco);
-        lblAntiguedad.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        lblAntiguedad.setFont(fuentePlain);
 
         tfAntiguedad = new JTextField();
-        tfAntiguedad.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tfAntiguedad.setFont(fuentePlain);
         tfAntiguedad.setBackground(blanco);
         tfAntiguedad.setForeground(fondo);
         tfAntiguedad.setCaretColor(fondo);
 
         JLabel lblCargo = new JLabel("Cargo:");
         lblCargo.setForeground(blanco);
-        lblCargo.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        lblCargo.setFont(fuentePlain);
 
         cbCargo = new JComboBox<String>();
         cbCargo.addItem("Capitan");
         cbCargo.addItem("Consejero");
         cbCargo.addItem("Teniente");
         cbCargo.addItem("Alferez");
-        cbCargo.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        cbCargo.setFont(fuentePlain);
         cbCargo.setBackground(blanco);
         cbCargo.setForeground(fondo);
 
         JLabel lblOrigen = new JLabel("Origen:");
         lblOrigen.setForeground(blanco);
-        lblOrigen.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        lblOrigen.setFont(fuentePlain);
 
         cbOrigen = new JComboBox<String>();
         cbOrigen.addItem("Terricola");
         cbOrigen.addItem("Vulcano");
         cbOrigen.addItem("Marciano");
-        cbOrigen.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        cbOrigen.setFont(fuentePlain);
         cbOrigen.setBackground(blanco);
         cbOrigen.setForeground(fondo);
 
@@ -266,7 +254,7 @@ public class VCreacion extends JFrame {
         btnCrearTripulante = new JButton("Crear tripulante");
         btnCrearTripulante.setBackground(celeste);
         btnCrearTripulante.setForeground(fondo);
-        btnCrearTripulante.setFont(new Font("Monospaced", Font.BOLD, 12));
+        btnCrearTripulante.setFont(fuenteBold);
         btnCrearTripulante.setFocusPainted(false);
 
         JPanel panelFormularioTripulante = new JPanel(new BorderLayout(5, 8));
@@ -279,9 +267,7 @@ public class VCreacion extends JFrame {
         panelDisponibles = new JPanel(new BorderLayout(5, 10));
         panelDisponibles.setBorder(new TitledBorder("Tripulantes disponibles"));
         ((TitledBorder) panelDisponibles.getBorder()).setTitleColor(celeste);
-        ((TitledBorder) panelDisponibles.getBorder()).setTitleFont(
-                new Font("Monospaced", Font.BOLD, 12)
-        );
+        ((TitledBorder) panelDisponibles.getBorder()).setTitleFont(fuenteBold);
         panelDisponibles.setBackground(fondo);
 
         modeloDisponibles = new DefaultListModel<>();
@@ -291,7 +277,7 @@ public class VCreacion extends JFrame {
         listaDisponibles.setForeground(blanco);
         listaDisponibles.setSelectionBackground(celeste);
         listaDisponibles.setSelectionForeground(fondo);
-        listaDisponibles.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        listaDisponibles.setFont(fuentePlain);
         listaDisponibles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JScrollPane scrollDisponibles = new JScrollPane(listaDisponibles);
@@ -301,7 +287,7 @@ public class VCreacion extends JFrame {
         btnAsignar = new JButton("Asignar a nave");
         btnAsignar.setBackground(celeste);
         btnAsignar.setForeground(fondo);
-        btnAsignar.setFont(new Font("Monospaced", Font.BOLD, 12));
+        btnAsignar.setFont(fuenteBold);
         btnAsignar.setFocusPainted(false);
 
         panelDisponibles.add(scrollDisponibles, BorderLayout.CENTER);
@@ -327,7 +313,7 @@ public class VCreacion extends JFrame {
         panelbtnIniciar.setBackground(fondo);
         btnIniciar.setBackground(celeste);
         btnIniciar.setForeground(fondo);
-        btnIniciar.setFont(new Font("Monospaced", Font.BOLD, 13));
+        btnIniciar.setFont(fuenteBold);
         btnIniciar.setFocusPainted(false);
         contentPane.add(panelComienzo, BorderLayout.SOUTH);
     }
