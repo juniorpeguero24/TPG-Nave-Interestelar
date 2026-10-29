@@ -1,16 +1,18 @@
 package modelo.mision;
 
-import modelo.AsistenteComando;
+import modelo.nave.AsistenteComando;
 import modelo.bitacora.Evento;
 import modelo.bitacora.TipoEvento;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
 
+import modelo.universo.Posicion;
+
 public class Mision02 extends Mision {
     private boolean elementoObtenido = false;
     
     public Mision02() {
-        super( "M-02 - Recoleccion", 4, 5, 4);
+        super( "M-02 - Recoleccion", new Posicion(3, 6));
     }
 
     @Override

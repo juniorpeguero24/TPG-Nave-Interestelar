@@ -1,4 +1,4 @@
-package modelo;
+package modelo.nave;
 
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
@@ -75,6 +75,13 @@ public class Recursos {
         energia -= cantidad;
     }
     
+    public void reducirEnergia(int cantidad) {
+        energia -= cantidad;
+        if (energia < 0) {
+            energia = 0;
+        }
+    }
+    
     public void aumentarDesgaste(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         if (cantidad < 0) {
             throw new OperacionRecursoInvalidaExcepcion("El desgaste debe ser positivo");
@@ -110,5 +117,14 @@ public class Recursos {
         if (desgaste + desgasteGenerado > DESGASTE_MAXIMO) {
             throw new OperacionRecursoInvalidaExcepcion("El desgaste supera el limite maximo");
         }
+    }
+    
+    // Usados por la estacion de carga
+    public int getEspacioCombustible() {
+        return CAPACIDAD_MAX_COMBUSTIBLE - combustible;
+    }
+
+    public int getEspacioEnergia() {
+        return CAPACIDAD_MAX_ENERGIA - energia;
     }
 }
