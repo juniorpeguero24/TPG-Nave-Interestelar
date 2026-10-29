@@ -53,7 +53,7 @@ public class VTripulantes extends JFrame {
 
         tablaTripulantes = new JTable(modelo);
         		
-        tablaTripulantes.setBackground(fondoTabla);
+        tablaTripulantes.setBackground(fondoPanel);
         tablaTripulantes.setForeground(blanco);
         tablaTripulantes.setFont(fuenteBold);
         tablaTripulantes.setRowHeight(28);
@@ -66,8 +66,9 @@ public class VTripulantes extends JFrame {
         tablaTripulantes.getTableHeader().setFont(fuentePlain);
 
         JScrollPane scrollTripulantes = new JScrollPane(tablaTripulantes);
-        scrollTripulantes.getViewport().setBackground(fondoTabla);
+        scrollTripulantes.getViewport().setBackground(fondoPanel);
         scrollTripulantes.setBackground(fondo);
+        scrollTripulantes.getVerticalScrollBar().setBackground(fondoPanel);
 
         JPanel panelTabla = new JPanel(new BorderLayout());
         panelTabla.setBackground(fondo);
