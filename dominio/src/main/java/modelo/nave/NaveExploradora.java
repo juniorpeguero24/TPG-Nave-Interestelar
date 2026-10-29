@@ -9,4 +9,12 @@ public class NaveExploradora extends Nave {
     public String getTipo() {
         return "exploradora";
     }
+    
+    @Override
+    public ResultadoEncuentro aceptarInteraccion(NaveExterna externa) {
+        return externa.interactuarConExploradora(this);
 }
+}
+
+
+ 

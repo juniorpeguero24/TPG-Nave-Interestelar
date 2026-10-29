@@ -9,4 +9,10 @@ public class NaveCombate extends Nave {
     public String getTipo() {
         return "combate";
     }
+
+    @Override
+    public ResultadoEncuentro aceptarInteraccion(NaveExterna externa) {
+        return externa.interactuarConCombate(this);
 }
+}
+

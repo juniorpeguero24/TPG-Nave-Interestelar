@@ -120,4 +120,7 @@ public abstract class Nave {
     public Evento enfriar(){
         return motorWarp.enfriar();
     }
+    
+    public abstract ResultadoEncuentro aceptarInteraccion(NaveExterna externa);
 }
+

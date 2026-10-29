@@ -9,4 +9,10 @@ public class NaveCarguero extends Nave {
     public String getTipo() {
         return "carguero";
     }
+
+    @Override
+    public ResultadoEncuentro aceptarInteraccion(NaveExterna externa) {
+        return externa.interactuarConCarguero(this);
 }
+}
+ 
