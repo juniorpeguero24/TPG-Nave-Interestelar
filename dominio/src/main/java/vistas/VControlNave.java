@@ -55,6 +55,7 @@ public class VControlNave extends JFrame {
 
     private JList<String> listaInformes;
     private DefaultListModel<String> modeloInformes;
+    private DefaultListModel<String> modeloBitacora;
 
     private JLabel lblCoordenadas;
     private JLabel lblEstado;
@@ -143,13 +144,13 @@ public class VControlNave extends JFrame {
         this.panelNave.setLayout(new GridLayout(1, 3, 0, 0));
         
         this.lblNave = new JLabel("Nave: ");
-        this.lblNave.setForeground(new Color(80, 200, 230));
-        this.lblNave.setFont(new Font("Monospaced", Font.BOLD, 13));
+        this.lblNave.setForeground(Estilo.celeste);
+        this.lblNave.setFont(Estilo.fuenteBold);
         this.panelNave.add(this.lblNave);
         
         this.lblTipo = new JLabel("Tipo: ");
-        this.lblTipo.setForeground(new Color(235, 240, 245));
-        this.lblTipo.setFont(new Font("Monospaced", Font.PLAIN, 13));
+        this.lblTipo.setForeground(Estilo.blanco);
+        this.lblTipo.setFont(Estilo.fuentePlain);
         this.panelNave.add(this.lblTipo);
         this.panelNave.setBackground(Estilo.fondoPanel);
         
@@ -158,7 +159,7 @@ public class VControlNave extends JFrame {
         this.panelRelleno.setBackground(Estilo.fondoPanel);
         
         this.panelRecursos = new JPanel();
-        this.panelRecursos.setBackground(new Color(30, 42, 58));
+        this.panelRecursos.setBackground(Estilo.fondoPanel);
         panelDatos.add(this.panelRecursos);
         this.panelRecursos.setLayout(new GridLayout(3, 1, 0, 0));
         
@@ -182,18 +183,18 @@ public class VControlNave extends JFrame {
         	    );
         
         this.lblCombustible = new JLabel("Combustible: 80%");
-        this.lblCombustible.setForeground(new Color(235, 240, 245));
-        this.lblCombustible.setFont(new Font("Monospaced", Font.PLAIN, 13));
+        this.lblCombustible.setForeground(Estilo.blanco);
+        this.lblCombustible.setFont(Estilo.fuentePlain);
         this.panelOrganizaRecursos.add(this.lblCombustible);
         
         this.lblEnergia = new JLabel("Energia: 65%");
-        this.lblEnergia.setForeground(new Color(235, 240, 245));
-        this.lblEnergia.setFont(new Font("Monospaced", Font.PLAIN, 13));
+        this.lblEnergia.setForeground(Estilo.blanco);
+        this.lblEnergia.setFont(Estilo.fuentePlain);
         this.panelOrganizaRecursos.add(this.lblEnergia);
         
         this.lblDesgaste = new JLabel("Desgaste: 20%");
-        this.lblDesgaste.setForeground(new Color(235, 240, 245));
-        this.lblDesgaste.setFont(new Font("Monospaced", Font.PLAIN, 13));
+        this.lblDesgaste.setForeground(Estilo.blanco);
+        this.lblDesgaste.setFont(Estilo.fuentePlain);
         this.panelOrganizaRecursos.add(this.lblDesgaste);
 
         // BITACORA
@@ -212,11 +213,14 @@ public class VControlNave extends JFrame {
 
         this.panelBitacora.add(lblTituloBitacora, BorderLayout.NORTH);
 
-        this.listaBitacora = new JList<String>();
+        this.modeloBitacora = new DefaultListModel<String>();
+
+        this.listaBitacora = new JList<String>(this.modeloBitacora);
         this.listaBitacora.setBackground(Estilo.fondoPanel);
         this.listaBitacora.setFont(Estilo.fuentePlain);
         this.listaBitacora.setForeground(Estilo.blanco);
         this.listaBitacora.setFocusable(false);
+        this.modeloBitacora.addElement("Sin eventos registrados.");
 
         this.scrollBitacora = new JScrollPane(this.listaBitacora);
         scrollBitacora.getViewport().setBackground(Estilo.fondoPanel);
@@ -295,8 +299,6 @@ public class VControlNave extends JFrame {
         this.panelHistorial.add(lblHistorial, BorderLayout.NORTH);
 
         this.modeloInformes = new DefaultListModel<String>();
-        this.modeloInformes.addElement("Sin informes registrados.");
-        this.modeloInformes.addElement("Sin informes registrados.");
         this.modeloInformes.addElement("Sin informes registrados.");
 
         this.listaInformes = new JList<String>(this.modeloInformes);
