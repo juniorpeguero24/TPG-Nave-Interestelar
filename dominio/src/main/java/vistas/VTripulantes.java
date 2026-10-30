@@ -18,6 +18,12 @@ public class VTripulantes extends JFrame {
 
     private JTable tablaTripulantes;
     private JButton btnVolver;
+    private JLabel lblTitulo;
+    private JPanel panelTitulo;
+    private DefaultTableModel modelo;
+    private JScrollPane scrollTripulantes;
+    private JPanel panelBotones;
+    private JPanel panelTabla;
 
     public VTripulantes() {
         setSize(850, 500);
@@ -28,12 +34,12 @@ public class VTripulantes extends JFrame {
         getContentPane().setLayout(new BorderLayout(10, 10));
         getContentPane().setBackground(fondo);
 
-        JLabel lblTitulo = new JLabel("LISTA DE TRIPULANTES");
+        lblTitulo = new JLabel("LISTA DE TRIPULANTES");
         lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
         lblTitulo.setFont(fuenteTitulo);
         lblTitulo.setForeground(celeste);
 
-        JPanel panelTitulo = new JPanel(new FlowLayout());
+        panelTitulo = new JPanel(new FlowLayout());
         panelTitulo.setBackground(fondo);
         panelTitulo.add(lblTitulo);
 
@@ -43,7 +49,7 @@ public class VTripulantes extends JFrame {
             "Nombre", "Cargo", "Origen", "Antiguedad", "Salario"
         };
 
-        DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+        modelo = new DefaultTableModel(columnas, 0);
 
        /* COMO SE AGREGA UN TRIPULANTE A LA TABLA:
       
@@ -65,12 +71,12 @@ public class VTripulantes extends JFrame {
         tablaTripulantes.getTableHeader().setForeground(fondo);
         tablaTripulantes.getTableHeader().setFont(fuentePlain);
 
-        JScrollPane scrollTripulantes = new JScrollPane(tablaTripulantes);
+        scrollTripulantes = new JScrollPane(tablaTripulantes);
         scrollTripulantes.getViewport().setBackground(fondoPanel);
         scrollTripulantes.setBackground(fondo);
         scrollTripulantes.getVerticalScrollBar().setBackground(fondoPanel);
 
-        JPanel panelTabla = new JPanel(new BorderLayout());
+        panelTabla = new JPanel(new BorderLayout());
         panelTabla.setBackground(fondo);
         panelTabla.add(scrollTripulantes, BorderLayout.CENTER);
 
@@ -82,7 +88,7 @@ public class VTripulantes extends JFrame {
         btnVolver.setForeground(fondo);
         btnVolver.setFocusPainted(false);
 
-        JPanel panelBotones = new JPanel(new FlowLayout());
+        panelBotones = new JPanel(new FlowLayout());
         panelBotones.setBackground(fondo);
         panelBotones.add(btnVolver);
 

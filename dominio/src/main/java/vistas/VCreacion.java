@@ -24,13 +24,19 @@ import static vistas.Estilo.*;
 
 public class VCreacion extends JFrame {
 
+    private JPanel panelOpcionesNave;
     private JPanel contentPane;
     private JPanel panelPrincipal;
     private JPanel panelTitulo;
     private JPanel panelComienzo;
-
+    private JPanel panelFormularioNave;
+    private JPanel panelInferiorNave;
+    private JPanel panelInfoNave;
     private JPanel panelNave;
     private JPanel panelTripulante;
+    private JPanel panelFormularioTripulante;
+    private JScrollPane scrollDisponibles;
+    
     private JPanel panelDisponibles;
 
     private JLabel lblTitulo;
@@ -104,7 +110,7 @@ public class VCreacion extends JFrame {
         panelNave.setBackground(fondo);
         this.panelNave.setLayout(new GridLayout(3, 1, 0, 0));
 
-        JPanel panelOpcionesNave = new JPanel(new GridLayout(3, 1, 0, 0));
+        panelOpcionesNave = new JPanel(new GridLayout(3, 1, 0, 0));
         panelOpcionesNave.setBackground(fondo);
 
 
@@ -131,7 +137,7 @@ public class VCreacion extends JFrame {
 
         panelNave.add(panelOpcionesNave);
 
-        JPanel panelFormularioNave = new JPanel();
+        panelFormularioNave = new JPanel();
         panelFormularioNave.setBackground(fondo);
 
         lblNombreNave = new JLabel("Nombre:");
@@ -152,7 +158,7 @@ public class VCreacion extends JFrame {
 
         // BOTON CREAR NAVE
 
-        JPanel panelInferiorNave = new JPanel(new GridLayout(2, 1, 0, 10));
+        panelInferiorNave = new JPanel(new GridLayout(2, 1, 0, 10));
         panelInferiorNave.setBackground(fondo);
         
         this.panelbtnCrearNave = new JPanel();
@@ -168,7 +174,7 @@ public class VCreacion extends JFrame {
 
         // INFORMACION DE LA NAVE CREADA
 
-        JPanel panelInfoNave = new JPanel(new GridLayout(2, 1, 3, 3));
+        panelInfoNave = new JPanel(new GridLayout(2, 1, 3, 3));
         panelInfoNave.setBorder(new TitledBorder("Nave creada"));
         ((TitledBorder) panelInfoNave.getBorder()).setTitleColor(celeste);
         ((TitledBorder) panelInfoNave.getBorder()).setTitleFont(fuenteBold);
@@ -257,7 +263,7 @@ public class VCreacion extends JFrame {
         btnCrearTripulante.setFont(fuenteBold);
         btnCrearTripulante.setFocusPainted(false);
 
-        JPanel panelFormularioTripulante = new JPanel(new BorderLayout(5, 8));
+        panelFormularioTripulante = new JPanel(new BorderLayout(5, 8));
         panelFormularioTripulante.setBackground(fondo);
         panelFormularioTripulante.add(panelTripulante, BorderLayout.CENTER);
         panelFormularioTripulante.add(btnCrearTripulante, BorderLayout.SOUTH);
@@ -280,7 +286,7 @@ public class VCreacion extends JFrame {
         listaDisponibles.setFont(fuentePlain);
         listaDisponibles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        JScrollPane scrollDisponibles = new JScrollPane(listaDisponibles);
+        scrollDisponibles = new JScrollPane(listaDisponibles);
         scrollDisponibles.setBorder(null);
         scrollDisponibles.getViewport().setBackground(fondoPanel);
 

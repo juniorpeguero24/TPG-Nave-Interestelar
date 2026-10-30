@@ -14,8 +14,6 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -23,13 +21,26 @@ import javax.swing.border.TitledBorder;
 import java.awt.Color;
 import java.awt.Font;
 
+import static vistas.Estilo.*;
+
 public class VControlNave extends JFrame {
 
+    private JLabel lblTituloBitacora;
+    private JPanel panelSeleccion;
+    private JLabel lblMisiones;
+    private JLabel lblHistorial;
+    private JScrollPane scrollInformes;
+    private JPanel panelDatosTablero;
+    private JPanel panelCoordenadas;
+    private JLabel lblTituloTablero;
+    private JPanel panelInferior;
+    private JPanel panelDatos;
     private JPanel contentPane;
     private JPanel panelPrincipal;
 
     private JPanel panelInformacionNave;
     private JPanel panelBitacora;
+
     private JPanel panelMision;
     private JPanel panelGestionMision;
     private JPanel panelHistorial;
@@ -60,6 +71,7 @@ public class VControlNave extends JFrame {
     private JLabel lblCombustible;
     private JLabel lblEnergia;
     private JLabel lblDesgaste;
+    private JScrollPane scrollBitacora;
     private JList<String> listaBitacora;
 
     public static void main(String[] args) {
@@ -83,7 +95,7 @@ public class VControlNave extends JFrame {
         setResizable(false);
 
         this.contentPane = new JPanel();
-        this.contentPane.setBackground(Estilo.fondo);
+        this.contentPane.setBackground(fondo);
         this.contentPane.setBorder(new EmptyBorder(15, 20, 15, 20));
         this.contentPane.setLayout(new BorderLayout(10, 15));
         setContentPane(this.contentPane);
@@ -102,7 +114,7 @@ public class VControlNave extends JFrame {
         // PANEL PRINCIPAL
 
         this.panelPrincipal = new JPanel();
-        this.panelPrincipal.setBackground(Estilo.fondo);
+        this.panelPrincipal.setBackground(fondo);
         this.panelPrincipal.setLayout(new GridLayout(1, 3, 20, 0));
 
         this.contentPane.add(this.panelPrincipal, BorderLayout.CENTER);
@@ -120,7 +132,7 @@ public class VControlNave extends JFrame {
 
         // INFORMACION GENERAL
 
-        JPanel panelDatos = new JPanel();
+        this.panelDatos = new JPanel();
         panelDatos.setBackground(Estilo.fondoPanel);
 
         this.panelInformacionNave.add(panelDatos);
@@ -194,7 +206,7 @@ public class VControlNave extends JFrame {
 
         this.panelInformacionNave.add(this.panelBitacora);
 
-        JLabel lblTituloBitacora = new JLabel("BITACORA DE EVENTOS");
+        this.lblTituloBitacora = new JLabel("BITACORA DE EVENTOS");
         lblTituloBitacora.setForeground(Estilo.celeste);
         lblTituloBitacora.setFont(Estilo.fuenteBold);
 
@@ -206,15 +218,15 @@ public class VControlNave extends JFrame {
         this.listaBitacora.setForeground(Estilo.blanco);
         this.listaBitacora.setFocusable(false);
 
-        JScrollPane scrollBitacora = new JScrollPane(this.listaBitacora);
+        this.scrollBitacora = new JScrollPane(this.listaBitacora);
         scrollBitacora.getViewport().setBackground(Estilo.fondoPanel);
 
         this.panelBitacora.add(scrollBitacora, BorderLayout.CENTER);
 
         // PANEL MISION
 
-        JPanel panelMision = new JPanel();
-        panelMision.setBackground(Estilo.fondo);
+        this.panelMision = new JPanel();
+        panelMision.setBackground(fondo);
         panelMision.setBorder(new EmptyBorder(12, 12, 12, 12));
         panelMision.setLayout(new GridLayout(2, 1, 0, 12));
 
@@ -232,13 +244,13 @@ public class VControlNave extends JFrame {
 
         // SELECCION DE MISION
 
-        JPanel panelSeleccion = new JPanel();
+        this.panelSeleccion = new JPanel();
         panelSeleccion.setBackground(Estilo.fondoPanel);
         panelSeleccion.setLayout(new GridLayout(3, 1, 5, 0));
 
         this.panelGestionMision.add(panelSeleccion);
 
-        JLabel lblMisiones = new JLabel("GESTION DE MISIONES");
+        this.lblMisiones = new JLabel("GESTION DE MISIONES");
         lblMisiones.setForeground(Estilo.celeste);
         lblMisiones.setFont(Estilo.fuenteBold);
         panelSeleccion.add(lblMisiones);
@@ -276,7 +288,7 @@ public class VControlNave extends JFrame {
 
         panelMision.add(this.panelHistorial);
 
-        JLabel lblHistorial = new JLabel("HISTORIAL DE INFORMES");
+        this.lblHistorial = new JLabel("HISTORIAL DE INFORMES");
         lblHistorial.setForeground(Estilo.celeste);
         lblHistorial.setFont(Estilo.fuenteBold);
 
@@ -294,7 +306,7 @@ public class VControlNave extends JFrame {
         this.listaInformes.setSelectionMode(0);
         this.listaInformes.setFocusable(false);
 
-        JScrollPane scrollInformes = new JScrollPane(this.listaInformes);
+        this.scrollInformes = new JScrollPane(this.listaInformes);
         scrollInformes.getViewport().setBackground(Estilo.fondoPanel);
 
         this.panelHistorial.add(scrollInformes, BorderLayout.CENTER);
@@ -312,19 +324,19 @@ public class VControlNave extends JFrame {
 
         // INFORMACION DEL TABLERO
 
-        JPanel panelDatosTablero = new JPanel();
+        this.panelDatosTablero = new JPanel();
         panelDatosTablero.setBackground(Estilo.fondoPanel);
         panelDatosTablero.setLayout(new GridLayout(2, 1, 5, 5));
 
         this.panelTablero.add(panelDatosTablero, BorderLayout.NORTH);
 
-        JLabel lblTituloTablero = new JLabel("TABLERO DE NAVEGACION");
+        this.lblTituloTablero = new JLabel("TABLERO DE NAVEGACION");
         lblTituloTablero.setForeground(Estilo.celeste);
         lblTituloTablero.setFont(Estilo.fuenteBold);
 
         panelDatosTablero.add(lblTituloTablero);
 
-        JPanel panelCoordenadas = new JPanel();
+        this.panelCoordenadas = new JPanel();
         panelCoordenadas.setBackground(Estilo.fondoPanel);
         panelCoordenadas.setLayout(new GridLayout(1, 3, 10, 0));
 
@@ -350,8 +362,8 @@ public class VControlNave extends JFrame {
 
         // PANEL INFERIOR
 
-        JPanel panelInferior = new JPanel();
-        panelInferior.setBackground(Estilo.fondo);
+        this.panelInferior = new JPanel();
+        panelInferior.setBackground(fondo);
         panelInferior.setLayout(
                 new FlowLayout(FlowLayout.CENTER, 20, 5));
 
