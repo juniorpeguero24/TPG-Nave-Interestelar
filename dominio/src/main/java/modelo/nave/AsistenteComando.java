@@ -1,4 +1,4 @@
-package modelo;
+package modelo.nave;
 
 import modelo.bitacora.Evento;
 import modelo.bitacora.TipoEvento;
@@ -7,10 +7,13 @@ import modelo.bitacora.Bitacora;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
 import modelo.haberes.Liquidacion;
-import modelo.nave.Nave;
+
 import modelo.tripulacion.Tripulante;
 
 import java.util.ArrayList;
+
+import modelo.universo.Posicion;
+import modelo.universo.Ruta;
 
 public class AsistenteComando {
     private final Nave nave;
@@ -126,7 +129,9 @@ public class AsistenteComando {
     }
 
     // ----- CONSULTAS DE ESTADO Y DISPONIBILIDAD ----- //
-
+    public boolean naveDestruida() {
+        return nave.estaDestruida();
+    }
  
     public boolean estaDisponibleParaSalto() {
         return "Disponible".equalsIgnoreCase(this.nave.getEstadoMotorWarp());
@@ -142,7 +147,7 @@ public class AsistenteComando {
         }
     }
 
-// ----- CONSUMO DE RECURSOS DURANTE LA MISIÓN ----- //
+    // ----- CONSUMO DE RECURSOS DURANTE LA MISIÓN ----- //
 
     public void consumirCombustible(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         try {
@@ -189,5 +194,17 @@ public class AsistenteComando {
             throw e;
         }
     }
-
+    
+    // Acciones delegadas a la nave durante la mision
+    public Ruta usarRadarLargoAlcance(Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        return nave.usarRadarLargoAlcance(destino);
+    }
+    
+    public void avanzarA(Posicion nuevaPosicion) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        nave.avanzarA(nuevaPosicion);
+    }
+    
+    public Ruta recalcularRuta(Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        return nave.recalcularRuta(destino);
+    }
 }
