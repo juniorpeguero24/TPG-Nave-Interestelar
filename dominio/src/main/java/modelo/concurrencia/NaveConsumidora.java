@@ -12,10 +12,6 @@ public class NaveConsumidora implements Runnable {
         this.tiempoConsumoMs = tiempoConsumoMs;
     }
 
-    public NaveConsumidora(String id, PlataformaDeCarga plataforma) {
-        this(id, plataforma, 1800);
-    }
-
     @Override
     public void run() {
         try {
