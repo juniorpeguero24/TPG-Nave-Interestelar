@@ -1,29 +1,19 @@
 package vistas;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.event.ActionListener;
+
+import modelo.nave.Nave;
+import observer.ObservadorNave;
 
 import static vistas.Estilo.*;
 
-public class VControlNave extends JFrame {
+public class VControlNave extends JFrame implements IVista, ObservadorNave {
 
     private JLabel lblTituloBitacora;
     private JPanel panelSeleccion;
@@ -69,24 +59,9 @@ public class VControlNave extends JFrame {
     private JPanel panelRelleno;
     private JPanel panelRelleno2;
     private JPanel panelOrganizaRecursos;
-    private JLabel lblCombustible;
-    private JLabel lblEnergia;
-    private JLabel lblDesgaste;
+    private JTextArea txtRecursos;
     private JScrollPane scrollBitacora;
     private JList<String> listaBitacora;
-
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    VControlNave frame = new VControlNave();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
 
     public VControlNave() {
 
@@ -161,15 +136,15 @@ public class VControlNave extends JFrame {
         this.panelRecursos = new JPanel();
         this.panelRecursos.setBackground(Estilo.fondoPanel);
         panelDatos.add(this.panelRecursos);
-        this.panelRecursos.setLayout(new GridLayout(3, 1, 0, 0));
-        
+        this.panelRecursos.setLayout(new GridLayout(2, 1, 0, 0));
+
         this.panelRelleno2 = new JPanel();
         this.panelRecursos.add(this.panelRelleno2);
         this.panelRelleno2.setBackground(Estilo.fondoPanel);
         
         this.panelOrganizaRecursos = new JPanel();
         this.panelRecursos.add(this.panelOrganizaRecursos);
-        this.panelOrganizaRecursos.setLayout(new GridLayout(3, 1, 0, 0));
+        this.panelOrganizaRecursos.setLayout(new GridLayout(1, 1, 0, 0));
         this.panelOrganizaRecursos.setBackground(Estilo.fondoPanel);
         this.panelOrganizaRecursos.setBorder(
         	    BorderFactory.createTitledBorder(
@@ -182,20 +157,11 @@ public class VControlNave extends JFrame {
         	        )
         	    );
         
-        this.lblCombustible = new JLabel("Combustible: 80%");
-        this.lblCombustible.setForeground(Estilo.blanco);
-        this.lblCombustible.setFont(Estilo.fuentePlain);
-        this.panelOrganizaRecursos.add(this.lblCombustible);
-        
-        this.lblEnergia = new JLabel("Energia: 65%");
-        this.lblEnergia.setForeground(Estilo.blanco);
-        this.lblEnergia.setFont(Estilo.fuentePlain);
-        this.panelOrganizaRecursos.add(this.lblEnergia);
-        
-        this.lblDesgaste = new JLabel("Desgaste: 20%");
-        this.lblDesgaste.setForeground(Estilo.blanco);
-        this.lblDesgaste.setFont(Estilo.fuentePlain);
-        this.panelOrganizaRecursos.add(this.lblDesgaste);
+        this.txtRecursos = new JTextArea();
+        this.txtRecursos.setBackground(Estilo.fondoPanel);
+        this.txtRecursos.setForeground(Estilo.blanco);
+        this.txtRecursos.setFont(Estilo.fuenteBold);
+        this.panelOrganizaRecursos.add(this.txtRecursos);
 
         // BITACORA
 
@@ -384,7 +350,26 @@ public class VControlNave extends JFrame {
         this.btnVisorRecondito.setForeground(Estilo.celeste);
         this.btnVisorRecondito.setFont(Estilo.fuenteBold);
         this.btnVisorRecondito.setFocusPainted(false);
+        this.btnVisorRecondito.setActionCommand("VISOR");
 
         panelInferior.add(this.btnVisorRecondito);
+    }
+
+    @Override
+    public void setActionListener(ActionListener c) {
+
+        this.btnVisorRecondito.addActionListener(c);
+        this.btnTripulantes.addActionListener(c);
+    }
+
+    public void setDatosNave(String nombre, String tipo, String recursos) {
+        this.lblNave.setText("Nombre: " + nombre);
+        this.lblTipo.setText("Tipo: " + tipo);
+        this.txtRecursos.setText(recursos);
+    }
+
+    @Override
+    public void actualizar(Nave nave) {
+        this.txtRecursos.setText(nave.getEstadoActual());
     }
 }

@@ -7,6 +7,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
@@ -14,7 +15,7 @@ import javax.swing.JPasswordField;
 
 import static vistas.Estilo.*;
 
-public class VAcceso extends JFrame {
+public class VAcceso extends JFrame implements IVista {
 
 	private JPanel contentPane;
 	private JPanel panelPrincipal;
@@ -151,6 +152,20 @@ public class VAcceso extends JFrame {
 	    this.panelDerecha = new JPanel();
 	    this.panelDerecha.setBackground(fondo);
 	    this.panelPrincipal.add(this.panelDerecha);
+	}
+
+	public String getNombre() {
+		return this.tfNombre.getText();
+	}
+
+	public String getContrasenia() {
+		return this.passwordField.getText();
+	}
+
+	@Override
+	public void setActionListener(ActionListener c){
+		this.btnLogin.addActionListener(c);
+		this.btnRegistro.addActionListener(c);
 	}
 
 }

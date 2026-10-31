@@ -2,6 +2,7 @@ package vistas;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
 
 import static vistas.Estilo.*;
 
-public class VTripulantes extends JFrame {
+public class VTripulantes extends JFrame implements IVista {
 
     private JTable tablaTripulantes;
     private JButton btnVolver;
@@ -96,9 +97,9 @@ public class VTripulantes extends JFrame {
 
     }
     
-    public static void main(String[] args) {
-        VTripulantes ventana = new VTripulantes();
-        ventana.setVisible(true);
+    @Override
+    public void setActionListener(ActionListener c){
+
     }
 }
 

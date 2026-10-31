@@ -3,26 +3,15 @@ package vistas;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
 import static vistas.Estilo.*;
 
-public class VCreacion extends JFrame {
+public class VCreacion extends JFrame implements IVista {
 
     private JPanel panelOpcionesNave;
     private JPanel contentPane;
@@ -324,10 +313,35 @@ public class VCreacion extends JFrame {
         contentPane.add(panelComienzo, BorderLayout.SOUTH);
     }
 
-    public static void main(String[] args) {
-        java.awt.EventQueue.invokeLater(() -> {
-            VCreacion ventana = new VCreacion();
-            ventana.setVisible(true);
-        });
+    @Override
+    public void setActionListener(ActionListener c) {
+        this.btnIniciar.addActionListener(c);
+        this.btnAsignar.addActionListener(c);
+        this.btnCrearNave.addActionListener(c);
+        this.btnCrearTripulante.addActionListener(c);
+    }
+
+    public String getNombreNave() {
+        return this.tfNombreNave.getText();
+    }
+
+    public String getTipoNave() {
+        return this.grupoTipoNave.getSelection().toString();
+    }
+
+    public String getNombreTripulante() {
+        return this.tfNombreTripulante.getText();
+    }
+
+    public String getCargoTripulante() {
+        return this.cbCargo.getSelectedItem().toString();
+    }
+
+    public String getOrigenTripulante() {
+        return this.cbOrigen.getSelectedItem().toString();
+    }
+
+    public int getAntiguedadTripulante(){
+        return Integer.parseInt(this.tfAntiguedad.getText());
     }
 }
