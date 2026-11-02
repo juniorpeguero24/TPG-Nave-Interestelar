@@ -10,6 +10,7 @@ import modelo.tablero.Destino;
 import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
 
+import modelo.universo.Asteroide;
 import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
 
@@ -81,9 +82,16 @@ public abstract class Mision {
             }
 
             // 2. Radar corto
-            asistente.usarRadarCortoAlcance(tablero);
+            ElementoDelUniverso[][] alrededores = asistente.usarRadarCortoAlcance(tablero);
             sumarEnergiaConsumida(CostosMision.COSTO_RADAR_CORTO);
-
+            Posicion actual = tablero.getPosicionNave();
+            Posicion verSiguiente = ruta.verSiguiente();
+            ElementoDelUniverso siguienteElemento = obtenerElementoEnSiguientePosicion(alrededores, actual, verSiguiente);
+            
+            if (siguienteElemento instanceof Asteroide) {
+                // consultar como decidir si evitar o usar Warp
+            }
+            
             // 3. Movimiento
             Posicion siguiente = ruta.siguiente();
             asistente.avanzar();
@@ -154,5 +162,11 @@ public abstract class Mision {
     
     protected Ruta getRuta() {
         return ruta;
+    }
+    
+    private ElementoDelUniverso obtenerElementoEnSiguientePosicion(ElementoDelUniverso[][] alrededores, Posicion actual, Posicion siguiente) {
+        int dx = siguiente.getX() - actual.getX();
+        int dy = siguiente.getY() - actual.getY();
+        return alrededores[dx + 1][dy + 1]; // La nave esta en [1][1]
     }
 }

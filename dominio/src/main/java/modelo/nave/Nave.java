@@ -191,9 +191,7 @@ public abstract class Nave implements ElementoDelUniverso {
     }
     
     public void avanzar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-
-        // Primero verificar que toda la acción sea posible
-
+        recursos.verificarDisponibilidadRecursos(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE, 0, CostosMision.COSTO_MOVIMIENTO_DESGASTE);
         recursos.consumirCombustible(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
         recursos.aumentarDesgaste(CostosMision.COSTO_MOVIMIENTO_DESGASTE);
         verificarDestruccion();

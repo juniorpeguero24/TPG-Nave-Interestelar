@@ -5,7 +5,6 @@ import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
 
 import modelo.tablero.Destino;
-import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
 
 

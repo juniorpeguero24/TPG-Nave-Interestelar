@@ -4,26 +4,26 @@ import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.nave.Nave;
 
 public class EstacionCarga implements ElementoDelUniverso {
-    private int combustible;
-    private int energia;
+    private int cargaCombustible;
+    private int cargaEnergia;
 
-    public EstacionCarga(int combustible, int energia) {
-        this.combustible = combustible;
-        this.energia = energia;
+    public EstacionCarga(int cargaCombustible, int energia) {
+        this.cargaCombustible = cargaCombustible;
+        this.cargaEnergia = energia;
     }
 
-    public int getCombustible() {
-        return combustible;
+    public int getCargaCombustible() {
+        return cargaCombustible;
     }
 
-    public int getEnergia() {
-        return energia;
+    public int getCargaEnergia() {
+        return cargaEnergia;
     }
     
     @Override
     public void interactuarCon(Nave nave) {
-        int combustibleATransferir = Math.min(combustible, nave.getEspacioCombustible());
-        int energiaATransferir = Math.min(energia, nave.getEspacioEnergia());
+        int combustibleATransferir = Math.min(cargaCombustible, nave.getEspacioCombustible());
+        int energiaATransferir = Math.min(cargaEnergia, nave.getEspacioEnergia());
         try {
             nave.cargarCombustible(combustibleATransferir);
             nave.cargarEnergia(energiaATransferir);

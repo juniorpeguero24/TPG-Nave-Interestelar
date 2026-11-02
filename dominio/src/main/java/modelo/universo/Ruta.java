@@ -25,6 +25,13 @@ public class Ruta {
         indiceActual++;
         return siguiente;
     }
+    
+    public Posicion verSiguiente() {
+        if (!tieneSiguiente()) {
+            return null;
+        }
+        return posiciones.get(indiceActual);
+    }
 
     public int getCantidadPosiciones() {
         return posiciones.size();
