@@ -2,18 +2,17 @@ package modelo.mision;
 
 import modelo.nave.AsistenteComando;
 
-import modelo.bitacora.Evento;
-import modelo.bitacora.TipoEvento;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
 
-import modelo.universo.Posicion;
+import modelo.tablero.Destino;
+import modelo.tablero.Tablero;
 
 public class Mision03 extends Mision {
     private boolean regresoCompletado = false;
     
-    public Mision03() {
-        super( "M-03 - Retorno seguro", new Posicion(3, 9));
+    public Mision03(Destino destino, Tablero tablero) {
+        super( "M-03 - Retorno seguro", destino, tablero);
     }
 
 

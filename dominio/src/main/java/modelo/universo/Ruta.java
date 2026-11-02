@@ -2,6 +2,7 @@ package modelo.universo;
 
 import java.util.ArrayList;
 import java.util.List;
+import modelo.tablero.Posicion;
 
 public class Ruta {
     private List<Posicion> posiciones;

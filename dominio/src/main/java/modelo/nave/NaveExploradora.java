@@ -1,10 +1,8 @@
 package modelo.nave;
 
-import modelo.universo.Posicion;
-
 public class NaveExploradora extends Nave {
-    public NaveExploradora(String nombre, Posicion posicion) {
-        super(nombre, 60, 80, posicion);
+    public NaveExploradora(String nombre) {
+        super(nombre, 60, 80);
     }
 
     @Override
