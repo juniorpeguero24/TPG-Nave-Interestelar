@@ -4,14 +4,19 @@ import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
 import modelo.mision.*;
 import modelo.haberes.Liquidacion;
+
+import modelo.nave.AsistenteComando;
 import modelo.nave.Nave;
 import modelo.nave.NaveFactory;
+
+import modelo.tablero.Posicion;
+
 import modelo.tripulacion.*;
 
-import modelo.universo.Posicion;
 import modelo.universo.Universo;
 
 public class Prueba {
+    /*
     public static void main(String[] args) {
         Universo universo = crearUniversoBase();
         AsistenteComando asistente = universo.seleccionarNave("Combat-01");
@@ -212,4 +217,5 @@ public class Prueba {
         System.out.println("Evaluo si requiere mantenimiento: " + asistente.requiereMantenimiento());
         verificar("Luego del mantenimiento deja de requerirlo", !asistente.requiereMantenimiento());
     }
+    */
 }

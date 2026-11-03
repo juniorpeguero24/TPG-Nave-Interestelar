@@ -6,5 +6,5 @@ dominio/target/
 *.iml
 *.jws
 *.jpr
-data/*.mv.db
-data/*.trace.db
+*.mv.db
+*.trace.db
