@@ -3,23 +3,12 @@ package modelo.universo;
 import modelo.nave.Nave;
 
 public class Asteroide implements ElementoDelUniverso {
-    private Posicion posicion;
     private int danioEnergia;
 
-    public Asteroide(Posicion posicion, int danioEnergia) {
-        this.posicion = posicion;
+    public Asteroide(int danioEnergia) {
         this.danioEnergia = danioEnergia;
     }
-
-    @Override
-    public Posicion getPosicion() {
-        return posicion;
-    }
-
-    public void setPosicion(Posicion posicion) {
-        this.posicion = posicion;
-    }
-
+    
     public int getDanioEnergia() {
         return danioEnergia;
     }

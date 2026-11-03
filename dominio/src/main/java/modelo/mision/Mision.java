@@ -6,7 +6,12 @@ import modelo.bitacora.TipoEvento;
 import modelo.excepciones.*;
 import java.util.ArrayList;
 
-import modelo.universo.Posicion;
+import modelo.tablero.Destino;
+import modelo.tablero.Posicion;
+import modelo.tablero.Tablero;
+
+import modelo.universo.Asteroide;
+import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
 import observer.ObservadorMision;
 
@@ -16,14 +21,16 @@ public abstract class Mision {
     protected ResultadoMision resultado;
     private ArrayList<String> accionesPrincipales;
     private ArrayList<String> observaciones;
-    private Posicion destino;
+    private Destino destino;
+    private Tablero tablero;
     private Ruta ruta;
     private final ArrayList<ObservadorMision> observadores;
 
 
-    public Mision(String nombre, Posicion destino) {
+    public Mision(String nombre, Destino destino, Tablero tablero) {
         this.nombre = nombre;
         this.destino = destino;
+        this.tablero = tablero;
         this.accionesPrincipales = new ArrayList<>();
         this.observaciones = new ArrayList<>();
         this.resultado = ResultadoMision.FALLO;
@@ -31,6 +38,14 @@ public abstract class Mision {
         this.energiaConsumida = 0;
         this.desgasteGenerado = 0;
         this.observadores = new ArrayList<>();
+    }
+
+    protected Tablero getTablero() {
+        return tablero;
+    }
+
+    protected Destino getDestino() {
+        return destino;
     }
 
     public final InformeMision realizarMision(AsistenteComando asistente) {
@@ -52,31 +67,45 @@ public abstract class Mision {
             throw new TripulacionInvalidaExcepcion("No se puede realizar una mision con una tripulacion invalida");
         }
         asistente.registrarEvento(new Evento(TipoEvento.MISION, "Iniciando preparativos de misión: " + nombre));
-        ruta = asistente.usarRadarLargoAlcance(destino);
+        Posicion origen = tablero.getPosicionNave();
+        Posicion objetivo = tablero.obtenerObjetivo();
+        ruta = asistente.usarRadarLargoAlcance(origen, objetivo);
         energiaConsumida += CostosMision.COSTO_RADAR_LARGO;
     }
     
     protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
         while (ruta.tieneSiguiente() && !asistente.naveDestruida()) {
-               Posicion siguiente = ruta.siguiente();
 
-               // 1. Inspeccionar posición actual
-               // 2. Radar corto
-               // 3. Planificar y mover
+            // 1. Inspección de posición actual
+            ElementoDelUniverso elemento = tablero.inspeccionarPosicion();
+            if (elemento != null) {
+                elemento.interactuarCon(asistente.getNave());
+            }
+            if (asistente.naveDestruida()) {
+                break;
+            }
 
-               asistente.avanzarA(siguiente);
-               agregarAccionPrincipal("La nave avanzo a " + siguiente);
-
-               combustibleConsumido += CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE;
-               desgasteGenerado += CostosMision.COSTO_MOVIMIENTO_DESGASTE;
+            // 2. Radar corto
+            ElementoDelUniverso[][] alrededores = asistente.usarRadarCortoAlcance(tablero);
+            sumarEnergiaConsumida(CostosMision.COSTO_RADAR_CORTO);
+            Posicion actual = tablero.getPosicionNave();
+            Posicion verSiguiente = ruta.verSiguiente();
+            ElementoDelUniverso siguienteElemento = obtenerElementoEnSiguientePosicion(alrededores, actual, verSiguiente);
             
-               // 4. Turno del tablero
+            if (siguienteElemento instanceof Asteroide) {
+                // consultar como decidir si evitar o usar Warp
+            }
             
-               if (asistente.naveDestruida()) {
-                   resultado = ResultadoMision.FALLO;
-                   agregarObservacion("La nave fue destruida durante la mision");
-               }
-           }
+            // 3. Movimiento
+            Posicion siguiente = ruta.siguiente();
+            asistente.avanzar();
+            tablero.moverNave(siguiente);
+            sumarCombustibleConsumido(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
+            sumarDesgasteGenerado(CostosMision.COSTO_MOVIMIENTO_DESGASTE);
+
+            // 4. Turno del universo
+            destino.turnoDestino();
+        }
     }
 
     protected abstract void evaluar(AsistenteComando asistente);
@@ -139,9 +168,11 @@ public abstract class Mision {
     protected Ruta getRuta() {
         return ruta;
     }
-
-    protected Posicion getDestino() {
-        return destino;
+    
+    private ElementoDelUniverso obtenerElementoEnSiguientePosicion(ElementoDelUniverso[][] alrededores, Posicion actual, Posicion siguiente) {
+        int dx = siguiente.getX() - actual.getX();
+        int dy = siguiente.getY() - actual.getY();
+        return alrededores[dx + 1][dy + 1]; // La nave esta en [1][1]
     }
 
 

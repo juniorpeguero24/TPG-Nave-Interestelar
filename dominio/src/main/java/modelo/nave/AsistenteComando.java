@@ -7,12 +7,14 @@ import modelo.bitacora.Bitacora;
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
 import modelo.haberes.Liquidacion;
-
 import modelo.tripulacion.Tripulante;
-
 import java.util.ArrayList;
 
-import modelo.universo.Posicion;
+import modelo.tablero.Posicion;
+
+import modelo.tablero.Tablero;
+
+import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
 
 public class AsistenteComando {
@@ -205,15 +207,19 @@ public class AsistenteComando {
     }
     
     // Acciones delegadas a la nave durante la mision
-    public Ruta usarRadarLargoAlcance(Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        return nave.usarRadarLargoAlcance(destino);
+    public Ruta usarRadarLargoAlcance(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        return nave.usarRadarLargoAlcance(origen, destino);
     }
     
-    public void avanzarA(Posicion nuevaPosicion) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        nave.avanzarA(nuevaPosicion);
+    public ElementoDelUniverso[][] usarRadarCortoAlcance(Tablero tablero) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        return nave.usarRadarCortoAlcance(tablero);
     }
     
-    public Ruta recalcularRuta(Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        return nave.recalcularRuta(destino);
+    public void avanzar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        nave.avanzar();
+    }
+    
+    public Ruta recalcularRuta(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        return nave.recalcularRuta(origen, destino);
     }
 }

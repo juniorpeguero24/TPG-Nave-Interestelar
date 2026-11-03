@@ -3,7 +3,8 @@ package modelo.nave;
 import java.util.ArrayList;
 import java.util.List;
 
-import modelo.universo.Posicion;
+import modelo.tablero.Posicion;
+
 import modelo.universo.Ruta;
 
 public class RadarLargoAlcance {

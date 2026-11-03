@@ -37,7 +37,7 @@ public class Navegador {
             Nave nave = universo.getAsistenteEnOperacion().getNave();
             Bitacora bitacora = universo.getAsistenteEnOperacion().getBitacora();
 
-            nave.añadirObservador(control);
+            nave.agregarObservador(control);
             bitacora.añadirObservador(control);
 
             controladorNave.setDatosNave();
@@ -50,6 +50,8 @@ public class Navegador {
         if (tripulantes == null) {
             this.tripulantes = new VTripulantes();
             /*ControladorTripulantes = .... */
+            control.setVisible(false);
+            tripulantes.setVisible(true);
         } else {
             control.setVisible(false);
             tripulantes.setVisible(true);
@@ -67,6 +69,9 @@ public class Navegador {
             PlataformaDeCarga plataforma = new  PlataformaDeCarga();
             plataforma.añadirObservador(visor);
             ControladorPlataforma controladorPlataforma = new ControladorPlataforma(plataforma, visor, this);
+
+            control.setVisible(false);
+            visor.setVisible(true);
 
         } else {
             control.setVisible(false);
