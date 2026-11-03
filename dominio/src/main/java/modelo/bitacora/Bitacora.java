@@ -1,18 +1,25 @@
 package modelo.bitacora;
 
+import observer.ObservadorBitacora;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Bitacora {
-    private ArrayList<Evento> eventos;
+    private final ArrayList<Evento> eventos;
+    private final ArrayList<ObservadorBitacora> observadores;
 
     public Bitacora(){
+
         eventos = new ArrayList<Evento>();
+        observadores = new ArrayList<>();
     }
 
     public void registrarEvento(Evento evento){
-        if (evento != null && evento.esValido())
+        if (evento != null && evento.esValido()) {
             eventos.add(evento);
+            notificarObservadores();
+        }
     }
 
     public ArrayList<Evento> consultarEvento(LocalDateTime desde, LocalDateTime hasta){
@@ -30,5 +37,21 @@ public class Bitacora {
     @Override
     public String toString(){
         return "BITACORA: \n" + eventos.toString();
+    }
+
+    // OBSERVER
+
+    public void añadirObservador(ObservadorBitacora observador){
+        observadores.add(observador);
+    }
+
+    public void quitarObservador(ObservadorBitacora observador){
+        observadores.remove(observador);
+    }
+
+    public void notificarObservadores(){
+        for (ObservadorBitacora observador : observadores) {
+            observador.actualizarBitacora(this);
+        }
     }
 }
