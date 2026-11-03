@@ -5,6 +5,8 @@ import modelo.concurrencia.PlataformaDeCarga;
 import modelo.nave.Nave;
 import modelo.universo.Universo;
 import vistas.*;
+import modelo.tablero.Tablero;
+import modelo.tablero.Destino;
 
 public class Navegador {
     private VAcceso acceso;
@@ -12,13 +14,17 @@ public class Navegador {
     private VControlNave control;
     private VTripulantes tripulantes;
     private VVisorRecondito visor;
+    private Destino destino;
+    private Tablero tablero;
 
-    public Navegador(VAcceso acceso, VCreacion creacion){
+    public Navegador(VAcceso acceso, VCreacion creacion, Destino destino, Tablero tablero){
         this.acceso = acceso;
         this.creacion = creacion;
         this.control = null;
         this.tripulantes = null;
         this.visor = null;
+        this.destino = destino;
+        this.tablero = tablero;
     }
 
 
@@ -32,7 +38,7 @@ public class Navegador {
     public void iniciarJuego(Universo universo) {
         if (control == null) {
             this.control = new VControlNave();
-            ControladorNave controladorNave = new ControladorNave(universo, control, this);
+            ControladorNave controladorNave = new ControladorNave(universo, control, this, destino, tablero);
 
             Nave nave = universo.getAsistenteEnOperacion().getNave();
             Bitacora bitacora = universo.getAsistenteEnOperacion().getBitacora();

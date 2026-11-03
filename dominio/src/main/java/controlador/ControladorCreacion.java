@@ -6,8 +6,8 @@ import modelo.nave.NaveFactory;
 import modelo.tripulacion.Cargo;
 import modelo.tripulacion.Origen;
 import modelo.tripulacion.Tripulante;
-import modelo.universo.Posicion;
 import modelo.universo.Universo;
+import modelo.tablero.Posicion;
 import vistas.VControlNave;
 import vistas.VCreacion;
 
@@ -52,7 +52,7 @@ public class ControladorCreacion extends WindowAdapter implements ActionListener
         String nombre = this.vCreacion.getNombreNave();
         String tipo = this.vCreacion.getTipoNave();
 
-        Nave nave = NaveFactory.crearNave(nombre, tipo, new Posicion(0,0));
+        Nave nave = NaveFactory.crearNave(nombre, tipo);
 
         if (nave!=null) {
 

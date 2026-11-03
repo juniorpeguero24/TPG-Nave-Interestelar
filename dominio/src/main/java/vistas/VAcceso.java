@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
+import javax.swing.JOptionPane;
 
 import static vistas.Estilo.*;
 
@@ -166,6 +167,15 @@ public class VAcceso extends JFrame implements IVista {
 	public void setActionListener(ActionListener c){
 		this.btnLogin.addActionListener(c);
 		this.btnRegistro.addActionListener(c);
+	}
+	
+	public void limpiarCampos() {
+		tfNombre.setText("");
+		passwordField.setText("");
+	}
+
+	public void mostrarMensaje(String mensaje) {
+		JOptionPane.showMessageDialog(this, mensaje);
 	}
 
 }

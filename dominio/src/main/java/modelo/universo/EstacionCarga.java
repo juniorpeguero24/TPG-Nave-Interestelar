@@ -7,9 +7,9 @@ public class EstacionCarga implements ElementoDelUniverso {
     private int cargaCombustible;
     private int cargaEnergia;
 
-    public EstacionCarga(int cargaCombustible, int energia) {
+    public EstacionCarga(int cargaCombustible, int cargaEnergia) {
         this.cargaCombustible = cargaCombustible;
-        this.cargaEnergia = energia;
+        this.cargaEnergia = cargaEnergia;
     }
 
     public int getCargaCombustible() {
