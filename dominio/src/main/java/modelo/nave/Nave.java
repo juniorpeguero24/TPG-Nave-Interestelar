@@ -28,11 +28,9 @@ public abstract class Nave implements ElementoDelUniverso {
     private Tripulacion tripulacion;
     private boolean destruida;
     private RadarLargoAlcance radarLargoAlcance;
-<<<<<<< HEAD
     private final List<ObservadorNave> observadores = new ArrayList<>();
-=======
     private RadarCortoAlcance radarCortoAlcance;
->>>>>>> 7a50494925a652a2f285385a580500fe005d1503
+
 
     public Nave( String nombre,int combustible,int energia) {
         this.nombre = nombre;

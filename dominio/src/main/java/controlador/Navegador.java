@@ -37,7 +37,7 @@ public class Navegador {
             Nave nave = universo.getAsistenteEnOperacion().getNave();
             Bitacora bitacora = universo.getAsistenteEnOperacion().getBitacora();
 
-            nave.agregarObservador(control);
+            nave.añadirObservador(control);
             bitacora.añadirObservador(control);
 
             controladorNave.setDatosNave();
