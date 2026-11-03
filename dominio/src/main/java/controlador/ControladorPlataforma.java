@@ -14,17 +14,18 @@ public class ControladorPlataforma extends WindowAdapter implements ActionListen
     {
         private final PlataformaDeCarga plataforma;
         private final VVisorRecondito VVisor;
-        private final VControlNave controlNave;
+        private final Navegador navegador;
         private final List<Thread> hilosNaves = new ArrayList<>();
 
         public ControladorPlataforma(PlataformaDeCarga plataforma, VVisorRecondito VVisor,
-                                     VControlNave controlNave) {
+                                     Navegador nav) {
             this.plataforma = plataforma;
             this.VVisor = VVisor;
-            this.controlNave = controlNave;
             this.VVisor.setActionListener(this);
             this.VVisor.addWindowListener(this);
             this.VVisor.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+            this.navegador = nav;
         }
 
         @Override
@@ -65,8 +66,7 @@ public class ControladorPlataforma extends WindowAdapter implements ActionListen
         private void volverAlControl() {
             detenerNaves();
             this.hilosNaves.clear();
-            this.VVisor.setVisible(false);
-            this.controlNave.setVisible(true);
+            navegador.volverAlControlDesdeVisorRecondito();
         }
 
         @Override

@@ -1,5 +1,9 @@
 package controlador;
 
+import modelo.mision.Mision;
+import modelo.mision.Mision01;
+import modelo.mision.Mision02;
+import modelo.mision.Mision03;
 import modelo.nave.AsistenteComando;
 import modelo.universo.Universo;
 import vistas.VControlNave;
@@ -15,22 +19,17 @@ import java.awt.event.WindowAdapter;
 public class ControladorNave extends WindowAdapter implements ActionListener
 {
     private final VControlNave controlNave;
-    private final Universo universo;
     private final AsistenteComando asistenteComando;
-    private final VTripulantes vTripulantes;
-    private final VVisorRecondito vVisor;
+    private final Navegador navegador;
 
     public ControladorNave(Universo universo,
-                           VControlNave controlNave, VTripulantes vTripulantes, VVisorRecondito vVisor) {
+                           VControlNave controlNave, Navegador nav) {
 
         this.controlNave = controlNave;
         this.controlNave.setActionListener(this);
         this.controlNave.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.universo = universo;
-        this.vTripulantes = vTripulantes;
-        this.vVisor = vVisor;
         this.asistenteComando = universo.getAsistenteEnOperacion();
-        setDatosNave();
+        this.navegador = nav;
     }
 
     @Override
@@ -42,24 +41,44 @@ public class ControladorNave extends WindowAdapter implements ActionListener
         else if  (comando.equalsIgnoreCase("Visor")) {
             vistaVisorRecondito();
         }
+        else if  (comando.equalsIgnoreCase("Iniciar Mision")) {
+            iniciarMision();
+        }
     }
 
-    private void setDatosNave() {
+    public void setDatosNave() {
         String nombre = this.asistenteComando.getNombreNave();
         String tipo = this.asistenteComando.getTipo();
         String recursos = this.asistenteComando.obtenerEstadoNaveActual();
         controlNave.setDatosNave(nombre, tipo, recursos);
     }
 
+    public void iniciarMision(){
+        String NombreMision = this.controlNave.getMisionSeleccionada();
+
+        Mision mision = null;
+
+        if (NombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
+             mision = new Mision01();
+        }
+        else if (NombreMision.equalsIgnoreCase("M-02 (Recolección)"))
+        {
+             mision = new Mision02();
+        }
+        else if (NombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")){
+             mision = new Mision03();
+        }
+
+        mision.añadirObservador(this.controlNave);
+        mision.realizarMision(this.asistenteComando);
+    }
 
     private void vistaTripulantes() {
-        this.controlNave.setVisible(false);
-        this.vTripulantes.setVisible(true);
+        navegador.mostrarTripulantes();
     }
 
     private void vistaVisorRecondito() {
-        this.controlNave.setVisible(false);
-        this.vVisor.setVisible(true);
+        navegador.mostrarVisorRecondito();
     }
 
 }
