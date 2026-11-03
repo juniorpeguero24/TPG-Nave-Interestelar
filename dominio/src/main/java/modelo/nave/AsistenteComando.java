@@ -26,6 +26,10 @@ public class AsistenteComando {
 
     // ----- NAVE Y TRIPULACION ----- //
 
+    public Nave getNave() {
+        return nave;
+    }
+
     public String getNombreNave() {
         return nave.getNombre();
     }
@@ -48,6 +52,10 @@ public class AsistenteComando {
     }
 
     // ----- BITACORA ----- //
+
+    public Bitacora getBitacora() {
+        return bitacora;
+    }
 
     public void registrarEvento(Evento evento) {
         bitacora.registrarEvento(evento);

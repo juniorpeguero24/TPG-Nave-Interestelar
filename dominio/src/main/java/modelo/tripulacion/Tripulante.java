@@ -7,6 +7,7 @@ import modelo.haberes.SubsidioOrigen;
 import modelo.haberes.SueldoBase;
 
 public class Tripulante {
+    private static int identificadores = 0;
     private final int id;
     private final int antiguedad;
     private final String nombre;
@@ -14,7 +15,7 @@ public class Tripulante {
     private final Origen planetaOrigen;
     private int cantidadConsejos;
 
-    public Tripulante(int id, int antiguedad, String nombre, Cargo cargo, Origen planetaOrigen) {
+    public Tripulante(int antiguedad, String nombre, Cargo cargo, Origen planetaOrigen) {
         if (antiguedad < 0) {
             throw new IllegalArgumentException("La antiguedad no puede ser negativa");
         }
@@ -28,7 +29,7 @@ public class Tripulante {
             throw new IllegalArgumentException("El origen no puede ser nulo");
         }
 
-        this.id = id;
+        this.id = identificadores++;
         this.antiguedad = antiguedad;
         this.nombre = nombre;
         this.cargo = cargo;
@@ -74,7 +75,7 @@ public class Tripulante {
 
     @Override
     public String toString() {
-        return nombre + " " + cargo
+        return nombre + " - " + cargo
                 + " Planeta de Origen: " + planetaOrigen
                 + " Antiguedad: " + antiguedad;
     }

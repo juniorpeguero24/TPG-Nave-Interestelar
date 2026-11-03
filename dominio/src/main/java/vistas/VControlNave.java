@@ -8,12 +8,16 @@ import javax.swing.border.TitledBorder;
 
 import java.awt.event.ActionListener;
 
+import modelo.bitacora.Bitacora;
+import modelo.mision.InformeMision;
 import modelo.nave.Nave;
+import observer.ObservadorBitacora;
+import observer.ObservadorMision;
 import observer.ObservadorNave;
 
 import static vistas.Estilo.*;
 
-public class VControlNave extends JFrame implements IVista, ObservadorNave {
+public class VControlNave extends JFrame implements IVista, ObservadorNave, ObservadorBitacora, ObservadorMision {
 
     private JLabel lblTituloBitacora;
     private JPanel panelSeleccion;
@@ -45,7 +49,6 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave {
 
     private JList<String> listaInformes;
     private DefaultListModel<String> modeloInformes;
-    private DefaultListModel<String> modeloBitacora;
 
     private JLabel lblCoordenadas;
     private JLabel lblEstado;
@@ -61,7 +64,7 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave {
     private JPanel panelOrganizaRecursos;
     private JTextArea txtRecursos;
     private JScrollPane scrollBitacora;
-    private JList<String> listaBitacora;
+    private JTextArea listaBitacora;
 
     public VControlNave() {
 
@@ -179,14 +182,14 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave {
 
         this.panelBitacora.add(lblTituloBitacora, BorderLayout.NORTH);
 
-        this.modeloBitacora = new DefaultListModel<String>();
 
-        this.listaBitacora = new JList<String>(this.modeloBitacora);
+        this.listaBitacora = new JTextArea();
         this.listaBitacora.setBackground(Estilo.fondoPanel);
         this.listaBitacora.setFont(Estilo.fuentePlain);
         this.listaBitacora.setForeground(Estilo.blanco);
         this.listaBitacora.setFocusable(false);
-        this.modeloBitacora.addElement("Sin eventos registrados.");
+        this.listaBitacora.setEditable(false);
+        this.listaBitacora.setText("Sin eventos registrados.");
 
         this.scrollBitacora = new JScrollPane(this.listaBitacora);
         scrollBitacora.getViewport().setBackground(Estilo.fondoPanel);
@@ -244,6 +247,7 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave {
         this.btnIniciarMision.setForeground(Estilo.celeste);
         this.btnIniciarMision.setFont(Estilo.fuenteBold);
         this.btnIniciarMision.setFocusPainted(false);
+        this.btnIniciarMision.setActionCommand("Iniciar Mision");
 
 
         panelSeleccion.add(this.btnIniciarMision);
@@ -360,6 +364,7 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave {
 
         this.btnVisorRecondito.addActionListener(c);
         this.btnTripulantes.addActionListener(c);
+        this.btnIniciarMision.addActionListener(c);
     }
 
     public void setDatosNave(String nombre, String tipo, String recursos) {
@@ -368,8 +373,33 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave {
         this.txtRecursos.setText(recursos);
     }
 
+    public String getMisionSeleccionada(){
+        try{
+            return this.cbMisiones.getSelectedItem().toString();
+        }
+        catch(NullPointerException e){
+            JOptionPane.showMessageDialog(null, "Debe seleccionar una misión");
+        }
+        return "";
+    }
+
     @Override
-    public void actualizar(Nave nave) {
+    public void actualizarNave(Nave nave) {
         this.txtRecursos.setText(nave.getEstadoActual());
+    }
+
+    @Override
+    public void actualizarBitacora(Bitacora bitacora) {
+
+        this.listaBitacora.setText(bitacora.toString());
+    }
+
+    @Override
+    public void actualizarInformes(InformeMision informe) {
+        modeloInformes.addElement("--------------------------------");
+        String texto = informe.toString();
+        for (String linea : texto.split("\\n")) {
+            modeloInformes.addElement(linea);
+        }
     }
 }

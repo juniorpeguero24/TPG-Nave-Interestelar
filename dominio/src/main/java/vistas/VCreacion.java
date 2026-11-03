@@ -1,7 +1,6 @@
 package vistas;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 
@@ -217,10 +216,10 @@ public class VCreacion extends JFrame implements IVista {
         lblCargo.setFont(fuentePlain);
 
         cbCargo = new JComboBox<String>();
-        cbCargo.addItem("Capitan");
-        cbCargo.addItem("Consejero");
-        cbCargo.addItem("Teniente");
-        cbCargo.addItem("Alferez");
+        cbCargo.addItem("CAPITAN");
+        cbCargo.addItem("CONSEJERO");
+        cbCargo.addItem("TENIENTE");
+        cbCargo.addItem("ALFEREZ");
         cbCargo.setFont(fuentePlain);
         cbCargo.setBackground(blanco);
         cbCargo.setForeground(fondo);
@@ -230,9 +229,9 @@ public class VCreacion extends JFrame implements IVista {
         lblOrigen.setFont(fuentePlain);
 
         cbOrigen = new JComboBox<String>();
-        cbOrigen.addItem("Terricola");
-        cbOrigen.addItem("Vulcano");
-        cbOrigen.addItem("Marciano");
+        cbOrigen.addItem("TERRICOLA");
+        cbOrigen.addItem("VULCANO");
+        cbOrigen.addItem("MARCIANO");
         cbOrigen.setFont(fuentePlain);
         cbOrigen.setBackground(blanco);
         cbOrigen.setForeground(fondo);
@@ -321,12 +320,26 @@ public class VCreacion extends JFrame implements IVista {
         this.btnCrearTripulante.addActionListener(c);
     }
 
+    public void setDatosNaveCreada(String nombre, String tipo){
+        this.lblNombreCreada.setText("Nombre: " + nombre);
+        this.lblTipoCreada.setText("Tipo : " + tipo);
+    }
+
     public String getNombreNave() {
         return this.tfNombreNave.getText();
     }
 
     public String getTipoNave() {
-        return this.grupoTipoNave.getSelection().toString();
+        String seleccionado = "";
+
+        if (rdbtnCarguero.isSelected()) {
+            seleccionado = "Carguero";
+        } else if (rdbtnCombate.isSelected()) {
+            seleccionado = "Combate";
+        } else if (rdbtnExploradora.isSelected()) {
+            seleccionado = "Exploradora";
+        }
+        return seleccionado;
     }
 
     public String getNombreTripulante() {
@@ -334,11 +347,11 @@ public class VCreacion extends JFrame implements IVista {
     }
 
     public String getCargoTripulante() {
-        return this.cbCargo.getSelectedItem().toString();
+        return (String) this.cbCargo.getSelectedItem();
     }
 
     public String getOrigenTripulante() {
-        return this.cbOrigen.getSelectedItem().toString();
+        return (String) this.cbOrigen.getSelectedItem();
     }
 
     public int getAntiguedadTripulante(){

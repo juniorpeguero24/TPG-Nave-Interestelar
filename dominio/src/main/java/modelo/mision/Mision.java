@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import modelo.universo.Posicion;
 import modelo.universo.Ruta;
+import observer.ObservadorMision;
 
 public abstract class Mision {
     private final String nombre;
@@ -17,6 +18,8 @@ public abstract class Mision {
     private ArrayList<String> observaciones;
     private Posicion destino;
     private Ruta ruta;
+    private final ArrayList<ObservadorMision> observadores;
+
 
     public Mision(String nombre, Posicion destino) {
         this.nombre = nombre;
@@ -27,6 +30,7 @@ public abstract class Mision {
         this.combustibleConsumido = 0;
         this.energiaConsumida = 0;
         this.desgasteGenerado = 0;
+        this.observadores = new ArrayList<>();
     }
 
     public final InformeMision realizarMision(AsistenteComando asistente) {
@@ -95,6 +99,7 @@ public abstract class Mision {
         );
 
         asistente.registrarEvento(new Evento(TipoEvento.INFORME, informe.toString()));
+        notificarObservadores(informe);
 
         return informe;
     }
@@ -137,5 +142,22 @@ public abstract class Mision {
 
     protected Posicion getDestino() {
         return destino;
+    }
+
+
+    // OBSERVER
+
+    public void añadirObservador(ObservadorMision observador) {
+        this.observadores.add(observador);
+    }
+
+    public void quitarObservador(ObservadorMision observador) {
+        this.observadores.remove(observador);
+    }
+
+    public void notificarObservadores(InformeMision informe) {
+        for (ObservadorMision observador : observadores) {
+            observador.actualizarInformes(informe);
+        }
     }
 }

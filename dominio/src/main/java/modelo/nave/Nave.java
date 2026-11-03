@@ -236,7 +236,7 @@ public abstract class Nave implements ElementoDelUniverso {
 
     public void notificarObservadores() {
         for (ObservadorNave observador : observadores) {
-            observador.actualizar(this);
+            observador.actualizarNave(this);
         }
     }
 
