@@ -1,6 +1,7 @@
 package modelo.nave;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
@@ -17,6 +18,8 @@ import modelo.tablero.Tablero;
 import modelo.tripulacion.Tripulante;
 import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
+import observer.ObservadorNave;
+import observer.ObservadorPlataforma;
 
 public abstract class Nave implements ElementoDelUniverso {
     private String nombre;
@@ -25,7 +28,9 @@ public abstract class Nave implements ElementoDelUniverso {
     private Tripulacion tripulacion;
     private boolean destruida;
     private RadarLargoAlcance radarLargoAlcance;
+    private final List<ObservadorNave> observadores = new ArrayList<>();
     private RadarCortoAlcance radarCortoAlcance;
+
 
     public Nave( String nombre,int combustible,int energia) {
         this.nombre = nombre;
@@ -53,8 +58,7 @@ public abstract class Nave implements ElementoDelUniverso {
             destruir();
         }
     }
-    
-    // Usado en Prueba para validar las construcciones correctas
+
     public abstract String getTipo();
     
     public String getEstadoActual() {
@@ -89,10 +93,12 @@ public abstract class Nave implements ElementoDelUniverso {
 
     public void cargarCombustible(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         recursos.cargarCombustible(cantidad);
+        notificarObservadores();
     }
 
     public void consumirCombustible(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirCombustible(cantidad);
+        notificarObservadores();
     }
     
     public int getEnergia() {
@@ -101,17 +107,20 @@ public abstract class Nave implements ElementoDelUniverso {
     
     public void cargarEnergia(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         recursos.cargarEnergia(cantidad);
+        notificarObservadores();
     }
     
     // gasto voluntario
     public void consumirEnergia(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirEnergia(cantidad);
+        notificarObservadores();
     }
     
     // gasto involuntario
     public void recibirDanioEnergia(int cantidad) {
         recursos.reducirEnergia(cantidad);
         verificarDestruccion();
+        notificarObservadores();
     }
     
     public int getDesgaste() {
@@ -120,10 +129,13 @@ public abstract class Nave implements ElementoDelUniverso {
     
     public void aumentarDesgaste(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         recursos.aumentarDesgaste(cantidad);
+        notificarObservadores();
     }
     
     public void realizarMantenimiento(){
+
         recursos.realizarMantenimiento();
+        notificarObservadores();
     }
     
     public boolean requiereMantenimiento(){
@@ -166,15 +178,21 @@ public abstract class Nave implements ElementoDelUniverso {
     }
 
     public Evento prepararSalto(){
-        return motorWarp.prepararSalto();
+        Evento evento = motorWarp.prepararSalto();
+        notificarObservadores();
+        return evento;
     }
 
     public Evento saltar(){
-        return motorWarp.saltar(); 
+        Evento evento = motorWarp.saltar();
+        notificarObservadores();
+        return evento;
     }
 
     public Evento enfriar(){
-        return motorWarp.enfriar();
+        Evento evento = motorWarp.enfriar();
+        notificarObservadores();
+        return evento;
     }
     
     // Metodos usados para las Misiones
@@ -201,4 +219,24 @@ public abstract class Nave implements ElementoDelUniverso {
         recursos.consumirEnergia(CostosMision.COSTO_RECALCULO);
         return radarLargoAlcance.calcularRuta(origen, destino);
     }
+
+
+
+    // OBSERVADORES
+
+    public void añadirObservador(ObservadorNave observador) {
+        observadores.add(observador);
+    }
+
+    public void quitarObservador(ObservadorNave observador) {
+
+        observadores.remove(observador);
+    }
+
+    public void notificarObservadores() {
+        for (ObservadorNave observador : observadores) {
+            observador.actualizarNave(this);
+        }
+    }
+
 }

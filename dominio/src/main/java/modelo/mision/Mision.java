@@ -13,6 +13,7 @@ import modelo.tablero.Tablero;
 import modelo.universo.Asteroide;
 import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
+import observer.ObservadorMision;
 
 public abstract class Mision {
     private final String nombre;
@@ -23,6 +24,8 @@ public abstract class Mision {
     private Destino destino;
     private Tablero tablero;
     private Ruta ruta;
+    private final ArrayList<ObservadorMision> observadores;
+
 
     public Mision(String nombre, Destino destino, Tablero tablero) {
         this.nombre = nombre;
@@ -34,6 +37,7 @@ public abstract class Mision {
         this.combustibleConsumido = 0;
         this.energiaConsumida = 0;
         this.desgasteGenerado = 0;
+        this.observadores = new ArrayList<>();
     }
 
     protected Tablero getTablero() {
@@ -124,6 +128,7 @@ public abstract class Mision {
         );
 
         asistente.registrarEvento(new Evento(TipoEvento.INFORME, informe.toString()));
+        notificarObservadores(informe);
 
         return informe;
     }
@@ -168,5 +173,22 @@ public abstract class Mision {
         int dx = siguiente.getX() - actual.getX();
         int dy = siguiente.getY() - actual.getY();
         return alrededores[dx + 1][dy + 1]; // La nave esta en [1][1]
+    }
+
+
+    // OBSERVER
+
+    public void añadirObservador(ObservadorMision observador) {
+        this.observadores.add(observador);
+    }
+
+    public void quitarObservador(ObservadorMision observador) {
+        this.observadores.remove(observador);
+    }
+
+    public void notificarObservadores(InformeMision informe) {
+        for (ObservadorMision observador : observadores) {
+            observador.actualizarInformes(informe);
+        }
     }
 }

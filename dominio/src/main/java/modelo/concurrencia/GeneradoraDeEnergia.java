@@ -12,10 +12,6 @@ public class GeneradoraDeEnergia implements Runnable {
         this.tiempoProduccionMs = tiempoProduccionMs;
     }
 
-    public GeneradoraDeEnergia(String id, PlataformaDeCarga plataforma) {
-        this(id, plataforma, 1200);
-    }
-
     @Override
     public void run() {
         try {

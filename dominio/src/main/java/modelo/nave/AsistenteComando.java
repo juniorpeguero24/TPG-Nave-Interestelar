@@ -35,6 +35,7 @@ public class AsistenteComando {
     public String getNombreNave() {
         return nave.getNombre();
     }
+    public String getTipo() {return nave.getTipo();}
 
     public String obtenerEstadoNaveActual() {
         return nave.getEstadoActual();
@@ -53,6 +54,10 @@ public class AsistenteComando {
     }
 
     // ----- BITACORA ----- //
+
+    public Bitacora getBitacora() {
+        return bitacora;
+    }
 
     public void registrarEvento(Evento evento) {
         bitacora.registrarEvento(evento);
