@@ -20,6 +20,9 @@ public class Tripulante {
         if (antiguedad < 0) {
             throw new TripulanteInvalidoException("La antiguedad no puede ser negativa");
         }
+        if (antiguedad > 100) {
+            throw new TripulanteInvalidoException("La antiguedad no es valida");
+        }
         if (nombre == null || nombre.isBlank() || nombre.length() < 3 || nombre.length() > 15) {
             throw new TripulanteInvalidoException("Nombre invalido");
         }
