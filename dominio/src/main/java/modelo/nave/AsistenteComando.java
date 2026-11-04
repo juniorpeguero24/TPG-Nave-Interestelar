@@ -235,6 +235,7 @@ public class AsistenteComando {
 
     public void interactuarCon(ElementoDelUniverso elemento) {
         elemento.interactuarCon(nave);
+        registrarEvento(new Evento(TipoEvento.MISION, "Interaccion con " + elemento));
     }
 
     // Observadores

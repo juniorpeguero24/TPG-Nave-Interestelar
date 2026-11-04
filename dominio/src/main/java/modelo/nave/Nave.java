@@ -202,27 +202,23 @@ public abstract class Nave implements ElementoDelUniverso {
     
     // Metodos usados para las Misiones
     public Ruta usarRadarLargoAlcance(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        recursos.consumirEnergia(CostosMision.COSTO_RADAR_LARGO);
-        notificarObservadores();
+        consumirEnergia(CostosMision.COSTO_RADAR_LARGO);
         return radarLargoAlcance.calcularRuta(origen, destino);
     }
     
     public ElementoDelUniverso[][] usarRadarCortoAlcance(Tablero tablero) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        recursos.consumirEnergia(CostosMision.COSTO_RADAR_CORTO);
-        notificarObservadores();
+        consumirEnergia(CostosMision.COSTO_RADAR_CORTO);
         return radarCortoAlcance.escanear(tablero);
     }
     
     public void avanzar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        recursos.verificarDisponibilidadRecursos(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE, 0, CostosMision.COSTO_MOVIMIENTO_DESGASTE);
-        recursos.consumirCombustible(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
-        recursos.aumentarDesgaste(CostosMision.COSTO_MOVIMIENTO_DESGASTE);
-        notificarObservadores();
+        verificarDisponibilidadRecursos(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE, 0, CostosMision.COSTO_MOVIMIENTO_DESGASTE);
+        consumirCombustible(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
+        aumentarDesgaste(CostosMision.COSTO_MOVIMIENTO_DESGASTE);
     }
     
     public Ruta recalcularRuta(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        recursos.consumirEnergia(CostosMision.COSTO_RECALCULO);
-        notificarObservadores();
+        consumirEnergia(CostosMision.COSTO_RECALCULO);
         return radarLargoAlcance.calcularRuta(origen, destino);
     }
 
@@ -235,7 +231,6 @@ public abstract class Nave implements ElementoDelUniverso {
     }
 
     public void quitarObservador(ObservadorNave observador) {
-
         observadores.remove(observador);
     }
 
@@ -243,6 +238,11 @@ public abstract class Nave implements ElementoDelUniverso {
         for (ObservadorNave observador : observadores) {
             observador.actualizarNave(this);
         }
+    }
+    
+    @Override
+    public String toString() {
+        return "Nave [nombre = " + nombre + ", tipo = " + getTipo() + "]";
     }
 
 }
