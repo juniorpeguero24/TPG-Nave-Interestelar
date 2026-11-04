@@ -4,6 +4,8 @@ import modelo.mision.Mision;
 import modelo.mision.Mision01;
 import modelo.mision.Mision02;
 import modelo.mision.Mision03;
+import modelo.tablero.Destino;
+import modelo.tablero.Tablero;
 import modelo.nave.AsistenteComando;
 import modelo.universo.Universo;
 import vistas.VControlNave;
@@ -21,15 +23,18 @@ public class ControladorNave extends WindowAdapter implements ActionListener
     private final VControlNave controlNave;
     private final AsistenteComando asistenteComando;
     private final Navegador navegador;
+    private Destino destino;
+    private Tablero tablero;
 
-    public ControladorNave(Universo universo,
-                           VControlNave controlNave, Navegador nav) {
+    public ControladorNave(Universo universo, VControlNave controlNave, Navegador nav, Destino destino, Tablero tablero) {
 
         this.controlNave = controlNave;
         this.controlNave.setActionListener(this);
         this.controlNave.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.asistenteComando = universo.getAsistenteEnOperacion();
         this.navegador = nav;
+        this.destino = destino;
+        this.tablero = tablero;
     }
 
     @Override
@@ -59,14 +64,14 @@ public class ControladorNave extends WindowAdapter implements ActionListener
         Mision mision = null;
 
         if (NombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
-             mision = new Mision01();
+             mision = new Mision01(destino, tablero);
         }
         else if (NombreMision.equalsIgnoreCase("M-02 (Recolección)"))
         {
-             mision = new Mision02();
+             mision = new Mision02(destino, tablero);
         }
         else if (NombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")){
-             mision = new Mision03();
+             mision = new Mision03(destino, tablero);
         }
 
         mision.añadirObservador(this.controlNave);
