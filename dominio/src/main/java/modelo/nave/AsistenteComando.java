@@ -4,8 +4,7 @@ import modelo.bitacora.Evento;
 import modelo.bitacora.TipoEvento;
 
 import modelo.bitacora.Bitacora;
-import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
-import modelo.excepciones.RecursoInsuficienteExcepcion;
+import modelo.excepciones.*;
 import modelo.haberes.Liquidacion;
 import modelo.tripulacion.Tripulante;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class AsistenteComando {
         return nave.getEstadoActual();
     }
 
-    public void agregarTripulante(Tripulante tripulante) {
+    public void agregarTripulante(Tripulante tripulante) throws CapitanExistenteException, TripulanteRepetidoException, TripulanteInvalidoException {
         nave.agregarTripulante(tripulante);
     }
 

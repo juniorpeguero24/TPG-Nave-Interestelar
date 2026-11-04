@@ -3,8 +3,7 @@ package modelo.nave;
 import java.util.ArrayList;
 import java.util.List;
 
-import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
-import modelo.excepciones.RecursoInsuficienteExcepcion;
+import modelo.excepciones.*;
 import modelo.bitacora.Evento;
 import modelo.motorwarp.MotorWarp;
 import modelo.tripulacion.Tripulacion;
@@ -71,7 +70,7 @@ public abstract class Nave implements ElementoDelUniverso {
     }
     
     // Operaciones delegadas sobre Tripulacion
-    public void agregarTripulante(Tripulante tripulante) {
+    public void agregarTripulante(Tripulante tripulante) throws CapitanExistenteException, TripulanteRepetidoException, TripulanteInvalidoException {
         this.tripulacion.agregarTripulante(tripulante);
     }
 

@@ -285,6 +285,7 @@ public class VCreacion extends JFrame implements IVista {
         btnAsignar.setForeground(fondo);
         btnAsignar.setFont(fuenteBold);
         btnAsignar.setFocusPainted(false);
+        btnAsignar.setEnabled(false);
 
         panelDisponibles.add(scrollDisponibles, BorderLayout.CENTER);
         panelDisponibles.add(btnAsignar, BorderLayout.SOUTH);
@@ -312,6 +313,7 @@ public class VCreacion extends JFrame implements IVista {
         btnIniciar.setFont(fuenteBold);
         btnIniciar.setFocusPainted(false);
         contentPane.add(panelComienzo, BorderLayout.SOUTH);
+        btnIniciar.setEnabled(false);
     }
 
     @Override
@@ -344,14 +346,29 @@ public class VCreacion extends JFrame implements IVista {
         return seleccionado;
     }
 
-    public void actualizarListaTripulantes(Tripulante tripulante) {
+    public void agregarTripulanteDisponible(Tripulante tripulante) {
+
         this.modeloDisponibles.addElement(tripulante);
     }
 
+    public void habilitaIniciarJuego(){
+        this.btnIniciar.setEnabled(true);
+    }
+
+    public void habilitaAsignarTripulante(){
+        this.btnAsignar.setEnabled(true);
+    }
+
     public Tripulante getTripulanteSeleccionado() {
-        Tripulante tripulante = this.listaDisponibles.getSelectedValue();
+        return this.listaDisponibles.getSelectedValue();
+    }
+
+    public void quitarTripulanteDisponible(Tripulante tripulante) {
         this.modeloDisponibles.removeElement(tripulante);
-        return tripulante;
+    }
+
+    public void mostrarMensaje(String mensaje) {
+        JOptionPane.showMessageDialog(this, mensaje);
     }
 
     public String getNombreTripulante() {

@@ -1,18 +1,10 @@
 package vistas;
 
-import modelo.tripulacion.Tripulante;
-
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import static vistas.Estilo.*;
@@ -29,7 +21,7 @@ public class VTripulantes extends JFrame implements IVista {
     private JPanel panelTabla;
 
     public VTripulantes() {
-        setSize(850, 500);
+        setSize(950, 650);
         setResizable(false);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -103,5 +95,6 @@ public class VTripulantes extends JFrame implements IVista {
         this.modeloTabla.addRow(tripulante);
 
     }
+
 }
 

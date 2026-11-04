@@ -1,6 +1,8 @@
 package modelo.universo;
 
 import java.util.ArrayList;
+
+import modelo.excepciones.TripulanteRepetidoException;
 import modelo.nave.AsistenteComando;
 import modelo.tripulacion.Tripulante;
 
@@ -31,8 +33,11 @@ public class Universo {
         return null;
     }
 
-    public void agregarTripulanteDisponible(Tripulante tripulante) {
-        this.tripulantesDisponibles.add(tripulante);
+    public void agregarTripulanteDisponible(Tripulante tripulante) throws TripulanteRepetidoException {
+            if (tripulantesDisponibles.contains(tripulante))
+                throw new TripulanteRepetidoException(("El tripulante ya esta en la lista"));
+
+            this.tripulantesDisponibles.add(tripulante);
     }
 
     public void quitarTripulanteDisponible(Tripulante tripulante) {

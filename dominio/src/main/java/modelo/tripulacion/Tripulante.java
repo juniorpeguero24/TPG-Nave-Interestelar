@@ -1,5 +1,6 @@
 package modelo.tripulacion;
 
+import modelo.excepciones.TripulanteInvalidoException;
 import modelo.haberes.AdicionalConsejeros;
 import modelo.haberes.Antiguedad;
 import modelo.haberes.Liquidacion;
@@ -15,18 +16,18 @@ public class Tripulante {
     private final Origen planetaOrigen;
     private int cantidadConsejos;
 
-    public Tripulante(int antiguedad, String nombre, Cargo cargo, Origen planetaOrigen) {
+    public Tripulante(int antiguedad, String nombre, Cargo cargo, Origen planetaOrigen) throws TripulanteInvalidoException {
         if (antiguedad < 0) {
-            throw new IllegalArgumentException("La antiguedad no puede ser negativa");
+            throw new TripulanteInvalidoException("La antiguedad no puede ser negativa");
         }
-        if (nombre == null || nombre.isBlank()) {
-            throw new IllegalArgumentException("El nombre no puede ser nulo ni vacio");
+        if (nombre == null || nombre.isBlank() || nombre.length() < 3 || nombre.length() > 15) {
+            throw new TripulanteInvalidoException("Nombre invalido");
         }
         if (cargo == null) {
-            throw new IllegalArgumentException("El cargo no puede ser nulo");
+            throw new TripulanteInvalidoException("El cargo no puede ser nulo");
         }
         if (planetaOrigen == null) {
-            throw new IllegalArgumentException("El origen no puede ser nulo");
+            throw new TripulanteInvalidoException("El origen no puede ser nulo");
         }
 
         this.id = identificadores++;
@@ -71,6 +72,22 @@ public class Tripulante {
 
     public Origen getPlanetaOrigen() {
         return planetaOrigen;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Tripulante tripulante = (Tripulante) o;
+        return this.hashCode() == tripulante.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + this.cargo.hashCode();
+        hash = 17 * hash + this.nombre.hashCode();
+        hash = 7  * hash + this.antiguedad;
+        hash = 3 * hash + this.planetaOrigen.hashCode();
+        return hash;
     }
 
     @Override
