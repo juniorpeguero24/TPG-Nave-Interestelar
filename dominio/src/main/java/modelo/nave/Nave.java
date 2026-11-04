@@ -28,6 +28,7 @@ public abstract class Nave implements ElementoDelUniverso {
     private RadarLargoAlcance radarLargoAlcance;
     private final List<ObservadorNave> observadores = new ArrayList<>();
     private RadarCortoAlcance radarCortoAlcance;
+    private int gemas;
 
 
     public Nave( String nombre,int combustible,int energia) {
@@ -243,6 +244,18 @@ public abstract class Nave implements ElementoDelUniverso {
         for (ObservadorNave observador : observadores) {
             observador.actualizarNave(this);
         }
+    }
+
+    public int getGemas() {
+        return gemas;
+    }
+
+    public void agregarGemas(int cantidad) throws OperacionRecursoInvalidaExcepcion {
+        if (cantidad <= 0) {
+            throw new OperacionRecursoInvalidaExcepcion("La cantidad de gemas debe ser positiva");
+        }
+        gemas += cantidad;
+        notificarObservadores();
     }
 
 }

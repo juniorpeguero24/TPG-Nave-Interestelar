@@ -18,3 +18,84 @@ Este proyecto sigue una organización por dominios para mantener la lógica de n
 - DIP (Dependency Inversion Principle): el dominio depende de abstracciones y no de implementaciones concretas, favoreciendo la flexibilidad y la prueba unitaria.
 
 En conjunto, el diseño busca un equilibrio entre claridad, extensibilidad y separación de responsabilidades.
+
+
+<br><br>
+
+# Entrega 2: operación dentro de un universo dinámico
+
+En la segunda entrega el núcleo de la Entrega 1 se integra con el tablero y el
+`Destino` provistos por la cátedra, se agrega una interfaz gráfica en Swing, un
+módulo de concurrencia y la persistencia de usuarios. Se continúa el mismo
+proyecto: las clases de la Entrega 1 se amplían, no se reemplazan.
+
+## Arquitectura general
+
+El sistema se organiza en capas con responsabilidades separadas:
+
+| Capa | Paquetes | Responsabilidad |
+| --- | --- | --- |
+| Vista | `vistas` | Mostrar datos y capturar eventos del usuario (Swing). Sin lógica de negocio. |
+| Controlador | `controlador` | Traducir los eventos de la vista en operaciones del modelo y coordinar la respuesta. |
+| Modelo | `modelo.nave`, `modelo.mision`, `modelo.tripulacion`, `modelo.universo`, `modelo.tablero`, `modelo.bitacora`, `modelo.haberes`, `modelo.motorwarp` | Lógica de negocio y reglas del dominio. No conoce Swing. |
+| Concurrencia | `modelo.concurrencia` | Simulación del universo paralelo (productores y consumidores). |
+| Persistencia | `modelo.persistencia` | Acceso a datos de usuarios (DAO y DTO sobre H2). |
+| Observadores | `observer` | Interfaces para las actualizaciones automáticas del modelo hacia la vista. |
+
+El punto de entrada es `Main`, que inicializa la base de datos, arma el tablero
+y el `Destino`, e inicia la pantalla de acceso.
+
+## Decisiones de diseño incorporadas
+
+- **Separación MVC y Observer.** Las acciones del usuario siguen el recorrido
+  vista, `ActionListener`, controlador y modelo. Los cambios que genera el modelo
+  por su cuenta (recursos de la nave, bitácora, informes de misión y eventos de
+  la plataforma) llegan a la vista mediante Observer, de modo que el dominio solo
+  conoce interfaces y no clases de Swing.
+- **Integración con el tablero de la cátedra.** `Mision` conserva el método
+  plantilla del Template Method y se amplía con el ciclo de travesía por turnos:
+  el radar de largo alcance calcula la ruta, la nave inspecciona su casilla e
+  interactúa con el elemento que encuentre, escanea con el radar de corto
+  alcance, se mueve y luego el `Destino` mueve los elementos del universo.
+  La nave, los asteroides y las estaciones de carga implementan
+  `ElementoDelUniverso`, por lo que el tablero los trata de forma uniforme.
+- **Encuentros entre naves con Double Dispatch.** El resultado depende solo del
+  tipo de cada nave. Se eliminan los condicionales por tipo y agregar un tipo de
+  nave obliga a resolver su comportamiento frente a los demás.
+- **Concurrencia con monitores.** La `PlataformaDeCarga` es el monitor del
+  problema Productor-Consumidor. Las pausas de la simulación se ubican en los
+  hilos y no dentro de los métodos sincronizados, para no mantener tomado el
+  monitor mientras un hilo duerme.
+- **Persistencia con DAO y DTO.** Solo se persisten las credenciales de los
+  usuarios. El controlador depende de la interfaz `IUsuarioDAO`, de modo que la
+  base de datos puede reemplazarse sin modificarlo.
+- **Manejo de errores.** Además de las excepciones de la Entrega 1 se agregaron
+  excepciones propias (`NaveInvalidaException`, `TripulanteInvalidoException`,
+  `TripulanteRepetidoException`, `CapitanExistenteException`). Las validaciones
+  de formato se hacen en la vista y el controlador, las reglas de negocio en el
+  dominio y las consultas en el DAO.
+
+## Principios SOLID en la Entrega 2
+
+- **SRP:** cada capa tiene una responsabilidad; los controladores coordinan, las
+  vistas muestran y el modelo decide.
+- **OCP:** se pueden agregar nuevos elementos del universo implementando
+  `ElementoDelUniverso`, nuevos observadores implementando una interfaz de
+  `observer`, o nuevas vistas, sin modificar los sujetos.
+- **LSP:** `Nave`, `Asteroide` y `EstacionCarga` pueden usarse indistintamente
+  donde se espera un `ElementoDelUniverso`.
+- **ISP:** las interfaces de observador declaran un único método, específico de
+  lo que cada sujeto notifica.
+- **DIP:** `ControladorAcceso` depende de `IUsuarioDAO` y el modelo depende de
+  interfaces de observador, no de clases concretas de la interfaz gráfica.
+
+## Bibliotecas externas
+
+- **H2 (`com.h2database:h2` 2.3.232):** base de datos embebida en archivo. Se
+  eligió para que todos los integrantes trabajen sin instalar un servidor ni
+  usar credenciales personales.
+- **`org.jetbrains:annotations`:** anotaciones de uso en el IDE.
+
+## Limitaciones conocidas y trabajo futuro
+
+- Las contraseñas se almacenan sin hash.

@@ -16,6 +16,7 @@ import modelo.universo.Ruta;
 import observer.ObservadorMision;
 
 public abstract class Mision {
+    private static final int PAUSA_TURNO_MS = 500;
     private final String nombre;
     private int combustibleConsumido, energiaConsumida, desgasteGenerado;
     protected ResultadoMision resultado;
@@ -55,6 +56,7 @@ public abstract class Mision {
             preparar(asistente);
             ejecutar(asistente);
             evaluar(asistente);
+            cerrar(asistente);
         } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion e) {
             this.resultado = ResultadoMision.FALLO;
             observaciones.add(e.getMessage());
@@ -68,8 +70,25 @@ public abstract class Mision {
             throw new TripulacionInvalidaExcepcion("No se puede realizar una mision con una tripulacion invalida");
         }
         asistente.registrarEvento(new Evento(TipoEvento.MISION, "Iniciando preparativos de misión: " + nombre));
+
+        // Se verifica todo junto antes de consumir nada: si falta algo, no queda ningun cambio parcial.
+        int energiaInicial = getEnergiaInicial();
+        asistente.verificarDisponibilidadRecursos(
+                CostosMision.COSTO_BASE_COMBUSTIBLE,
+                energiaInicial + CostosMision.COSTO_RADAR_LARGO,
+                CostosMision.COSTO_BASE_DESGASTE);
+
+        asistente.consumirCombustible(CostosMision.COSTO_BASE_COMBUSTIBLE);
+        if (energiaInicial > 0) {
+            asistente.consumirEnergia(energiaInicial);
+        }
+        asistente.aumentarDesgaste(CostosMision.COSTO_BASE_DESGASTE);
+        sumarCombustibleConsumido(CostosMision.COSTO_BASE_COMBUSTIBLE);
+        sumarEnergiaConsumida(energiaInicial);
+        sumarDesgasteGenerado(CostosMision.COSTO_BASE_DESGASTE);
+
         Posicion origen = tablero.getPosicionNave();
-        this.objetivo = tablero.obtenerObjetivo();
+        this.objetivo = elegirObjetivo(origen);
         ruta = asistente.usarRadarLargoAlcance(origen, this.objetivo);
         energiaConsumida += CostosMision.COSTO_RADAR_LARGO;
     }
@@ -109,21 +128,46 @@ public abstract class Mision {
             if (asistente.naveDestruida()) {
                 break;
             }
-            elemento = tablero.inspeccionarPosicion();
-            if (elemento != null) {
-                asistente.interactuarCon(elemento);
-            }
-            if (asistente.naveDestruida()) {
-                break;
-            }
-
 
             // 4. Turno del universo
             destino.turnoDestino();
+            try {
+                Thread.sleep(PAUSA_TURNO_MS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                agregarObservacion("Misión interrumpida");
+                break;
+            }
+        }
+        if (!asistente.naveDestruida()) {
+            ElementoDelUniverso elementoFinal = tablero.inspeccionarPosicion();
+            if (elementoFinal != null) {
+                asistente.interactuarCon(elementoFinal);
+            }
         }
     }
 
     protected abstract void evaluar(AsistenteComando asistente);
+
+    // Cierre: las misiones lo redefinen para entregar o recibir recursos y llaman a super.cerrar.
+    protected void cerrar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
+        if (asistente.naveDestruida()) {
+            agregarObservacion("La nave fue destruida durante la misión");
+        } else if (resultado == ResultadoMision.EXITO) {
+            asistente.registrarEvento(new Evento(TipoEvento.MISION, "Misión cumplida: " + nombre));
+        } else {
+            agregarObservacion("La misión no alcanzó su objetivo");
+        }
+    }
+
+    // Energia extra que consume la mision al comenzar (segun el anexo).
+    protected abstract int getEnergiaInicial();
+
+    // Por defecto el objetivo lo sortea el tablero;
+    // M-03 lo redefine.
+    protected Posicion elegirObjetivo(Posicion origen) {
+        return tablero.obtenerObjetivo();
+    }
 
     protected InformeMision finalizar(AsistenteComando asistente) {
         

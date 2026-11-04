@@ -28,6 +28,7 @@ public class ControladorNave extends WindowAdapter implements ActionListener
     private final Navegador navegador;
     private Destino destino;
     private Tablero tablero;
+    private boolean misionEnCurso = false;
 
     public ControladorNave(Universo universo, VControlNave controlNave, Navegador nav, Destino destino, Tablero tablero) {
 
@@ -77,7 +78,6 @@ public class ControladorNave extends WindowAdapter implements ActionListener
 
            mision.añadirObservador(this.controlNave);
            mision.realizarMision(this.asistenteComando);
-
     }
 
     private void vistaTripulantes() {
