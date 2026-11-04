@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.util.ArrayList;
 
 public class ControladorTripulantes extends WindowAdapter implements ActionListener {
+
     private final VTripulantes vTripulantes;
     private final Navegador navegador;
     private final AsistenteComando asistenteComando;
@@ -31,7 +32,20 @@ public class ControladorTripulantes extends WindowAdapter implements ActionListe
 
     public void setTablaTripulantes() {
         ArrayList<Tripulante> tripulantes = asistenteComando.getTripulantes();
-        this.vTripulantes.setTablaTripulantes(tripulantes);
-    }
 
+        String nombre, cargo, origen;
+        double salario;
+        int antiguedad;
+
+        for (Tripulante tripulante : tripulantes) {
+            nombre = tripulante.getNombre();
+            cargo = tripulante.getCargo().name();
+            origen = tripulante.getPlanetaOrigen().name();
+            antiguedad = tripulante.getAntiguedad();
+            salario = tripulante.liquidarHaberes().calcularTotal();
+
+            this.vTripulantes.setTablaTripulantes(new Object[]{nombre, cargo, origen, antiguedad, salario});
+        }
+
+    }
 }

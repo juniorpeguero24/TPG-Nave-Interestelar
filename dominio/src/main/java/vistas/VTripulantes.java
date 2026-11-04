@@ -5,7 +5,6 @@ import modelo.tripulacion.Tripulante;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -55,12 +54,6 @@ public class VTripulantes extends JFrame implements IVista {
 
         modeloTabla = new DefaultTableModel(columnas, 0);
 
-       /* COMO SE AGREGA UN TRIPULANTE A LA TABLA:
-      
-           modelo.addRow(new Object[] {
-                "NOMBRE", "CARGO", "ORIGEN", ANTIGUEDAD, SALARIO
-            }); */
-
         tablaTripulantes = new JTable(modeloTabla);
         		
         tablaTripulantes.setBackground(fondoPanel);
@@ -105,19 +98,10 @@ public class VTripulantes extends JFrame implements IVista {
         this.btnVolver.addActionListener(c);
     }
 
-    public void setTablaTripulantes(ArrayList<Tripulante> tripulantes) {
-        String nombre, cargo, origen;
-        Double salario;
-        int antiguedad;
+    public void setTablaTripulantes(Object[] tripulante) {
 
-        for(Tripulante tripulante : tripulantes) {
-            nombre = tripulante.getNombre();
-            cargo = tripulante.getCargo().name();
-            origen = tripulante.getPlanetaOrigen().name();
-            antiguedad = tripulante.getAntiguedad();
-            salario = tripulante.liquidarHaberes().calcularTotal();
-            modeloTabla.addRow(new Object[]{nombre, cargo, origen, antiguedad, salario});
-        }
+        this.modeloTabla.addRow(tripulante);
+
     }
 }
 
