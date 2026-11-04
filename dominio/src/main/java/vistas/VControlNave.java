@@ -401,4 +401,8 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
             modeloInformes.addElement(linea);
         }
     }
+    
+    public void mostrarMensaje(String mensaje) {
+            JOptionPane.showMessageDialog(this, mensaje);
+    }
 }

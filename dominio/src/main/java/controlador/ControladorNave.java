@@ -74,7 +74,12 @@ public class ControladorNave extends WindowAdapter implements ActionListener
            } else if (NombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
                mision = new Mision03(destino, tablero);
            }
-
+            
+           if (asistenteComando.naveDestruida()) {
+               controlNave.mostrarMensaje("No se puede iniciar una misión con la nave destruida");
+               return;
+           }
+           
            mision.añadirObservador(this.controlNave);
            mision.realizarMision(this.asistenteComando);
 
