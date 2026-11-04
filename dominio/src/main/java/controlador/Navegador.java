@@ -17,9 +17,9 @@ public class Navegador {
     private Destino destino;
     private Tablero tablero;
 
-    public Navegador(VAcceso acceso, VCreacion creacion, Destino destino, Tablero tablero){
+    public Navegador(VAcceso acceso, Destino destino, Tablero tablero){
         this.acceso = acceso;
-        this.creacion = creacion;
+        this.creacion = null;
         this.control = null;
         this.tripulantes = null;
         this.visor = null;
@@ -32,6 +32,9 @@ public class Navegador {
         if  (this.creacion == null) {
             this.creacion = new VCreacion();
             ControladorCreacion controladorCreacion = new ControladorCreacion(universo, creacion, this);
+
+            acceso.setVisible(false);
+            creacion.setVisible(true);
         }
         acceso.setVisible(false);
         creacion.setVisible(true);
@@ -53,10 +56,13 @@ public class Navegador {
         }
     }
 
-    public void mostrarTripulantes() {
+    public void mostrarTripulantes(AsistenteComando asistenteComando) {
         if (tripulantes == null) {
             this.tripulantes = new VTripulantes();
-            /*ControladorTripulantes = .... */
+            ControladorTripulantes controladorTripulantes = new ControladorTripulantes(asistenteComando, tripulantes, this);
+
+            controladorTripulantes.setTablaTripulantes();
+
             control.setVisible(false);
             tripulantes.setVisible(true);
         } else {

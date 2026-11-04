@@ -1,5 +1,8 @@
 package controlador;
 
+import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
+import modelo.excepciones.RecursoInsuficienteExcepcion;
+import modelo.excepciones.TripulacionInvalidaExcepcion;
 import modelo.mision.Mision;
 import modelo.mision.Mision01;
 import modelo.mision.Mision02;
@@ -59,27 +62,26 @@ public class ControladorNave extends WindowAdapter implements ActionListener
     }
 
     public void iniciarMision(){
-        String NombreMision = this.controlNave.getMisionSeleccionada();
 
-        Mision mision = null;
+           String NombreMision = this.controlNave.getMisionSeleccionada();
 
-        if (NombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
-             mision = new Mision01(destino, tablero);
-        }
-        else if (NombreMision.equalsIgnoreCase("M-02 (Recolección)"))
-        {
-             mision = new Mision02(destino, tablero);
-        }
-        else if (NombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")){
-             mision = new Mision03(destino, tablero);
-        }
+           Mision mision = null;
 
-        mision.añadirObservador(this.controlNave);
-        mision.realizarMision(this.asistenteComando);
+           if (NombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
+               mision = new Mision01(destino, tablero);
+           } else if (NombreMision.equalsIgnoreCase("M-02 (Recolección)")) {
+               mision = new Mision02(destino, tablero);
+           } else if (NombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
+               mision = new Mision03(destino, tablero);
+           }
+
+           mision.añadirObservador(this.controlNave);
+           mision.realizarMision(this.asistenteComando);
+
     }
 
     private void vistaTripulantes() {
-        navegador.mostrarTripulantes();
+        navegador.mostrarTripulantes(this.asistenteComando);
     }
 
     private void vistaVisorRecondito() {

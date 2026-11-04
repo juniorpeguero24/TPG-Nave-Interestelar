@@ -1,6 +1,7 @@
 import controlador.ControladorAcceso;
 import controlador.ControladorCreacion;
 import controlador.Navegador;
+import modelo.excepciones.NaveInvalidaException;
 import modelo.universo.Universo;
 import vistas.VCreacion;
 import modelo.tablero.Tablero;
@@ -28,8 +29,8 @@ public class Main {
         }
                 
         // Creacion del tablero
-        int cantFilas = 10;
-        int cantColumnas = 10;
+        int cantFilas = 5;
+        int cantColumnas = 5;
         ArrayList<ElementoDelUniverso> elementos = new ArrayList<>();
 
         elementos.add(new Asteroide(5));
@@ -37,9 +38,13 @@ public class Main {
         elementos.add(new Asteroide(2));
         elementos.add(new EstacionCarga(5, 5));
         elementos.add(new EstacionCarga(5, 3));
-        elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
-        elementos.add(NaveFactory.crearNave("Enemiga 2", "combate")); 
-        elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));  
+        try {
+            elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
+            elementos.add(NaveFactory.crearNave("Enemiga 2", "combate"));
+            elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));
+        }
+        catch (NaveInvalidaException e){
+        }
 
         Tablero tablero;
         try {
@@ -61,7 +66,7 @@ public class Main {
 
         // CONTROLADORES
 
-        Navegador navegador = new Navegador(vAcceso, null, destino, tablero);
+        Navegador navegador = new Navegador(vAcceso, destino, tablero);
         new ControladorAcceso(vAcceso, navegador, universo);
 
 

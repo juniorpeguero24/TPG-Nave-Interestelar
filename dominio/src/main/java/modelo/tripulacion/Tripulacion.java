@@ -1,5 +1,8 @@
 package modelo.tripulacion;
 
+import modelo.excepciones.CapitanExistenteException;
+import modelo.excepciones.TripulanteInvalidoException;
+import modelo.excepciones.TripulanteRepetidoException;
 import modelo.haberes.Liquidacion;
 
 import java.util.ArrayList;
@@ -11,15 +14,15 @@ public class Tripulacion {
         this.tripulantes = new ArrayList<>();
     }
 
-    public void agregarTripulante(Tripulante tripulante) {
+    public void agregarTripulante(Tripulante tripulante) throws CapitanExistenteException, TripulanteRepetidoException, TripulanteInvalidoException {
         if (tripulante == null) {
-            throw new IllegalArgumentException("El tripulante no puede ser nulo");
+            throw new TripulanteInvalidoException("El tripulante no puede ser nulo");
         }
         if (tripulantes.contains(tripulante)) {
-            throw new IllegalArgumentException("El tripulante ya pertenece a la tripulacion");
+            throw new TripulanteRepetidoException("El tripulante ya pertenece a la tripulacion");
         }
         if (tripulante.getCargo() == Cargo.CAPITAN && tieneCapitan()) {
-            throw new IllegalArgumentException("Ya existe un capitan en la tripulacion");
+            throw new CapitanExistenteException("Ya existe un capitan en la tripulacion");
         }
 
         tripulantes.add(tripulante);

@@ -1,5 +1,9 @@
 package controlador;
 
+import modelo.excepciones.CapitanExistenteException;
+import modelo.excepciones.NaveInvalidaException;
+import modelo.excepciones.TripulanteInvalidoException;
+import modelo.excepciones.TripulanteRepetidoException;
 import modelo.nave.AsistenteComando;
 import modelo.nave.Nave;
 import modelo.nave.NaveFactory;
@@ -16,6 +20,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
+import java.util.Objects;
 
 public class ControladorCreacion extends WindowAdapter implements ActionListener
 {
@@ -43,50 +48,77 @@ public class ControladorCreacion extends WindowAdapter implements ActionListener
         else if  (comando.equalsIgnoreCase("iniciar")) {
             iniciarJuego();
         }
-     /*   else if (comando.equalsIgnoreCase("asignar")) {
+        else if (comando.equalsIgnoreCase("asignar a nave")) {
             asignarTripulante();
-        }*/
+        }
     }
 
     private void crearNave(){
-        String nombre = this.vCreacion.getNombreNave();
-        String tipo = this.vCreacion.getTipoNave();
 
-        Nave nave = NaveFactory.crearNave(nombre, tipo);
+        try {
+            String nombre = this.vCreacion.getNombreNave();
+            String tipo = this.vCreacion.getTipoNave();
 
-        if (nave!=null) {
+            Nave nave = NaveFactory.crearNave(nombre, tipo);
 
-            this.asistenteComando = new AsistenteComando(nave);
+            if (nave != null) {
 
-            universo.registrarAsistente(this.asistenteComando);
-            universo.seleccionarNave(nombre);
+                this.asistenteComando = new AsistenteComando(nave);
 
-            this.vCreacion.setDatosNaveCreada(nombre, tipo);
+                universo.registrarAsistente(this.asistenteComando);
+                universo.seleccionarNave(nombre);
+
+                this.vCreacion.setDatosNaveCreada(nombre, tipo);
+                this.vCreacion.habilitaAsignarTripulante();
+            }
         }
-
+        catch (NaveInvalidaException e){
+            this.vCreacion.mostrarMensaje(e.getMessage());
+        }
     }
-
 
     private void crearTripulante() {
-        String nombre = this.vCreacion.getNombreTripulante();
-        Origen origen = Origen.valueOf(this.vCreacion.getOrigenTripulante());
-        int antiguedad = this.vCreacion.getAntiguedadTripulante();
-        Cargo cargo =  Cargo.valueOf(this.vCreacion.getCargoTripulante());
 
-        Tripulante tripulante = new Tripulante(antiguedad,nombre, cargo,origen);
+        try{
+           String nombre = this.vCreacion.getNombreTripulante();
+           int antiguedad = this.vCreacion.getAntiguedadTripulante();
+           Origen origen = Origen.valueOf(this.vCreacion.getOrigenTripulante());
+           Cargo cargo = Cargo.valueOf(this.vCreacion.getCargoTripulante());
 
-        asistenteComando.agregarTripulante(tripulante);
-        /* falta agregarlo en algun arraylist del modelo y actualizar la lista de la vista */
+           Tripulante tripulante = new Tripulante(antiguedad, nombre, cargo, origen);
+
+           universo.agregarTripulanteDisponible(tripulante);
+
+           this.vCreacion.agregarTripulanteDisponible(tripulante);
+       }
+
+        catch (NumberFormatException e)  {
+            this.vCreacion.mostrarMensaje("Antiguedad invalida");
+        }
+        catch (TripulanteInvalidoException | TripulanteRepetidoException e) {
+           this.vCreacion.mostrarMensaje(e.getMessage());
+        }
+
+
     }
 
-    /*private void asignarTripulante(){
+    private void asignarTripulante(){
         Tripulante tripulante = this.vCreacion.getTripulanteSeleccionado();
-        asistenteComando.agregarTripulante(tripulante);
-    }*/
+        try {
+            asistenteComando.agregarTripulante(tripulante);
+
+            universo.quitarTripulanteDisponible(tripulante);
+            this.vCreacion.quitarTripulanteDisponible(tripulante);
+
+            if (asistenteComando.tieneTripulacionValida())
+                this.vCreacion.habilitaIniciarJuego();
+        }
+        catch(CapitanExistenteException | TripulanteRepetidoException | TripulanteInvalidoException e){
+            this.vCreacion.mostrarMensaje(e.getMessage());
+        }
+    }
 
     private void iniciarJuego(){
-        AsistenteComando asistente = universo.getAsistenteEnOperacion();
-
         navegador.iniciarJuego(universo);
     }
 

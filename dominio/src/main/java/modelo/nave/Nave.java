@@ -3,8 +3,7 @@ package modelo.nave;
 import java.util.ArrayList;
 import java.util.List;
 
-import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
-import modelo.excepciones.RecursoInsuficienteExcepcion;
+import modelo.excepciones.*;
 import modelo.bitacora.Evento;
 import modelo.motorwarp.MotorWarp;
 import modelo.tripulacion.Tripulacion;
@@ -73,7 +72,7 @@ public abstract class Nave implements ElementoDelUniverso {
     }
     
     // Operaciones delegadas sobre Tripulacion
-    public void agregarTripulante(Tripulante tripulante) {
+    public void agregarTripulante(Tripulante tripulante) throws CapitanExistenteException, TripulanteRepetidoException, TripulanteInvalidoException {
         this.tripulacion.agregarTripulante(tripulante);
     }
 
@@ -204,11 +203,13 @@ public abstract class Nave implements ElementoDelUniverso {
     // Metodos usados para las Misiones
     public Ruta usarRadarLargoAlcance(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirEnergia(CostosMision.COSTO_RADAR_LARGO);
+        notificarObservadores();
         return radarLargoAlcance.calcularRuta(origen, destino);
     }
     
     public ElementoDelUniverso[][] usarRadarCortoAlcance(Tablero tablero) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirEnergia(CostosMision.COSTO_RADAR_CORTO);
+        notificarObservadores();
         return radarCortoAlcance.escanear(tablero);
     }
     
@@ -221,6 +222,7 @@ public abstract class Nave implements ElementoDelUniverso {
     
     public Ruta recalcularRuta(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirEnergia(CostosMision.COSTO_RECALCULO);
+        notificarObservadores();
         return radarLargoAlcance.calcularRuta(origen, destino);
     }
 

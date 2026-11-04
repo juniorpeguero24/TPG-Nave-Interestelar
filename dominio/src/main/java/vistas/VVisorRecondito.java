@@ -186,4 +186,8 @@ public class VVisorRecondito extends JFrame implements IVista, ObservadorPlatafo
 	public int getTiempo(){
 		return Integer.parseInt(this.txtTiempo.getText());
 	}
+
+	public void mostrarMensaje(String mensaje) {
+		JOptionPane.showMessageDialog(this, mensaje);
+	}
 }

@@ -1,5 +1,7 @@
 package vistas;
 
+import modelo.tripulacion.Tripulante;
+
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
@@ -42,8 +44,8 @@ public class VCreacion extends JFrame implements IVista {
     private JButton btnAsignar;
     private JButton btnIniciar;
 
-    private JList<String> listaDisponibles;
-    private DefaultListModel<String> modeloDisponibles;
+    private JList<Tripulante> listaDisponibles;
+    private DefaultListModel<Tripulante> modeloDisponibles;
 
     private JRadioButton rdbtnCarguero;
     private JRadioButton rdbtnExploradora;
@@ -57,7 +59,7 @@ public class VCreacion extends JFrame implements IVista {
     public VCreacion() {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 900, 560);
+        setBounds(100, 100, 1700, 700);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -283,6 +285,7 @@ public class VCreacion extends JFrame implements IVista {
         btnAsignar.setForeground(fondo);
         btnAsignar.setFont(fuenteBold);
         btnAsignar.setFocusPainted(false);
+        btnAsignar.setEnabled(false);
 
         panelDisponibles.add(scrollDisponibles, BorderLayout.CENTER);
         panelDisponibles.add(btnAsignar, BorderLayout.SOUTH);
@@ -310,6 +313,7 @@ public class VCreacion extends JFrame implements IVista {
         btnIniciar.setFont(fuenteBold);
         btnIniciar.setFocusPainted(false);
         contentPane.add(panelComienzo, BorderLayout.SOUTH);
+        btnIniciar.setEnabled(false);
     }
 
     @Override
@@ -340,6 +344,31 @@ public class VCreacion extends JFrame implements IVista {
             seleccionado = "Exploradora";
         }
         return seleccionado;
+    }
+
+    public void agregarTripulanteDisponible(Tripulante tripulante) {
+
+        this.modeloDisponibles.addElement(tripulante);
+    }
+
+    public void habilitaIniciarJuego(){
+        this.btnIniciar.setEnabled(true);
+    }
+
+    public void habilitaAsignarTripulante(){
+        this.btnAsignar.setEnabled(true);
+    }
+
+    public Tripulante getTripulanteSeleccionado() {
+        return this.listaDisponibles.getSelectedValue();
+    }
+
+    public void quitarTripulanteDisponible(Tripulante tripulante) {
+        this.modeloDisponibles.removeElement(tripulante);
+    }
+
+    public void mostrarMensaje(String mensaje) {
+        JOptionPane.showMessageDialog(this, mensaje);
     }
 
     public String getNombreTripulante() {

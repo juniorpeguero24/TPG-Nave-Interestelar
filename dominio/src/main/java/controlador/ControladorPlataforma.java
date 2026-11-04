@@ -1,6 +1,7 @@
 package controlador;
 
 import modelo.concurrencia.*;
+import modelo.excepciones.NaveInvalidaException;
 import vistas.VVisorRecondito;
 import vistas.VControlNave;
 
@@ -34,14 +35,11 @@ public class ControladorPlataforma extends WindowAdapter implements ActionListen
             if (comando.equalsIgnoreCase("VOLVER")) {
                 volverAlControl();
             } else {
-                String nombreNave = this.VVisor.getNombreNave();
-                int tiempo = this.VVisor.getTiempo();
-
                 if (comando.equalsIgnoreCase("NaveConsu")) {
-                    iniciarNave(new NaveConsumidora(nombreNave, this.plataforma, tiempo));
+                    iniciarNaveConsu();
                 } else
                     if (comando.equalsIgnoreCase("NaveGen")) {
-                        iniciarNave(new GeneradoraDeEnergia(nombreNave, this.plataforma, tiempo));
+                        iniciarNaveGen();
                     }
                     else
                         if  (comando.equalsIgnoreCase("detener")) {
@@ -50,11 +48,44 @@ public class ControladorPlataforma extends WindowAdapter implements ActionListen
             }
         }
 
-        private void iniciarNave(Runnable nave) {
-            Thread hilo = new Thread(nave);
-            hilo.setDaemon(true);
-            this.hilosNaves.add(hilo);
-            hilo.start();
+        private void iniciarNaveConsu() {
+           try {
+               String nombreNave = this.VVisor.getNombreNave();
+               int tiempo = this.VVisor.getTiempo();
+
+               NaveConsumidora consumidora = new NaveConsumidora(nombreNave, this.plataforma, tiempo);
+
+               Thread hilo = new Thread(consumidora);
+               hilo.setDaemon(true);
+               this.hilosNaves.add(hilo);
+               hilo.start();
+           }
+           catch (NumberFormatException e){
+               this.VVisor.mostrarMensaje("No se pudo crear la nave");
+           }
+           catch (NaveInvalidaException e){
+               this.VVisor.mostrarMensaje(e.getMessage());
+           }
+        }
+
+        private void iniciarNaveGen() {
+            try {
+                String nombreNave = this.VVisor.getNombreNave();
+                int tiempo = this.VVisor.getTiempo();
+
+                GeneradoraDeEnergia generadora = new GeneradoraDeEnergia(nombreNave, this.plataforma, tiempo);
+
+                Thread hilo = new Thread(generadora);
+                hilo.setDaemon(true);
+                this.hilosNaves.add(hilo);
+                hilo.start();
+            }
+            catch (NumberFormatException e){
+                this.VVisor.mostrarMensaje("No se pudo crear la nave");
+            }
+            catch (NaveInvalidaException e){
+                this.VVisor.mostrarMensaje(e.getMessage());
+            }
         }
 
         private void detenerNaves() {

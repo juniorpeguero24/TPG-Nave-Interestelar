@@ -4,13 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import static vistas.Estilo.*;
@@ -21,13 +15,13 @@ public class VTripulantes extends JFrame implements IVista {
     private JButton btnVolver;
     private JLabel lblTitulo;
     private JPanel panelTitulo;
-    private DefaultTableModel modelo;
+    private DefaultTableModel modeloTabla;
     private JScrollPane scrollTripulantes;
     private JPanel panelBotones;
     private JPanel panelTabla;
 
     public VTripulantes() {
-        setSize(850, 500);
+        setSize(950, 650);
         setResizable(false);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -50,15 +44,9 @@ public class VTripulantes extends JFrame implements IVista {
             "Nombre", "Cargo", "Origen", "Antiguedad", "Salario"
         };
 
-        modelo = new DefaultTableModel(columnas, 0);
+        modeloTabla = new DefaultTableModel(columnas, 0);
 
-       /* COMO SE AGREGA UN TRIPULANTE A LA TABLA:
-      
-           modelo.addRow(new Object[] {
-                "NOMBRE", "CARGO", "ORIGEN", ANTIGUEDAD, SALARIO
-            }); */
-
-        tablaTripulantes = new JTable(modelo);
+        tablaTripulantes = new JTable(modeloTabla);
         		
         tablaTripulantes.setBackground(fondoPanel);
         tablaTripulantes.setForeground(blanco);
@@ -99,7 +87,14 @@ public class VTripulantes extends JFrame implements IVista {
     
     @Override
     public void setActionListener(ActionListener c){
+        this.btnVolver.addActionListener(c);
+    }
+
+    public void setTablaTripulantes(Object[] tripulante) {
+
+        this.modeloTabla.addRow(tripulante);
 
     }
+
 }
 
