@@ -33,6 +33,8 @@ public class Navegador {
             this.creacion = new VCreacion();
             ControladorCreacion controladorCreacion = new ControladorCreacion(universo, creacion, this);
         }
+        acceso.setVisible(false);
+        creacion.setVisible(true);
     }
 
     public void iniciarJuego(Universo universo) {
