@@ -18,9 +18,10 @@ public class Mision03 extends Mision {
     @Override
     protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
         super.ejecutar(asistente);
-
-        agregarAccionPrincipal("Ejecutando maniobra de retorno");
-        this.regresoCompletado = true;
+        if (llegoAlObjetivo(asistente)) {
+            agregarAccionPrincipal("Ejecutando maniobra de retorno");
+            this.regresoCompletado = true;
+        }
     }
 
     @Override

@@ -18,7 +18,6 @@ import modelo.tripulacion.Tripulante;
 import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
 import observer.ObservadorNave;
-import observer.ObservadorPlataforma;
 
 public abstract class Nave implements ElementoDelUniverso {
     private String nombre;
@@ -50,7 +49,10 @@ public abstract class Nave implements ElementoDelUniverso {
     }
 
     public void destruir() {
-        destruida = true;
+        if (!destruida) {
+            destruida = true;
+            notificarObservadores();
+        }
     }
     
     public void verificarDestruccion() {
@@ -98,6 +100,7 @@ public abstract class Nave implements ElementoDelUniverso {
 
     public void consumirCombustible(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirCombustible(cantidad);
+        verificarDestruccion();
         notificarObservadores();
     }
     
@@ -113,6 +116,7 @@ public abstract class Nave implements ElementoDelUniverso {
     // gasto voluntario
     public void consumirEnergia(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirEnergia(cantidad);
+        verificarDestruccion();
         notificarObservadores();
     }
     
@@ -129,6 +133,7 @@ public abstract class Nave implements ElementoDelUniverso {
     
     public void aumentarDesgaste(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         recursos.aumentarDesgaste(cantidad);
+        verificarDestruccion();
         notificarObservadores();
     }
     
@@ -199,14 +204,12 @@ public abstract class Nave implements ElementoDelUniverso {
     public Ruta usarRadarLargoAlcance(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirEnergia(CostosMision.COSTO_RADAR_LARGO);
         notificarObservadores();
-        verificarDestruccion();
         return radarLargoAlcance.calcularRuta(origen, destino);
     }
     
     public ElementoDelUniverso[][] usarRadarCortoAlcance(Tablero tablero) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirEnergia(CostosMision.COSTO_RADAR_CORTO);
         notificarObservadores();
-        verificarDestruccion();
         return radarCortoAlcance.escanear(tablero);
     }
     
@@ -215,7 +218,6 @@ public abstract class Nave implements ElementoDelUniverso {
         recursos.consumirCombustible(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
         recursos.aumentarDesgaste(CostosMision.COSTO_MOVIMIENTO_DESGASTE);
         notificarObservadores();
-        verificarDestruccion();
     }
     
     public Ruta recalcularRuta(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {

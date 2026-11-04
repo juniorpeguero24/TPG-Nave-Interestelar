@@ -10,11 +10,13 @@ import modelo.tripulacion.Tripulante;
 import java.util.ArrayList;
 
 import modelo.tablero.Posicion;
-
 import modelo.tablero.Tablero;
 
 import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
+
+import observer.ObservadorBitacora;
+import observer.ObservadorNave;
 
 public class AsistenteComando {
     private final Nave nave;
@@ -91,10 +93,15 @@ public class AsistenteComando {
         this.registrarEvento(evento);
     }
 
-    public void ordenarSaltoWarp() {
-        this.prepararSalto();
-        this.saltar();
-        this.enfriar();
+    public boolean ordenarSaltoWarp() {
+        if (!estaDisponibleParaSalto()) {
+            registrarEvento(new Evento(TipoEvento.ERROR, "No se puede iniciar un salto Warp desde el estado " + getEstadoMotorWarp()));
+            return false;
+        }
+        prepararSalto();
+        saltar();
+        enfriar();
+        return true;
     }
 
     // ----- RECURSOS ----- //
@@ -224,5 +231,18 @@ public class AsistenteComando {
     
     public Ruta recalcularRuta(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         return nave.recalcularRuta(origen, destino);
+    }
+
+    public void interactuarCon(ElementoDelUniverso elemento) {
+        elemento.interactuarCon(nave);
+    }
+
+    // Observadores
+    public void añadirObservadorNave(ObservadorNave observador) {
+        nave.añadirObservador(observador);
+    }
+
+    public void añadirObservadorBitacora(ObservadorBitacora observador) {
+        bitacora.añadirObservador(observador);
     }
 }

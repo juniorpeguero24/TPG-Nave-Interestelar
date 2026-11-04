@@ -3,7 +3,6 @@ package controlador;
 import modelo.bitacora.Bitacora;
 import modelo.concurrencia.PlataformaDeCarga;
 import modelo.nave.AsistenteComando;
-import modelo.nave.Nave;
 import modelo.universo.Universo;
 import vistas.*;
 import modelo.tablero.Tablero;
@@ -46,11 +45,10 @@ public class Navegador {
             this.control = new VControlNave();
             ControladorNave controladorNave = new ControladorNave(universo, control, this, destino, tablero);
 
-            Nave nave = universo.getAsistenteEnOperacion().getNave();
-            Bitacora bitacora = universo.getAsistenteEnOperacion().getBitacora();
+            AsistenteComando asistente = universo.getAsistenteEnOperacion();
 
-            nave.añadirObservador(control);
-            bitacora.añadirObservador(control);
+            asistente.añadirObservadorNave(control);
+            asistente.añadirObservadorBitacora(control);
 
             controladorNave.setDatosNave();
             creacion.setVisible(false);
