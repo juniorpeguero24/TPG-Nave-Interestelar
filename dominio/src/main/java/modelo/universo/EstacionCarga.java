@@ -25,8 +25,12 @@ public class EstacionCarga implements ElementoDelUniverso {
         int combustibleATransferir = Math.min(cargaCombustible, nave.getEspacioCombustible());
         int energiaATransferir = Math.min(cargaEnergia, nave.getEspacioEnergia());
         try {
-            nave.cargarCombustible(combustibleATransferir);
-            nave.cargarEnergia(energiaATransferir);
+            if (combustibleATransferir > 0) {
+                nave.cargarCombustible(combustibleATransferir);
+            }
+            if (energiaATransferir > 0) {
+                nave.cargarEnergia(energiaATransferir);
+            }
         } catch (OperacionRecursoInvalidaExcepcion e) {
             throw new IllegalStateException("La estación calculó una carga inválida", e);
         }

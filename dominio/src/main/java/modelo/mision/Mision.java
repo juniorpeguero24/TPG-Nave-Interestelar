@@ -25,7 +25,7 @@ public abstract class Mision {
     private Tablero tablero;
     private Ruta ruta;
     private final ArrayList<ObservadorMision> observadores;
-
+    private Posicion objetivo;
 
     public Mision(String nombre, Destino destino, Tablero tablero) {
         this.nombre = nombre;
@@ -38,6 +38,7 @@ public abstract class Mision {
         this.energiaConsumida = 0;
         this.desgasteGenerado = 0;
         this.observadores = new ArrayList<>();
+        this.objetivo = null;
     }
 
     protected Tablero getTablero() {
@@ -68,8 +69,8 @@ public abstract class Mision {
         }
         asistente.registrarEvento(new Evento(TipoEvento.MISION, "Iniciando preparativos de misión: " + nombre));
         Posicion origen = tablero.getPosicionNave();
-        Posicion objetivo = tablero.obtenerObjetivo();
-        ruta = asistente.usarRadarLargoAlcance(origen, objetivo);
+        this.objetivo = tablero.obtenerObjetivo();
+        ruta = asistente.usarRadarLargoAlcance(origen, this.objetivo);
         energiaConsumida += CostosMision.COSTO_RADAR_LARGO;
     }
     
@@ -79,7 +80,7 @@ public abstract class Mision {
             // 1. Inspección de posición actual
             ElementoDelUniverso elemento = tablero.inspeccionarPosicion();
             if (elemento != null) {
-                elemento.interactuarCon(asistente.getNave());
+                asistente.interactuarCon(elemento);
             }
             if (asistente.naveDestruida()) {
                 break;
@@ -88,6 +89,9 @@ public abstract class Mision {
             // 2. Radar corto
             ElementoDelUniverso[][] alrededores = asistente.usarRadarCortoAlcance(tablero);
             sumarEnergiaConsumida(CostosMision.COSTO_RADAR_CORTO);
+            if (asistente.naveDestruida()) {
+                break;
+            }
             Posicion actual = tablero.getPosicionNave();
             Posicion verSiguiente = ruta.verSiguiente();
             ElementoDelUniverso siguienteElemento = obtenerElementoEnSiguientePosicion(alrededores, actual, verSiguiente);
@@ -102,6 +106,17 @@ public abstract class Mision {
             tablero.moverNave(siguiente);
             sumarCombustibleConsumido(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
             sumarDesgasteGenerado(CostosMision.COSTO_MOVIMIENTO_DESGASTE);
+            if (asistente.naveDestruida()) {
+                break;
+            }
+            elemento = tablero.inspeccionarPosicion();
+            if (elemento != null) {
+                asistente.interactuarCon(elemento);
+            }
+            if (asistente.naveDestruida()) {
+                break;
+            }
+
 
             // 4. Turno del universo
             destino.turnoDestino();
@@ -156,11 +171,7 @@ public abstract class Mision {
     protected void agregarAccionPrincipal(String accion) {
         accionesPrincipales.add(accion);
     }
-    public String getInforme(
-            int combustibleConsumido,
-            int energiaConsumida,
-            int desgasteGenerado,
-            String estadoFinalNave) {
+    public String getInforme(int combustibleConsumido, int energiaConsumida, int desgasteGenerado, String estadoFinalNave) {
         return "La mision " + getNombre() + " fue un " + resultado.toString() + ". Se consumio " + combustibleConsumido + " de combustible y " +
                 energiaConsumida + " de energia. El desgaste generado fue de " + desgasteGenerado + " y la nave quedo en estado " + estadoFinalNave;
     }
@@ -175,6 +186,9 @@ public abstract class Mision {
         return alrededores[dx + 1][dy + 1]; // La nave esta en [1][1]
     }
 
+    protected boolean llegoAlObjetivo(AsistenteComando asistente) {
+        return !asistente.naveDestruida() && objetivo != null && tablero.getPosicionNave().equals(objetivo);
+    }
 
     // OBSERVER
 

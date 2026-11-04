@@ -3,16 +3,16 @@ package modelo.mision;
 import java.util.ArrayList;
 
 public class InformeMision {
-    private String misionEjecutada;
-    private ResultadoMision resultado;
-    private ArrayList<String> accionesPrincipales;
+    private final String misionEjecutada;
+    private final ResultadoMision resultado;
+    private final ArrayList<String> accionesPrincipales;
 
-    private int combustibleConsumido;
-    private int energiaConsumida;
-    private int desgasteGenerado;
+    private final int combustibleConsumido;
+    private final int energiaConsumida;
+    private final int desgasteGenerado;
 
-    private String estadoFinalNave;
-    private ArrayList<String> observaciones;
+    private final String estadoFinalNave;
+    private final ArrayList<String> observaciones;
 
     public InformeMision(
             String misionEjecutada,
@@ -26,12 +26,12 @@ public class InformeMision {
     {
         this.misionEjecutada = misionEjecutada;
         this.resultado = resultado;
-        this.accionesPrincipales = accionesPrincipales;
+        this.accionesPrincipales =  new ArrayList<>(accionesPrincipales);
         this.combustibleConsumido = combustibleConsumido;
         this.energiaConsumida = energiaConsumida;
         this.desgasteGenerado = desgasteGenerado;
         this.estadoFinalNave = estadoFinalNave;
-        this.observaciones = observaciones;
+        this.observaciones =  new ArrayList<>(observaciones);
     }
 
     public String getMisionEjecutada() {
