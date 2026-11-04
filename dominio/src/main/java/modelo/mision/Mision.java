@@ -69,6 +69,9 @@ public abstract class Mision {
         if (!asistente.tieneTripulacionValida()) {
             throw new TripulacionInvalidaExcepcion("No se puede realizar una mision con una tripulacion invalida");
         }
+        if (asistente.naveDestruida()) {
+            throw new OperacionRecursoInvalidaExcepcion("No se puede iniciar una misión con la nave destruida");
+        }
         asistente.registrarEvento(new Evento(TipoEvento.MISION, "Iniciando preparativos de misión: " + nombre));
 
         // Se verifica todo junto antes de consumir nada: si falta algo, no queda ningun cambio parcial.
