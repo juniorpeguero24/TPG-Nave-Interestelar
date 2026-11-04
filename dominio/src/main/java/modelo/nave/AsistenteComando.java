@@ -153,6 +153,11 @@ public class AsistenteComando {
         nave.realizarMantenimiento();
         this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se realizo el mantenimiento de la nave"));
     }
+    
+    public void agregarGemas(int cantidad) throws OperacionRecursoInvalidaExcepcion {
+        nave.agregarGemas(cantidad);
+        registrarEvento(new Evento(TipoEvento.RECURSOS, "Se recolectaron " + cantidad + " gemas"));
+    }
 
     // ----- CONSULTAS DE ESTADO Y DISPONIBILIDAD ----- //
     public boolean naveDestruida() {

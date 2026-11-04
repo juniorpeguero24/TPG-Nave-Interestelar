@@ -31,7 +31,7 @@ public abstract class Nave implements ElementoDelUniverso {
     private RadarLargoAlcance radarLargoAlcance;
     private final List<ObservadorNave> observadores = new ArrayList<>();
     private RadarCortoAlcance radarCortoAlcance;
-
+    private int gemas;
 
     public Nave( String nombre,int combustible,int energia) {
         this.nombre = nombre;
@@ -71,7 +71,7 @@ public abstract class Nave implements ElementoDelUniverso {
                 + "\n  Energia: " + recursos.getEnergia()
                 + "\n  Desgaste: " + recursos.getDesgaste()
                 + "\n  Requiere mantenimiento: " + recursos.requiereMantenimiento()
-                + "\n  Motor Warp: " + motorWarp.getEstado();
+                + "\n  Motor Warp: " + motorWarp;
     }
     
     // Operaciones delegadas sobre Tripulacion
@@ -113,6 +113,18 @@ public abstract class Nave implements ElementoDelUniverso {
     
     public void cargarEnergia(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         recursos.cargarEnergia(cantidad);
+        notificarObservadores();
+    }
+    
+    public int getGemas() {
+        return gemas;
+    }
+
+    public void agregarGemas(int cantidad) throws OperacionRecursoInvalidaExcepcion {
+        if (cantidad <= 0) {
+            throw new OperacionRecursoInvalidaExcepcion("La cantidad de gemas debe ser positiva");
+        }
+        gemas += cantidad;
         notificarObservadores();
     }
     

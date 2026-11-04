@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import modelo.motorwarp.ResultadoSalto;
 import modelo.motorwarp.TipoResultadoSalto;
 
+import modelo.nave.Nave;
+
 import modelo.tablero.Destino;
 import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
@@ -19,6 +21,8 @@ import modelo.universo.Ruta;
 import observer.ObservadorMision;
 
 public abstract class Mision {
+    private static final int PAUSA_TURNO_MS = 1000;
+    
     private final String nombre;
     private int combustibleConsumido, energiaConsumida, desgasteGenerado;
     protected ResultadoMision resultado;
@@ -53,49 +57,41 @@ public abstract class Mision {
     }
 
     public final InformeMision realizarMision(AsistenteComando asistente) {
-        
+        InformeMision informe = null;
         try {
             preparar(asistente);
             ejecutar(asistente);
-            evaluar(asistente);
-        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion | InterruptedException e) {
+            informe = evaluar(asistente);
+            cerrar(asistente);
+        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion | InterruptedException | NaveDestruidaExcepcion e) {
             this.resultado = ResultadoMision.FALLO;
             observaciones.add(e.getMessage());
         }
-
-        return finalizar(asistente);
+        return informe;
     }
 
-    protected void preparar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion, TripulacionInvalidaExcepcion {
+    protected void preparar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion, TripulacionInvalidaExcepcion, NaveDestruidaExcepcion {
         if (!asistente.tieneTripulacionValida()) {
             throw new TripulacionInvalidaExcepcion("No se puede realizar una mision con una tripulacion invalida");
         }
+        if (asistente.naveDestruida()) {
+            throw new NaveDestruidaExcepcion("No se puede iniciar una mision con la nave destruida");
+        }
         asistente.registrarEvento(new Evento(TipoEvento.MISION, "Iniciando preparativos de misión: " + nombre));
         Posicion origen = tablero.getPosicionNave();
-        this.objetivo = tablero.obtenerObjetivo();
+        this.objetivo = elegirObjetivo(origen);
         ruta = asistente.usarRadarLargoAlcance(origen, this.objetivo);
         energiaConsumida += CostosMision.COSTO_RADAR_LARGO;
     }
     
     protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion, InterruptedException {
-        boolean warpEnCurso = false;
-        boolean enfriamientoPendiente = false;
+        ResultadoSalto ultimoResultado = null;
         
-        while ((ruta.tieneSiguiente() || enfriamientoPendiente) && !asistente.naveDestruida()) {
+        while ((ruta.tieneSiguiente() || (ultimoResultado != null && ultimoResultado.debeEnfriar())) && !asistente.naveDestruida()) {
 
-            // Llegue al objetivo pero todavia tengo el turno de enfriamiento
-            if (!ruta.tieneSiguiente() && enfriamientoPendiente) {
-                ResultadoSalto resultadoSalto = realizarMovimiento(asistente, false);
-                if (resultadoSalto.getTipo() == TipoResultadoSalto.ENFRIAMIENTO) {
-                    enfriamientoPendiente = false;
-                }
-                if (!asistente.naveDestruida()) {
-                    destino.turnoDestino();
-                }
-                continue;
-            }
+            // A. TURNO DE LA NAVE
 
-            // 1. Inspección de posición actual
+            // 1. Inspección e interacción
             ElementoDelUniverso elemento = tablero.inspeccionarPosicion();
             if (elemento != null) {
                 asistente.interactuarCon(elemento);
@@ -110,65 +106,64 @@ public abstract class Mision {
             if (asistente.naveDestruida()) {
                 break;
             }
-            Posicion actual = tablero.getPosicionNave();
-            Posicion verSiguiente = ruta.verSiguiente();
-            ElementoDelUniverso siguienteElemento = obtenerElementoEnSiguientePosicion(alrededores, actual, verSiguiente);
-            
-            // Si ya habia un warp en curso o el obstaculo es un asteroide, salto con warp
-            boolean debeUsarWarp = warpEnCurso || siguienteElemento instanceof Asteroide;
-            
-            // 3. Ejecuto el salto correspondiente
-            ResultadoSalto resultadoSalto = realizarMovimiento(asistente, debeUsarWarp);
-            
-            // 5. Interpretar el resultado del State
-                switch (resultadoSalto.getTipo()) {
-                    case PREPARANDO:
-                    case WARP_LISTO:
-                    case SIN_ENERGIA:
-                        warpEnCurso = true;
-                        break;
-                    case SALTO_WARP:
-                        warpEnCurso = false;
-                        enfriamientoPendiente = true;
-                        break;
-                    case ENFRIAMIENTO:
-                        enfriamientoPendiente = false;
-                        break;
-                    case INVALIDO:
-                        agregarObservacion(resultadoSalto.getDescripcion());
-                        break;
-                    case SALTO_NORMAL:
-                        break;
-                }
-            
-            // 6. Si realmente hubo movimiento muevo la nave
-            int casilleros = resultadoSalto.getCasillerosAvanzados();
-            if (casilleros > 0) {
-                Posicion nuevaPosicion = ruta.siguiente(casilleros);
-                if (nuevaPosicion == null) {
-                    agregarObservacion("No fue posible avanzar " + casilleros + " posiciones en la ruta");
+
+            // 3. Planificación y movimiento
+            if (ultimoResultado != null && ultimoResultado.debeEnfriar()) {
+                // Turno de enfriamiento (sin desplazamiento)
+                ultimoResultado = realizarMovimiento(asistente, false);
+                if (ultimoResultado.getTipo() != TipoResultadoSalto.ENFRIAMIENTO) {
+                    agregarObservacion("No se pudo completar el enfriamiento");
                     break;
                 }
-                tablero.moverNave(nuevaPosicion);
+            } else {
+                boolean usarWarp = ultimoResultado != null && ultimoResultado.debeContinuarWarp();
+                
+                // Solo decidimos un nuevo salto si no hay una preparación Warp en curso.
+                if (!usarWarp) {
+                    Posicion actual = tablero.getPosicionNave();
+                    Posicion siguiente = ruta.verSiguiente();
+                    ElementoDelUniverso siguienteElemento = obtenerElementoEnSiguientePosicion(alrededores, actual, siguiente);
+                    // Uso el saltoWarp para saltar asteroides y naves
+                    usarWarp = siguienteElemento instanceof Asteroide || siguienteElemento instanceof Nave;
+                }
+                int casillerosNecesarios = usarWarp ? 2 : 1;
+                
+                // Validar antes de ordenar el movimiento
+                if (!ruta.puedeAvanzar(casillerosNecesarios)) {
+                    agregarObservacion("No hay suficientes posiciones para realizar el salto");
+                    break;
+                }
+                ultimoResultado = realizarMovimiento(asistente, usarWarp);
+                if (ultimoResultado.getTipo() == TipoResultadoSalto.INVALIDO) {
+                    agregarObservacion(ultimoResultado.getDescripcion());
+                    break;
+                }
+                if (asistente.naveDestruida()) {
+                    break;
+                }
+
+                // Mover únicamente cuando corresponde
+                if (ultimoResultado.huboMovimiento()) {
+                    Posicion nuevaPosicion = ruta.siguiente(ultimoResultado.getCasillerosAvanzados());
+                    tablero.moverNave(nuevaPosicion);
+                }
             }
-            
-            // consultar si despues de moverme tengo que interactuar de nuevo
-            
+
             if (asistente.naveDestruida()) {
                 break;
             }
 
-            // 7. Turno del universo
+            // B. TURNO DEL TABLERO
             destino.turnoDestino();
             
-            // 8. Pausa breve para la simulacion (1.5s por ciclo)
-            Thread.sleep(1500);
+            // Pausa breve para la simulacion
+            Thread.sleep(PAUSA_TURNO_MS);
         }
     }
 
-    protected abstract void evaluar(AsistenteComando asistente);
+    protected abstract InformeMision evaluar(AsistenteComando asistente);
 
-    protected InformeMision finalizar(AsistenteComando asistente) {
+    protected InformeMision generarInforme(AsistenteComando asistente) {
         InformeMision informe = new InformeMision(
             nombre,
             resultado,
@@ -185,11 +180,25 @@ public abstract class Mision {
 
         return informe;
     }
+    
+    // Cierre: las misiones lo redefinen para entregar o recibir recursos y llaman a super.cerrar.
+    protected void cerrar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
+        if (asistente.naveDestruida()) {
+            agregarObservacion("La nave fue destruida durante la misión");
+        } else if (resultado == ResultadoMision.EXITO) {
+            asistente.registrarEvento(new Evento(TipoEvento.MISION, "Misión cumplida: " + nombre));
+        } else {
+            agregarObservacion("La misión no alcanzó su objetivo");
+        }
+    }
 
     public String getNombre() {
         return nombre;
     }
-
+    
+    // Energia extra que consume la mision al comenzar (segun el anexo).
+    protected abstract int getEnergiaInicial();
+        
     protected void sumarCombustibleConsumido(int cantidad) {
         combustibleConsumido += cantidad;
     }
@@ -226,6 +235,12 @@ public abstract class Mision {
 
     protected boolean llegoAlObjetivo(AsistenteComando asistente) {
         return !asistente.naveDestruida() && objetivo != null && tablero.getPosicionNave().equals(objetivo);
+    }
+
+    // Por defecto el objetivo lo sortea el tablero;
+    // M-03 lo redefine.
+    protected Posicion elegirObjetivo(Posicion origen) {
+        return tablero.obtenerObjetivo();
     }
 
     // OBSERVER

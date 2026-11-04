@@ -1,7 +1,5 @@
 package modelo.motorwarp;
 
-import modelo.bitacora.Evento;
-
 public class ResultadoSalto {
     private final String descripcion;
     private final int casillerosAvanzados;
@@ -27,6 +25,16 @@ public class ResultadoSalto {
 
     public boolean huboMovimiento() {
         return casillerosAvanzados > 0;
+    }
+    
+    public boolean debeContinuarWarp() {
+        return tipo == TipoResultadoSalto.PREPARANDO
+                || tipo == TipoResultadoSalto.WARP_LISTO
+                || tipo == TipoResultadoSalto.SIN_ENERGIA;
+    }
+
+    public boolean debeEnfriar() {
+        return tipo == TipoResultadoSalto.SALTO_WARP;
     }
     
     /*
