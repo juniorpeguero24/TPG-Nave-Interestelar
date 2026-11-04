@@ -242,12 +242,6 @@ public abstract class Nave implements ElementoDelUniverso {
         return radarCortoAlcance.escanear(tablero);
     }
     
-    public void avanzar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        verificarDisponibilidadRecursos(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE, 0, 0);
-        consumirCombustible(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
-        aumentarDesgaste(0);
-    }
-    
     public Ruta recalcularRuta(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         consumirEnergia(CostosMision.COSTO_RECALCULO);
         return radarLargoAlcance.calcularRuta(origen, destino);

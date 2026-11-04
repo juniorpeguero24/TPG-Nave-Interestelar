@@ -235,10 +235,6 @@ public class AsistenteComando {
         return nave.usarRadarCortoAlcance(tablero);
     }
     
-    public void avanzar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        nave.avanzar();
-    }
-    
     public Ruta recalcularRuta(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         return nave.recalcularRuta(origen, destino);
     }

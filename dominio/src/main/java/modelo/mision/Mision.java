@@ -66,6 +66,7 @@ public abstract class Mision {
         } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion | InterruptedException | NaveDestruidaExcepcion e) {
             this.resultado = ResultadoMision.FALLO;
             observaciones.add(e.getMessage());
+            informe = generarInforme(asistente);
         }
         return informe;
     }
@@ -77,16 +78,48 @@ public abstract class Mision {
         if (asistente.naveDestruida()) {
             throw new NaveDestruidaExcepcion("No se puede iniciar una mision con la nave destruida");
         }
+
+        // Verificamos los recursos necesarios para iniciar.
+        // Incluimos los 5 de energia del radar largo,
+        // porque se consume durante la preparacion.
+        asistente.verificarDisponibilidadParaMision(
+                CostosMision.COSTO_BASE_COMBUSTIBLE,
+                getEnergiaInicial() + CostosMision.COSTO_RADAR_LARGO,
+                CostosMision.COSTO_BASE_DESGASTE
+        );
+            
         asistente.registrarEvento(new Evento(TipoEvento.MISION, "Iniciando preparativos de misión: " + nombre));
         Posicion origen = tablero.getPosicionNave();
         this.objetivo = elegirObjetivo(origen);
         ruta = asistente.usarRadarLargoAlcance(origen, this.objetivo);
+        if (asistente.naveDestruida()) {
+            throw new NaveDestruidaExcepcion("La nave fue destruida durante la preparacion");
+        }
         energiaConsumida += CostosMision.COSTO_RADAR_LARGO;
     }
     
     protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion, InterruptedException {
-        ResultadoSalto ultimoResultado = null;
+        int combustible = CostosMision.COSTO_BASE_COMBUSTIBLE;
+        int energia = getEnergiaInicial();
+        int desgaste = CostosMision.COSTO_BASE_DESGASTE;
+
+        // Verificacion antes de modificar recursos.
+        asistente.verificarDisponibilidadRecursos(combustible, energia, desgaste);
+        // Consumo efectivo de despegue.
+        asistente.consumirCombustible(combustible);
+        if (energia > 0) {
+            asistente.consumirEnergia(energia);
+        }
+        asistente.aumentarDesgaste(desgaste);
         
+        // Actualizamos los valores del informe.
+        sumarCombustibleConsumido(combustible);
+        sumarEnergiaConsumida(energia);
+        sumarDesgasteGenerado(desgaste);
+
+        agregarAccionPrincipal("Consumo de recursos iniciales");
+            
+        ResultadoSalto ultimoResultado = null;
         while ((ruta.tieneSiguiente() || (ultimoResultado != null && ultimoResultado.debeEnfriar())) && !asistente.naveDestruida()) {
 
             // A. TURNO DE LA NAVE
