@@ -6,6 +6,9 @@ import modelo.bitacora.TipoEvento;
 import modelo.excepciones.*;
 import java.util.ArrayList;
 
+import modelo.motorwarp.ResultadoSalto;
+import modelo.motorwarp.TipoResultadoSalto;
+
 import modelo.tablero.Destino;
 import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
@@ -55,7 +58,7 @@ public abstract class Mision {
             preparar(asistente);
             ejecutar(asistente);
             evaluar(asistente);
-        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion e) {
+        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion | InterruptedException e) {
             this.resultado = ResultadoMision.FALLO;
             observaciones.add(e.getMessage());
         }
@@ -74,8 +77,23 @@ public abstract class Mision {
         energiaConsumida += CostosMision.COSTO_RADAR_LARGO;
     }
     
-    protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
-        while (ruta.tieneSiguiente() && !asistente.naveDestruida()) {
+    protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion, InterruptedException {
+        boolean warpEnCurso = false;
+        boolean enfriamientoPendiente = false;
+        
+        while ((ruta.tieneSiguiente() || enfriamientoPendiente) && !asistente.naveDestruida()) {
+
+            // Llegue al objetivo pero todavia tengo el turno de enfriamiento
+            if (!ruta.tieneSiguiente() && enfriamientoPendiente) {
+                ResultadoSalto resultadoSalto = realizarMovimiento(asistente, false);
+                if (resultadoSalto.getTipo() == TipoResultadoSalto.ENFRIAMIENTO) {
+                    enfriamientoPendiente = false;
+                }
+                if (!asistente.naveDestruida()) {
+                    destino.turnoDestino();
+                }
+                continue;
+            }
 
             // 1. Inspección de posición actual
             ElementoDelUniverso elemento = tablero.inspeccionarPosicion();
@@ -96,41 +114,61 @@ public abstract class Mision {
             Posicion verSiguiente = ruta.verSiguiente();
             ElementoDelUniverso siguienteElemento = obtenerElementoEnSiguientePosicion(alrededores, actual, verSiguiente);
             
-            if (siguienteElemento instanceof Asteroide) {
-                // consultar como decidir si evitar o usar Warp
+            // Si ya habia un warp en curso o el obstaculo es un asteroide, salto con warp
+            boolean debeUsarWarp = warpEnCurso || siguienteElemento instanceof Asteroide;
+            
+            // 3. Ejecuto el salto correspondiente
+            ResultadoSalto resultadoSalto = realizarMovimiento(asistente, debeUsarWarp);
+            
+            // 5. Interpretar el resultado del State
+                switch (resultadoSalto.getTipo()) {
+                    case PREPARANDO:
+                    case WARP_LISTO:
+                    case SIN_ENERGIA:
+                        warpEnCurso = true;
+                        break;
+                    case SALTO_WARP:
+                        warpEnCurso = false;
+                        enfriamientoPendiente = true;
+                        break;
+                    case ENFRIAMIENTO:
+                        enfriamientoPendiente = false;
+                        break;
+                    case INVALIDO:
+                        agregarObservacion(resultadoSalto.getDescripcion());
+                        break;
+                    case SALTO_NORMAL:
+                        break;
+                }
+            
+            // 6. Si realmente hubo movimiento muevo la nave
+            int casilleros = resultadoSalto.getCasillerosAvanzados();
+            if (casilleros > 0) {
+                Posicion nuevaPosicion = ruta.siguiente(casilleros);
+                if (nuevaPosicion == null) {
+                    agregarObservacion("No fue posible avanzar " + casilleros + " posiciones en la ruta");
+                    break;
+                }
+                tablero.moverNave(nuevaPosicion);
             }
             
-            // 3. Movimiento
-            Posicion siguiente = ruta.siguiente();
-            asistente.avanzar();
-            tablero.moverNave(siguiente);
-            sumarCombustibleConsumido(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
-            sumarDesgasteGenerado(CostosMision.COSTO_MOVIMIENTO_DESGASTE);
-            if (asistente.naveDestruida()) {
-                break;
-            }
-            elemento = tablero.inspeccionarPosicion();
-            if (elemento != null) {
-                asistente.interactuarCon(elemento);
-            }
+            // consultar si despues de moverme tengo que interactuar de nuevo
+            
             if (asistente.naveDestruida()) {
                 break;
             }
 
-
-            // 4. Turno del universo
+            // 7. Turno del universo
             destino.turnoDestino();
+            
+            // 8. Pausa breve para la simulacion (1.5s por ciclo)
+            Thread.sleep(1500);
         }
     }
 
     protected abstract void evaluar(AsistenteComando asistente);
 
     protected InformeMision finalizar(AsistenteComando asistente) {
-        
-        if (resultado == ResultadoMision.EXITO) {
-            asistente.ordenarSaltoWarp();
-        }
-        
         InformeMision informe = new InformeMision(
             nombre,
             resultado,
@@ -204,5 +242,28 @@ public abstract class Mision {
         for (ObservadorMision observador : observadores) {
             observador.actualizarInformes(informe);
         }
+    }
+    
+    private ResultadoSalto realizarMovimiento(AsistenteComando asistente, boolean usarWarp) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        int combustibleAntes = asistente.getCombustible();
+        int energiaAntes = asistente.getEnergia();
+        int desgasteAntes = asistente.getDesgaste();
+
+        ResultadoSalto resultadoSalto;
+        if (usarWarp) {
+            resultadoSalto = asistente.saltarWarp();
+        } else {
+            resultadoSalto = asistente.saltar();
+        }
+
+        int combustibleDespues = asistente.getCombustible();
+        int energiaDespues = asistente.getEnergia();
+        int desgasteDespues = asistente.getDesgaste();
+
+        sumarCombustibleConsumido(combustibleAntes - combustibleDespues);
+        sumarEnergiaConsumida(energiaAntes - energiaDespues);
+        sumarDesgasteGenerado(desgasteDespues - desgasteAntes);
+        
+        return resultadoSalto;
     }
 }

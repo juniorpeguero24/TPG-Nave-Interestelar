@@ -19,6 +19,9 @@ import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
 import observer.ObservadorNave;
 
+import modelo.motorwarp.ResultadoSalto;
+import modelo.motorwarp.TipoResultadoSalto;
+
 public abstract class Nave implements ElementoDelUniverso {
     private String nombre;
     private Recursos recursos;
@@ -179,25 +182,41 @@ public abstract class Nave implements ElementoDelUniverso {
     
     // Operaciones delegadas sobre el Motor Warp
     public String getEstadoMotorWarp() {
-        return motorWarp.getEstado();
+        return motorWarp.toString();
     }
 
-    public Evento prepararSalto(){
-        Evento evento = motorWarp.prepararSalto();
+    public ResultadoSalto saltar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        ResultadoSalto resultado = motorWarp.saltar();
+        aplicarCostosSalto(resultado);
         notificarObservadores();
-        return evento;
+        return resultado;
     }
 
-    public Evento saltar(){
-        Evento evento = motorWarp.saltar();
+    public ResultadoSalto saltarWarp() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        boolean energiaSuficiente = recursos.getEnergia() >= CostosMision.COSTO_ENERGIA_WARP;
+        ResultadoSalto resultado = motorWarp.saltarWarp(energiaSuficiente);
+        aplicarCostosSalto(resultado);
         notificarObservadores();
-        return evento;
+        return resultado;
     }
-
-    public Evento enfriar(){
-        Evento evento = motorWarp.enfriar();
-        notificarObservadores();
-        return evento;
+    
+    private void aplicarCostosSalto(ResultadoSalto resultado) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        if (resultado.getTipo() == TipoResultadoSalto.SALTO_NORMAL) {
+            verificarDisponibilidadRecursos(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE, 0, 0);
+            consumirCombustible(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
+            aumentarDesgaste(0);
+        }
+        else if (resultado.getTipo() == TipoResultadoSalto.SALTO_WARP) {
+            verificarDisponibilidadRecursos(0, CostosMision.COSTO_ENERGIA_WARP, 0);
+            consumirEnergia(CostosMision.COSTO_ENERGIA_WARP);
+        }
+        else if (resultado.getTipo() == TipoResultadoSalto.ENFRIAMIENTO) {
+            int desgasteAplicado = Math.min(CostosMision.COSTO_DESGASTE_ENFRIAMIENTO_WARP, 100 - recursos.getDesgaste());
+            if (desgasteAplicado > 0) {
+                recursos.aumentarDesgaste(desgasteAplicado);
+            }
+        }
+        verificarDestruccion();
     }
     
     // Metodos usados para las Misiones
@@ -212,9 +231,9 @@ public abstract class Nave implements ElementoDelUniverso {
     }
     
     public void avanzar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        verificarDisponibilidadRecursos(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE, 0, CostosMision.COSTO_MOVIMIENTO_DESGASTE);
+        verificarDisponibilidadRecursos(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE, 0, 0);
         consumirCombustible(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
-        aumentarDesgaste(CostosMision.COSTO_MOVIMIENTO_DESGASTE);
+        aumentarDesgaste(0);
     }
     
     public Ruta recalcularRuta(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
@@ -222,10 +241,7 @@ public abstract class Nave implements ElementoDelUniverso {
         return radarLargoAlcance.calcularRuta(origen, destino);
     }
 
-
-
     // OBSERVADORES
-
     public void añadirObservador(ObservadorNave observador) {
         observadores.add(observador);
     }

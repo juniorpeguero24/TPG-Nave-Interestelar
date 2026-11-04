@@ -16,7 +16,7 @@ public class Mision01 extends Mision {
     }
 
     @Override
-    protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
+    protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion, InterruptedException {
         super.ejecutar(asistente);
         if (llegoAlObjetivo(asistente)) {
             agregarAccionPrincipal("Ejecutando maniobra de asistencia táctica");

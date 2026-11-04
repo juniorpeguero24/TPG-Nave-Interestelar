@@ -9,6 +9,9 @@ import modelo.haberes.Liquidacion;
 import modelo.tripulacion.Tripulante;
 import java.util.ArrayList;
 
+import modelo.motorwarp.ResultadoSalto;
+import modelo.motorwarp.TipoResultadoSalto;
+
 import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
 
@@ -17,6 +20,7 @@ import modelo.universo.Ruta;
 
 import observer.ObservadorBitacora;
 import observer.ObservadorNave;
+
 
 public class AsistenteComando {
     private final Nave nave;
@@ -78,30 +82,31 @@ public class AsistenteComando {
         return nave.getEstadoMotorWarp();
     }
 
-    public void prepararSalto(){
-        Evento evento = nave.prepararSalto();
-        this.registrarEvento(evento);
-    }
-
-    public void saltar(){
-        Evento evento = nave.saltar();
-        this.registrarEvento(evento);
-    }
-
-    public void enfriar(){
-        Evento evento = nave.enfriar();
-        this.registrarEvento(evento);
-    }
-
-    public boolean ordenarSaltoWarp() {
-        if (!estaDisponibleParaSalto()) {
-            registrarEvento(new Evento(TipoEvento.ERROR, "No se puede iniciar un salto Warp desde el estado " + getEstadoMotorWarp()));
-            return false;
+    public ResultadoSalto saltar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        try {
+            ResultadoSalto resultado = nave.saltar();
+            registrarResultadoSalto(resultado);
+            return resultado;
+        } catch (RecursoInsuficienteExcepcion | OperacionRecursoInvalidaExcepcion e) {
+            registrarEvento(new Evento(TipoEvento.ERROR, e.getMessage()));
+            throw e;
         }
-        prepararSalto();
-        saltar();
-        enfriar();
-        return true;
+    }
+    
+    public ResultadoSalto saltarWarp() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        try {
+            ResultadoSalto resultado = nave.saltarWarp();
+            registrarResultadoSalto(resultado);
+            return resultado;
+        } catch (RecursoInsuficienteExcepcion | OperacionRecursoInvalidaExcepcion e) {
+            registrarEvento(new Evento(TipoEvento.ERROR, e.getMessage()));
+            throw e;
+        }
+    }
+    
+    private void registrarResultadoSalto(ResultadoSalto resultado) {
+        TipoEvento tipoEvento = (resultado.getTipo() == TipoResultadoSalto.INVALIDO) ? TipoEvento.ERROR : TipoEvento.MOTOR_WARP;
+        registrarEvento(new Evento(tipoEvento,resultado.getDescripcion()));
     }
 
     // ----- RECURSOS ----- //
