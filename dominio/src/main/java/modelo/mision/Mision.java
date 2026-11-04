@@ -56,17 +56,22 @@ public abstract class Mision {
         return destino;
     }
 
-    public final InformeMision realizarMision(AsistenteComando asistente) {
+    public final InformeMision realizarMision(AsistenteComando asistente) throws NaveDestruidaExcepcion {
         InformeMision informe = null;
         try {
             preparar(asistente);
             ejecutar(asistente);
             informe = evaluar(asistente);
             cerrar(asistente);
-        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion | InterruptedException | NaveDestruidaExcepcion e) {
+        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion | InterruptedException e) {
             this.resultado = ResultadoMision.FALLO;
             observaciones.add(e.getMessage());
             informe = generarInforme(asistente);
+        } catch (NaveDestruidaExcepcion e) {
+            this.resultado = ResultadoMision.FALLO;
+            observaciones.add(e.getMessage());
+            informe = generarInforme(asistente);
+            throw e;
         }
         return informe;
     }

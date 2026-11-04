@@ -405,4 +405,8 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     public void mostrarMensaje(String mensaje) {
             JOptionPane.showMessageDialog(this, mensaje);
     }
+    
+    public void desactivarMision() {
+        btnIniciarMision.setEnabled(false);
+    }
 }
