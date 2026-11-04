@@ -1,7 +1,6 @@
 package modelo.universo;
 
 import java.util.ArrayList;
-
 import modelo.nave.AsistenteComando;
 
 public class Universo {

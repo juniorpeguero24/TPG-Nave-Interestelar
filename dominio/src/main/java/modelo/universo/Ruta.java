@@ -2,6 +2,7 @@ package modelo.universo;
 
 import java.util.ArrayList;
 import java.util.List;
+import modelo.tablero.Posicion;
 
 public class Ruta {
     private List<Posicion> posiciones;
@@ -23,6 +24,13 @@ public class Ruta {
         Posicion siguiente = posiciones.get(indiceActual);
         indiceActual++;
         return siguiente;
+    }
+    
+    public Posicion verSiguiente() {
+        if (!tieneSiguiente()) {
+            return null;
+        }
+        return posiciones.get(indiceActual);
     }
 
     public int getCantidadPosiciones() {

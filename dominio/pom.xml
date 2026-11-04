@@ -12,6 +12,11 @@
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <version>2.3.232</version>
+            <artifactId>h2</artifactId>
+        </dependency>
     </dependencies>
     <build>
     <resources>
