@@ -1,8 +1,11 @@
 package vistas;
 
+import modelo.tripulacion.Tripulante;
+
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -21,7 +24,7 @@ public class VTripulantes extends JFrame implements IVista {
     private JButton btnVolver;
     private JLabel lblTitulo;
     private JPanel panelTitulo;
-    private DefaultTableModel modelo;
+    private DefaultTableModel modeloTabla;
     private JScrollPane scrollTripulantes;
     private JPanel panelBotones;
     private JPanel panelTabla;
@@ -50,7 +53,7 @@ public class VTripulantes extends JFrame implements IVista {
             "Nombre", "Cargo", "Origen", "Antiguedad", "Salario"
         };
 
-        modelo = new DefaultTableModel(columnas, 0);
+        modeloTabla = new DefaultTableModel(columnas, 0);
 
        /* COMO SE AGREGA UN TRIPULANTE A LA TABLA:
       
@@ -58,7 +61,7 @@ public class VTripulantes extends JFrame implements IVista {
                 "NOMBRE", "CARGO", "ORIGEN", ANTIGUEDAD, SALARIO
             }); */
 
-        tablaTripulantes = new JTable(modelo);
+        tablaTripulantes = new JTable(modeloTabla);
         		
         tablaTripulantes.setBackground(fondoPanel);
         tablaTripulantes.setForeground(blanco);
@@ -99,7 +102,22 @@ public class VTripulantes extends JFrame implements IVista {
     
     @Override
     public void setActionListener(ActionListener c){
+        this.btnVolver.addActionListener(c);
+    }
 
+    public void setTablaTripulantes(ArrayList<Tripulante> tripulantes) {
+        String nombre, cargo, origen;
+        Double salario;
+        int antiguedad;
+
+        for(Tripulante tripulante : tripulantes) {
+            nombre = tripulante.getNombre();
+            cargo = tripulante.getCargo().name();
+            origen = tripulante.getPlanetaOrigen().name();
+            antiguedad = tripulante.getAntiguedad();
+            salario = tripulante.liquidarHaberes().calcularTotal();
+            modeloTabla.addRow(new Object[]{nombre, cargo, origen, antiguedad, salario});
+        }
     }
 }
 

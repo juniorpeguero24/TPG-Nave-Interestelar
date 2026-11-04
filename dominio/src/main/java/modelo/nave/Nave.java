@@ -39,6 +39,7 @@ public abstract class Nave implements ElementoDelUniverso {
         this.recursos = new Recursos(combustible, energia);
         this.destruida = false;
         this.radarLargoAlcance = new RadarLargoAlcance();
+        this.radarCortoAlcance = new RadarCortoAlcance();
     }
 
     public String getNombre() {
@@ -198,12 +199,14 @@ public abstract class Nave implements ElementoDelUniverso {
     // Metodos usados para las Misiones
     public Ruta usarRadarLargoAlcance(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirEnergia(CostosMision.COSTO_RADAR_LARGO);
+        notificarObservadores();
         verificarDestruccion();
         return radarLargoAlcance.calcularRuta(origen, destino);
     }
     
     public ElementoDelUniverso[][] usarRadarCortoAlcance(Tablero tablero) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirEnergia(CostosMision.COSTO_RADAR_CORTO);
+        notificarObservadores();
         verificarDestruccion();
         return radarCortoAlcance.escanear(tablero);
     }
@@ -212,11 +215,13 @@ public abstract class Nave implements ElementoDelUniverso {
         recursos.verificarDisponibilidadRecursos(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE, 0, CostosMision.COSTO_MOVIMIENTO_DESGASTE);
         recursos.consumirCombustible(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
         recursos.aumentarDesgaste(CostosMision.COSTO_MOVIMIENTO_DESGASTE);
+        notificarObservadores();
         verificarDestruccion();
     }
     
     public Ruta recalcularRuta(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirEnergia(CostosMision.COSTO_RECALCULO);
+        notificarObservadores();
         return radarLargoAlcance.calcularRuta(origen, destino);
     }
 

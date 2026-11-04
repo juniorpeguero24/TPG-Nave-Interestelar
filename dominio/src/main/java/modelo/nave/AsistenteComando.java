@@ -49,6 +49,10 @@ public class AsistenteComando {
         return nave.tieneTripulacionValida();
     }
 
+    public ArrayList<Tripulante> getTripulantes() {
+        return nave.getTripulantes();
+    }
+
     public ArrayList<Liquidacion> liquidarHaberesTripulacion() {
         return nave.liquidarHaberesTripulacion();
     }

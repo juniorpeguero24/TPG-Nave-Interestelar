@@ -328,9 +328,14 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
         this.panelMapa = new JPanel();
         this.panelMapa.setBackground(Estilo.fondoPanel);
-        this.panelMapa.setLayout(null);
+        this.panelMapa.setLayout(new BorderLayout());
 
         this.panelTablero.add(this.panelMapa, BorderLayout.CENTER);
+
+        JScrollPane scrollTablero = new JScrollPane();
+        scrollTablero.setBorder(null);
+        scrollTablero.getViewport().setBackground(Estilo.fondoPanel);
+        this.panelMapa.add(scrollTablero, BorderLayout.CENTER);
 
         // PANEL INFERIOR
 
@@ -374,13 +379,7 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     }
 
     public String getMisionSeleccionada(){
-        try{
-            return this.cbMisiones.getSelectedItem().toString();
-        }
-        catch(NullPointerException e){
-            JOptionPane.showMessageDialog(null, "Debe seleccionar una misión");
-        }
-        return "";
+        return this.cbMisiones.getSelectedItem().toString();
     }
 
     @Override

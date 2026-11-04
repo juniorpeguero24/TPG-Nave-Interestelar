@@ -79,7 +79,7 @@ public class ControladorNave extends WindowAdapter implements ActionListener
     }
 
     private void vistaTripulantes() {
-        navegador.mostrarTripulantes();
+        navegador.mostrarTripulantes(this.asistenteComando);
     }
 
     private void vistaVisorRecondito() {

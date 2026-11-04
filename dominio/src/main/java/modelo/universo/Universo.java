@@ -2,13 +2,16 @@ package modelo.universo;
 
 import java.util.ArrayList;
 import modelo.nave.AsistenteComando;
+import modelo.tripulacion.Tripulante;
 
 public class Universo {
     private final ArrayList<AsistenteComando> asistentes;
+    private final ArrayList<Tripulante> tripulantesDisponibles;
     private AsistenteComando asistenteEnOperacion;
 
     public Universo() {
         this.asistentes = new ArrayList<>();
+        this.tripulantesDisponibles = new ArrayList<>();
     }
 
     public void registrarAsistente(AsistenteComando asistente) {
@@ -26,6 +29,14 @@ public class Universo {
             }
         }
         return null;
+    }
+
+    public void agregarTripulanteDisponible(Tripulante tripulante) {
+        this.tripulantesDisponibles.add(tripulante);
+    }
+
+    public void quitarTripulanteDisponible(Tripulante tripulante) {
+        this.tripulantesDisponibles.remove(tripulante);
     }
 
     public AsistenteComando getAsistenteEnOperacion() {

@@ -1,5 +1,7 @@
 package vistas;
 
+import modelo.tripulacion.Tripulante;
+
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
@@ -42,8 +44,8 @@ public class VCreacion extends JFrame implements IVista {
     private JButton btnAsignar;
     private JButton btnIniciar;
 
-    private JList<String> listaDisponibles;
-    private DefaultListModel<String> modeloDisponibles;
+    private JList<Tripulante> listaDisponibles;
+    private DefaultListModel<Tripulante> modeloDisponibles;
 
     private JRadioButton rdbtnCarguero;
     private JRadioButton rdbtnExploradora;
@@ -340,6 +342,16 @@ public class VCreacion extends JFrame implements IVista {
             seleccionado = "Exploradora";
         }
         return seleccionado;
+    }
+
+    public void actualizarListaTripulantes(Tripulante tripulante) {
+        this.modeloDisponibles.addElement(tripulante);
+    }
+
+    public Tripulante getTripulanteSeleccionado() {
+        Tripulante tripulante = this.listaDisponibles.getSelectedValue();
+        this.modeloDisponibles.removeElement(tripulante);
+        return tripulante;
     }
 
     public String getNombreTripulante() {

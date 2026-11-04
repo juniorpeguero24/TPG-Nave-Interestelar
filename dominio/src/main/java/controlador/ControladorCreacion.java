@@ -43,9 +43,9 @@ public class ControladorCreacion extends WindowAdapter implements ActionListener
         else if  (comando.equalsIgnoreCase("iniciar")) {
             iniciarJuego();
         }
-     /*   else if (comando.equalsIgnoreCase("asignar")) {
+        else if (comando.equalsIgnoreCase("asignar a nave")) {
             asignarTripulante();
-        }*/
+        }
     }
 
     private void crearNave(){
@@ -66,7 +66,6 @@ public class ControladorCreacion extends WindowAdapter implements ActionListener
 
     }
 
-
     private void crearTripulante() {
         String nombre = this.vCreacion.getNombreTripulante();
         Origen origen = Origen.valueOf(this.vCreacion.getOrigenTripulante());
@@ -75,14 +74,16 @@ public class ControladorCreacion extends WindowAdapter implements ActionListener
 
         Tripulante tripulante = new Tripulante(antiguedad,nombre, cargo,origen);
 
-        asistenteComando.agregarTripulante(tripulante);
-        /* falta agregarlo en algun arraylist del modelo y actualizar la lista de la vista */
+        universo.agregarTripulanteDisponible(tripulante);
+
+        this.vCreacion.actualizarListaTripulantes(tripulante);
     }
 
-    /*private void asignarTripulante(){
+    private void asignarTripulante(){
         Tripulante tripulante = this.vCreacion.getTripulanteSeleccionado();
         asistenteComando.agregarTripulante(tripulante);
-    }*/
+        universo.quitarTripulanteDisponible(tripulante);
+    }
 
     private void iniciarJuego(){
         AsistenteComando asistente = universo.getAsistenteEnOperacion();
