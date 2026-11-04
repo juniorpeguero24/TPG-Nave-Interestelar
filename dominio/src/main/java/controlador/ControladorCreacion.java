@@ -69,7 +69,6 @@ public class ControladorCreacion extends WindowAdapter implements ActionListener
                 universo.seleccionarNave(nombre);
 
                 this.vCreacion.setDatosNaveCreada(nombre, tipo);
-                this.vCreacion.habilitaIniciarJuego();
                 this.vCreacion.habilitaAsignarTripulante();
             }
         }
@@ -110,6 +109,9 @@ public class ControladorCreacion extends WindowAdapter implements ActionListener
 
             universo.quitarTripulanteDisponible(tripulante);
             this.vCreacion.quitarTripulanteDisponible(tripulante);
+
+            if (asistenteComando.tieneTripulacionValida())
+                this.vCreacion.habilitaIniciarJuego();
         }
         catch(CapitanExistenteException | TripulanteRepetidoException | TripulanteInvalidoException e){
             this.vCreacion.mostrarMensaje(e.getMessage());
