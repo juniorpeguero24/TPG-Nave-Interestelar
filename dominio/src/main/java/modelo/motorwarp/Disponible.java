@@ -1,7 +1,5 @@
 package modelo.motorwarp;
 
-import modelo.bitacora.Evento;
-
 class Disponible implements EstadoWarp {
     private final MotorWarp motor;
 
@@ -15,21 +13,17 @@ class Disponible implements EstadoWarp {
     }
 
     @Override
-    public Evento prepararSalto(){
-        return motor.cambiarEstado(new PreparandoSalto(motor));
+    public ResultadoSalto saltar() {
+        return motor.resultado(TipoResultadoSalto.SALTO_NORMAL, 1, "Salto normal ejecutado");
     }
 
     @Override
-    public Evento saltar(){
-
-        return motor.registrarError();
+    public ResultadoSalto saltarWarp(boolean energiaSuficiente) {
+        int turnosCompletados = energiaSuficiente ? 1 : 0;
+        motor.cambiarEstado(new PreparandoSalto(motor, turnosCompletados));
+        if (!energiaSuficiente) {
+            return motor.resultado(TipoResultadoSalto.SIN_ENERGIA, 0, "El motor entra en preparacion, pero no puede avanzar por energia insuficiente");
+        }
+        return motor.resultado(TipoResultadoSalto.PREPARANDO, 0, "Primer turno de preparacion del salto Warp completado");
     }
-
-    @Override
-    public Evento enfriar(){
-
-        return motor.registrarError();
-    }
-
-
 }

@@ -7,6 +7,7 @@ import modelo.excepciones.RecursoInsuficienteExcepcion;
 import modelo.tablero.Destino;
 import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
+import modelo.tablero.Posicion;
 
 public class Mision03 extends Mision {
     private boolean regresoCompletado = false;
@@ -17,7 +18,7 @@ public class Mision03 extends Mision {
 
 
     @Override
-    protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
+    protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion, InterruptedException {
         super.ejecutar(asistente);
         if (llegoAlObjetivo(asistente)) {
             agregarAccionPrincipal("Ejecutando maniobra de retorno");
@@ -25,6 +26,13 @@ public class Mision03 extends Mision {
         }
     }
 
+    @Override
+    protected InformeMision evaluar(AsistenteComando asistente) {
+        if (this.regresoCompletado)
+            this.resultado = ResultadoMision.EXITO;
+        return generarInforme(asistente);
+    }
+    
     @Override
     protected void cerrar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
         if (resultado == ResultadoMision.EXITO) {
@@ -42,11 +50,16 @@ public class Mision03 extends Mision {
         }
         super.cerrar(asistente);
     }
-
+    
+    // La base de origen es la posicion inicial de la nave: el centro del tablero.
     @Override
-    protected void evaluar(AsistenteComando asistente) {
-        if (this.regresoCompletado)
-            this.resultado = ResultadoMision.EXITO;
+    protected Posicion elegirObjetivo(Posicion origen) {
+        return new Posicion(getTablero().getX() / 2, getTablero().getY() / 2);
+    }
+    
+    @Override
+    protected int getEnergiaInicial() {
+        return CostosMision.ENERGIA_INICIAL_M03;
     }
 
     // La base de origen es la posicion inicial de la nave: el centro del tablero.

@@ -20,6 +20,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 
+import modelo.excepciones.NaveDestruidaExcepcion;
+
 
 public class ControladorNave extends WindowAdapter implements ActionListener
 {
@@ -75,9 +77,16 @@ public class ControladorNave extends WindowAdapter implements ActionListener
            } else if (NombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
                mision = new Mision03(destino, tablero);
            }
-
+           
            mision.añadirObservador(this.controlNave);
-           mision.realizarMision(this.asistenteComando);
+           
+           try {
+              mision.realizarMision(this.asistenteComando);
+           } catch (NaveDestruidaExcepcion e) {
+               controlNave.mostrarMensaje("No se puede iniciar una misión con la nave destruida");
+               controlNave.desactivarMision();
+           }
+
     }
 
     private void vistaTripulantes() {
