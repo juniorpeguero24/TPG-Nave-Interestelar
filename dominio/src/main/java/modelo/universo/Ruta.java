@@ -17,13 +17,16 @@ public class Ruta {
         return indiceActual < posiciones.size();
     }
 
-    public Posicion siguiente() {
-        if (!tieneSiguiente()) {
+    public boolean puedeAvanzar(int cantidad) {
+        return cantidad > 0 && indiceActual + cantidad <= posiciones.size();
+    }
+
+    public Posicion siguiente(int cantidad) {
+        if (!puedeAvanzar(cantidad)) {
             return null;
         }
-        Posicion siguiente = posiciones.get(indiceActual);
-        indiceActual++;
-        return siguiente;
+        indiceActual += cantidad;
+        return posiciones.get(indiceActual - 1);
     }
     
     public Posicion verSiguiente() {

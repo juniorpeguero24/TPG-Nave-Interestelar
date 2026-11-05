@@ -17,4 +17,9 @@ public class Asteroide implements ElementoDelUniverso {
     public void interactuarCon(Nave nave) {
         nave.recibirDanioEnergia(danioEnergia);
     }
+    
+    @Override
+    public String toString() {
+        return "Asteroide [danio de energia = " + danioEnergia + "]";
+    }
 }

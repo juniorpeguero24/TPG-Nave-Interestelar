@@ -35,4 +35,9 @@ public class EstacionCarga implements ElementoDelUniverso {
             throw new IllegalStateException("La estación calculó una carga inválida", e);
         }
     }
+    
+    @Override
+    public String toString() {
+        return "Estacion de carga [combustible = " + cargaCombustible + ", energia = " + cargaEnergia + "]";
+    }
 }
