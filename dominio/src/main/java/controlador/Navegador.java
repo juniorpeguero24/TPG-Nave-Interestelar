@@ -48,7 +48,7 @@ public class Navegador {
         }
 
         // Si cambiamos de nave, descartamos la vista anterior
-        if (control != null && asistenteDelControl != asistente) {
+        if (control != null && asistenteDelControl != null && asistenteDelControl != asistente) {
             // Dejamos de observar a la nave anterior
             asistenteDelControl.getNave().quitarObservador(control);
             asistenteDelControl.getBitacora().quitarObservador(control);
@@ -69,12 +69,14 @@ public class Navegador {
             this.control = new VControlNave(tablero);
             ControladorNave controladorNave = new ControladorNave(universo, control, this, destino, tablero);
 
-            AsistenteComando asistente = universo.getAsistenteEnOperacion();
+            asistente = universo.getAsistenteEnOperacion();
 
             asistente.añadirObservadorNave(control);
             asistente.añadirObservadorBitacora(control);
 
             controladorNave.configuracionInicial();
+            
+            asistenteDelControl = asistente;
         }
 
         // Mostramos el control de la nave seleccionada

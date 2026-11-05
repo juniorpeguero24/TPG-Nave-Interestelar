@@ -19,6 +19,10 @@ public class MotorWarp {
         return estado.saltar();
     }
 
+    public boolean puedeSaltarWarp() {
+        return estado instanceof Disponible;
+    }
+
     public ResultadoSalto saltarWarp(boolean energiaSuficiente) {
         return estado.saltarWarp(energiaSuficiente);
     }

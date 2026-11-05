@@ -426,7 +426,6 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
     @Override
     public void actualizarBitacora(Bitacora bitacora) {
-
         this.listaBitacora.setText(bitacora.toString());
     }
 
@@ -440,7 +439,7 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     }
 
     public void mostrarMensaje(String mensaje) {
-            JOptionPane.showMessageDialog(this, mensaje);
+        JOptionPane.showMessageDialog(this, mensaje);
     }
 
     public void desactivarMision() {

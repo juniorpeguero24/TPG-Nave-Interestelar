@@ -9,6 +9,8 @@ import modelo.haberes.Liquidacion;
 import modelo.tripulacion.Tripulante;
 import java.util.ArrayList;
 
+import modelo.mision.InformeMision;
+
 import modelo.motorwarp.ResultadoSalto;
 import modelo.motorwarp.TipoResultadoSalto;
 
@@ -116,6 +118,10 @@ public class AsistenteComando {
     private void registrarResultadoSalto(ResultadoSalto resultado) {
         TipoEvento tipoEvento = (resultado.getTipo() == TipoResultadoSalto.INVALIDO) ? TipoEvento.ERROR : TipoEvento.MOTOR_WARP;
         registrarEvento(new Evento(tipoEvento,resultado.getDescripcion()));
+    }
+    
+    public boolean puedeSaltarWarp() {
+        return nave.puedeSaltarWarp();
     }
 
     // ----- RECURSOS ----- //

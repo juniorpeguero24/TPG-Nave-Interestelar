@@ -19,11 +19,10 @@ class Disponible implements EstadoWarp {
 
     @Override
     public ResultadoSalto saltarWarp(boolean energiaSuficiente) {
-        int turnosCompletados = energiaSuficiente ? 1 : 0;
-        motor.cambiarEstado(new PreparandoSalto(motor, turnosCompletados));
         if (!energiaSuficiente) {
-            return motor.resultado(TipoResultadoSalto.SIN_ENERGIA, 0, "El motor entra en preparacion, pero no puede avanzar por energia insuficiente");
+            return saltar();
         }
-        return motor.resultado(TipoResultadoSalto.PREPARANDO, 0, "Primer turno de preparacion del salto Warp completado");
+        motor.cambiarEstado(new Enfriamiento(motor));
+        return motor.resultado(TipoResultadoSalto.SALTO_WARP, 2, "Salto Warp ejecutado");
     }
 }

@@ -198,6 +198,8 @@ public abstract class Nave implements ElementoDelUniverso {
     }
 
     public ResultadoSalto saltar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        // Verificamos antes de avanzar el estado del motor.
+        verificarDisponibilidadRecursos(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE, 0, 0);
         ResultadoSalto resultado = motorWarp.saltar();
         aplicarCostosSalto(resultado);
         notificarObservadores();
@@ -205,30 +207,39 @@ public abstract class Nave implements ElementoDelUniverso {
     }
 
     public ResultadoSalto saltarWarp() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        boolean energiaSuficiente = recursos.getEnergia() >= CostosMision.COSTO_ENERGIA_WARP;
-        ResultadoSalto resultado = motorWarp.saltarWarp(energiaSuficiente);
+        // Si el Warp no está disponible, se realiza un salto normal
+        if (!puedeSaltarWarp()) {
+            return saltar();
+        }
+        // Validamos antes de cambiar el estado a Enfriamiento.
+        verificarDisponibilidadRecursos(0, CostosMision.COSTO_ENERGIA_WARP, 0);
+        ResultadoSalto resultado = motorWarp.saltarWarp(true);
         aplicarCostosSalto(resultado);
         notificarObservadores();
         return resultado;
     }
 
     private void aplicarCostosSalto(ResultadoSalto resultado) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        if (resultado.getTipo() == TipoResultadoSalto.SALTO_NORMAL) {
-            verificarDisponibilidadRecursos(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE, 0, 0);
+        if (resultado.getTipo() == TipoResultadoSalto.SALTO_NORMAL || resultado.getTipo() == TipoResultadoSalto.ENFRIAMIENTO) {
             consumirCombustible(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
-            aumentarDesgaste(0);
         }
-        else if (resultado.getTipo() == TipoResultadoSalto.SALTO_WARP) {
-            verificarDisponibilidadRecursos(0, CostosMision.COSTO_ENERGIA_WARP, 0);
+
+        if (resultado.getTipo() == TipoResultadoSalto.SALTO_WARP) {
             consumirEnergia(CostosMision.COSTO_ENERGIA_WARP);
         }
-        else if (resultado.getTipo() == TipoResultadoSalto.ENFRIAMIENTO) {
+
+        if (resultado.getTipo() == TipoResultadoSalto.ENFRIAMIENTO) {
             int desgasteAplicado = Math.min(CostosMision.COSTO_DESGASTE_ENFRIAMIENTO_WARP, 100 - recursos.getDesgaste());
             if (desgasteAplicado > 0) {
-                recursos.aumentarDesgaste(desgasteAplicado);
+                aumentarDesgaste(desgasteAplicado);
             }
         }
+        
         verificarDestruccion();
+    }
+    
+    public boolean puedeSaltarWarp() {
+        return motorWarp.puedeSaltarWarp() && recursos.getEnergia() >= CostosMision.COSTO_ENERGIA_WARP;
     }
     
     // Metodos usados para las Misiones
