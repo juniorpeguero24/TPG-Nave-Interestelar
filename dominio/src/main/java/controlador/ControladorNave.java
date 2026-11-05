@@ -1,8 +1,6 @@
 package controlador;
 
-import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
-import modelo.excepciones.RecursoInsuficienteExcepcion;
-import modelo.excepciones.TripulacionInvalidaExcepcion;
+import modelo.excepciones.NaveDestruidaExcepcion;
 import modelo.mision.Mision;
 import modelo.mision.Mision01;
 import modelo.mision.Mision02;
@@ -12,15 +10,11 @@ import modelo.tablero.Tablero;
 import modelo.nave.AsistenteComando;
 import modelo.universo.Universo;
 import vistas.VControlNave;
-import vistas.VTripulantes;
-import vistas.VVisorRecondito;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
-
-import modelo.excepciones.NaveDestruidaExcepcion;
 
 
 public class ControladorNave extends WindowAdapter implements ActionListener
@@ -53,39 +47,41 @@ public class ControladorNave extends WindowAdapter implements ActionListener
             vistaVisorRecondito();
         }
         else if  (comando.equalsIgnoreCase("Iniciar Mision")) {
-            iniciarMision();
+                iniciarMision();
         }
     }
 
-    public void setDatosNave() {
+    public void configuracionInicial() {
         String nombre = this.asistenteComando.getNombreNave();
         String tipo = this.asistenteComando.getTipo();
         String recursos = this.asistenteComando.obtenerEstadoNaveActual();
         controlNave.setDatosNave(nombre, tipo, recursos);
+        controlNave.setTablero();
     }
 
-    public void iniciarMision(){
+    public void iniciarMision() {
 
-           String NombreMision = this.controlNave.getMisionSeleccionada();
+        try {
+            String NombreMision = this.controlNave.getMisionSeleccionada();
 
-           Mision mision = null;
+            Mision mision = null;
 
-           if (NombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
-               mision = new Mision01(destino, tablero);
-           } else if (NombreMision.equalsIgnoreCase("M-02 (Recolección)")) {
-               mision = new Mision02(destino, tablero);
-           } else if (NombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
-               mision = new Mision03(destino, tablero);
-           }
-           
-           mision.añadirObservador(this.controlNave);
-           
-           try {
-              mision.realizarMision(this.asistenteComando);
-           } catch (NaveDestruidaExcepcion e) {
-               controlNave.mostrarMensaje("No se puede iniciar una misión con la nave destruida");
-               controlNave.desactivarMision();
-           }
+            if (NombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
+                mision = new Mision01(destino, tablero);
+            } else if (NombreMision.equalsIgnoreCase("M-02 (Recolección)")) {
+                mision = new Mision02(destino, tablero);
+            } else if (NombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
+                mision = new Mision03(destino, tablero);
+            }
+
+            assert mision != null;
+            mision.agregarObservador(this.controlNave);
+            mision.realizarMision(this.asistenteComando);
+        }
+        catch (NaveDestruidaExcepcion ex) {
+            this.controlNave.mostrarMensaje(ex.getMessage());
+            this.controlNave.desactivarMision();
+        }
 
     }
 

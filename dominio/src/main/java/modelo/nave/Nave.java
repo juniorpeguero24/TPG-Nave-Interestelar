@@ -115,7 +115,7 @@ public abstract class Nave implements ElementoDelUniverso {
         recursos.cargarEnergia(cantidad);
         notificarObservadores();
     }
-    
+
     public int getGemas() {
         return gemas;
     }
@@ -127,7 +127,7 @@ public abstract class Nave implements ElementoDelUniverso {
         gemas += cantidad;
         notificarObservadores();
     }
-    
+
     // gasto voluntario
     public void consumirEnergia(int cantidad) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         recursos.consumirEnergia(cantidad);
@@ -211,7 +211,7 @@ public abstract class Nave implements ElementoDelUniverso {
         notificarObservadores();
         return resultado;
     }
-    
+
     private void aplicarCostosSalto(ResultadoSalto resultado) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         if (resultado.getTipo() == TipoResultadoSalto.SALTO_NORMAL) {
             verificarDisponibilidadRecursos(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE, 0, 0);
@@ -241,14 +241,14 @@ public abstract class Nave implements ElementoDelUniverso {
         consumirEnergia(CostosMision.COSTO_RADAR_CORTO);
         return radarCortoAlcance.escanear(tablero);
     }
-    
+
     public Ruta recalcularRuta(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         consumirEnergia(CostosMision.COSTO_RECALCULO);
         return radarLargoAlcance.calcularRuta(origen, destino);
     }
 
     // OBSERVADORES
-    public void añadirObservador(ObservadorNave observador) {
+    public void agregarObservador(ObservadorNave observador) {
         observadores.add(observador);
     }
 
@@ -261,7 +261,7 @@ public abstract class Nave implements ElementoDelUniverso {
             observador.actualizarNave(this);
         }
     }
-    
+
     @Override
     public String toString() {
         return "Nave [nombre = " + nombre + ", tipo = " + getTipo() + "]";

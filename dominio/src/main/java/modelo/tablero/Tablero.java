@@ -13,6 +13,7 @@ import modelo.excepciones.CantidadDeElementosSuperaCasillaExcepcion;
 import modelo.excepciones.DimensionesDeTableroInconsistentesExcepcion;
 
 import modelo.universo.ElementoDelUniverso;
+import observer.ObservadorTablero;
 
 /**
  * Administra una grilla rectangular, sus elementos, la nave y el objetivo.
@@ -349,7 +350,6 @@ public class Tablero extends Observable {
     protected void notificarActualizacion(){
         notificarObservadores();
     }
-
 
     /**
      * Devuelve una representación matricial de los elementos ocupantes del
