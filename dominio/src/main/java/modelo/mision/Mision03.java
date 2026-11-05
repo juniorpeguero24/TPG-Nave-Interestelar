@@ -62,14 +62,4 @@ public class Mision03 extends Mision {
         return CostosMision.ENERGIA_INICIAL_M03;
     }
 
-    // La base de origen es la posicion inicial de la nave: el centro del tablero.
-    @Override
-    protected Posicion elegirObjetivo(Posicion origen) {
-        return new Posicion(getTablero().getX() / 2, getTablero().getY() / 2);
-    }
-
-    @Override
-    protected int getEnergiaInicial() {
-        return CostosMision.ENERGIA_INICIAL_M03;
-    }
 }
