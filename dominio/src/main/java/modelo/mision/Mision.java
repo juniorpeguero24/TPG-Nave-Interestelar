@@ -322,7 +322,4 @@ public abstract class Mision {
         return resultadoSalto;
     }
 
-    public void añadirObservador(ObservadorMision o) {
-        this.observadores.add(o);
-    }
 }

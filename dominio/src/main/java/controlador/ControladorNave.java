@@ -46,12 +46,7 @@ public class ControladorNave extends WindowAdapter implements ActionListener
             vistaVisorRecondito();
         }
         else if  (comando.equalsIgnoreCase("Iniciar Mision")) {
-            try {
                 iniciarMision();
-            } catch (NaveDestruidaExcepcion ex) {
-                this.controlNave.mostrarMensaje(ex.getMessage());
-                this.controlNave.desactivarMision();
-            }
         }
     }
 
@@ -63,22 +58,29 @@ public class ControladorNave extends WindowAdapter implements ActionListener
         controlNave.setTablero();
     }
 
-    public void iniciarMision() throws NaveDestruidaExcepcion {
+    public void iniciarMision() {
 
-           String NombreMision = this.controlNave.getMisionSeleccionada();
+        try {
+            String NombreMision = this.controlNave.getMisionSeleccionada();
 
-           Mision mision = null;
+            Mision mision = null;
 
-           if (NombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
-               mision = new Mision01(destino, tablero);
-           } else if (NombreMision.equalsIgnoreCase("M-02 (Recolección)")) {
-               mision = new Mision02(destino, tablero);
-           } else if (NombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
-               mision = new Mision03(destino, tablero);
-           }
+            if (NombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
+                mision = new Mision01(destino, tablero);
+            } else if (NombreMision.equalsIgnoreCase("M-02 (Recolección)")) {
+                mision = new Mision02(destino, tablero);
+            } else if (NombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
+                mision = new Mision03(destino, tablero);
+            }
 
-           mision.añadirObservador(this.controlNave);
-           mision.realizarMision(this.asistenteComando);
+            assert mision != null;
+            mision.agregarObservador(this.controlNave);
+            mision.realizarMision(this.asistenteComando);
+        }
+        catch (NaveDestruidaExcepcion ex) {
+            this.controlNave.mostrarMensaje(ex.getMessage());
+            this.controlNave.desactivarMision();
+        }
 
     }
 
