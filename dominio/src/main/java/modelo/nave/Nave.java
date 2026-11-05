@@ -19,6 +19,9 @@ import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
 import observer.ObservadorNave;
 
+import modelo.motorwarp.ResultadoSalto;
+import modelo.motorwarp.TipoResultadoSalto;
+
 public abstract class Nave implements ElementoDelUniverso {
     private String nombre;
     private Recursos recursos;
@@ -28,7 +31,7 @@ public abstract class Nave implements ElementoDelUniverso {
     private RadarLargoAlcance radarLargoAlcance;
     private final List<ObservadorNave> observadores = new ArrayList<>();
     private RadarCortoAlcance radarCortoAlcance;
-
+    private int gemas;
 
     public Nave( String nombre,int combustible,int energia) {
         this.nombre = nombre;
@@ -68,7 +71,7 @@ public abstract class Nave implements ElementoDelUniverso {
                 + "\n  Energia: " + recursos.getEnergia()
                 + "\n  Desgaste: " + recursos.getDesgaste()
                 + "\n  Requiere mantenimiento: " + recursos.requiereMantenimiento()
-                + "\n  Motor Warp: " + motorWarp.getEstado();
+                + "\n  Motor Warp: " + motorWarp;
     }
     
     // Operaciones delegadas sobre Tripulacion
@@ -110,6 +113,18 @@ public abstract class Nave implements ElementoDelUniverso {
     
     public void cargarEnergia(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         recursos.cargarEnergia(cantidad);
+        notificarObservadores();
+    }
+    
+    public int getGemas() {
+        return gemas;
+    }
+
+    public void agregarGemas(int cantidad) throws OperacionRecursoInvalidaExcepcion {
+        if (cantidad <= 0) {
+            throw new OperacionRecursoInvalidaExcepcion("La cantidad de gemas debe ser positiva");
+        }
+        gemas += cantidad;
         notificarObservadores();
     }
     
@@ -179,63 +194,65 @@ public abstract class Nave implements ElementoDelUniverso {
     
     // Operaciones delegadas sobre el Motor Warp
     public String getEstadoMotorWarp() {
-        return motorWarp.getEstado();
+        return motorWarp.toString();
     }
 
-    public Evento prepararSalto(){
-        Evento evento = motorWarp.prepararSalto();
+    public ResultadoSalto saltar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        ResultadoSalto resultado = motorWarp.saltar();
+        aplicarCostosSalto(resultado);
         notificarObservadores();
-        return evento;
+        return resultado;
     }
 
-    public Evento saltar(){
-        Evento evento = motorWarp.saltar();
+    public ResultadoSalto saltarWarp() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        boolean energiaSuficiente = recursos.getEnergia() >= CostosMision.COSTO_ENERGIA_WARP;
+        ResultadoSalto resultado = motorWarp.saltarWarp(energiaSuficiente);
+        aplicarCostosSalto(resultado);
         notificarObservadores();
-        return evento;
+        return resultado;
     }
-
-    public Evento enfriar(){
-        Evento evento = motorWarp.enfriar();
-        notificarObservadores();
-        return evento;
+    
+    private void aplicarCostosSalto(ResultadoSalto resultado) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        if (resultado.getTipo() == TipoResultadoSalto.SALTO_NORMAL) {
+            verificarDisponibilidadRecursos(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE, 0, 0);
+            consumirCombustible(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
+            aumentarDesgaste(0);
+        }
+        else if (resultado.getTipo() == TipoResultadoSalto.SALTO_WARP) {
+            verificarDisponibilidadRecursos(0, CostosMision.COSTO_ENERGIA_WARP, 0);
+            consumirEnergia(CostosMision.COSTO_ENERGIA_WARP);
+        }
+        else if (resultado.getTipo() == TipoResultadoSalto.ENFRIAMIENTO) {
+            int desgasteAplicado = Math.min(CostosMision.COSTO_DESGASTE_ENFRIAMIENTO_WARP, 100 - recursos.getDesgaste());
+            if (desgasteAplicado > 0) {
+                recursos.aumentarDesgaste(desgasteAplicado);
+            }
+        }
+        verificarDestruccion();
     }
     
     // Metodos usados para las Misiones
     public Ruta usarRadarLargoAlcance(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        recursos.consumirEnergia(CostosMision.COSTO_RADAR_LARGO);
-        notificarObservadores();
+        consumirEnergia(CostosMision.COSTO_RADAR_LARGO);
         return radarLargoAlcance.calcularRuta(origen, destino);
     }
     
     public ElementoDelUniverso[][] usarRadarCortoAlcance(Tablero tablero) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        recursos.consumirEnergia(CostosMision.COSTO_RADAR_CORTO);
-        notificarObservadores();
+        consumirEnergia(CostosMision.COSTO_RADAR_CORTO);
         return radarCortoAlcance.escanear(tablero);
     }
     
-    public void avanzar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        recursos.verificarDisponibilidadRecursos(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE, 0, CostosMision.COSTO_MOVIMIENTO_DESGASTE);
-        recursos.consumirCombustible(CostosMision.COSTO_MOVIMIENTO_COMBUSTIBLE);
-        recursos.aumentarDesgaste(CostosMision.COSTO_MOVIMIENTO_DESGASTE);
-        notificarObservadores();
-    }
-    
     public Ruta recalcularRuta(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        recursos.consumirEnergia(CostosMision.COSTO_RECALCULO);
-        notificarObservadores();
+        consumirEnergia(CostosMision.COSTO_RECALCULO);
         return radarLargoAlcance.calcularRuta(origen, destino);
     }
 
-
-
     // OBSERVADORES
-
     public void añadirObservador(ObservadorNave observador) {
         observadores.add(observador);
     }
 
     public void quitarObservador(ObservadorNave observador) {
-
         observadores.remove(observador);
     }
 
@@ -243,6 +260,11 @@ public abstract class Nave implements ElementoDelUniverso {
         for (ObservadorNave observador : observadores) {
             observador.actualizarNave(this);
         }
+    }
+    
+    @Override
+    public String toString() {
+        return "Nave [nombre = " + nombre + ", tipo = " + getTipo() + "]";
     }
 
 }

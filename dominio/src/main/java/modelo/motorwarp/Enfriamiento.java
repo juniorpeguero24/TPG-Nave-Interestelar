@@ -1,7 +1,5 @@
 package modelo.motorwarp;
 
-import modelo.bitacora.Evento;
-
 class Enfriamiento implements EstadoWarp {
     private final MotorWarp motor;
 
@@ -9,26 +7,23 @@ class Enfriamiento implements EstadoWarp {
         this.motor = motor;
     }
 
+    private ResultadoSalto completarEnfriamiento() {
+        motor.cambiarEstado(new Disponible(motor));
+        return motor.resultado(TipoResultadoSalto.ENFRIAMIENTO, 0, "Enfriamiento completado. Motor nuevamente disponible");
+    }
+
     @Override
-    public String toString(){
+    public ResultadoSalto saltar() {
+        return completarEnfriamiento();
+    }
+
+    @Override
+    public ResultadoSalto saltarWarp(boolean energiaSuficiente) {
+        return completarEnfriamiento();
+    }
+
+    @Override
+    public String toString() {
         return "Enfriamiento";
     }
-
-    @Override
-    public Evento prepararSalto(){
-        return motor.registrarError();
-    }
-
-    @Override
-    public Evento saltar(){
-
-        return motor.registrarError();
-    }
-
-    @Override
-    public Evento enfriar(){
-
-        return motor.registrarError();
-    }
-
 }

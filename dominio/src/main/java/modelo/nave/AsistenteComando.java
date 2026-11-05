@@ -9,6 +9,9 @@ import modelo.haberes.Liquidacion;
 import modelo.tripulacion.Tripulante;
 import java.util.ArrayList;
 
+import modelo.motorwarp.ResultadoSalto;
+import modelo.motorwarp.TipoResultadoSalto;
+
 import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
 
@@ -17,6 +20,7 @@ import modelo.universo.Ruta;
 
 import observer.ObservadorBitacora;
 import observer.ObservadorNave;
+
 
 public class AsistenteComando {
     private final Nave nave;
@@ -78,30 +82,31 @@ public class AsistenteComando {
         return nave.getEstadoMotorWarp();
     }
 
-    public void prepararSalto(){
-        Evento evento = nave.prepararSalto();
-        this.registrarEvento(evento);
-    }
-
-    public void saltar(){
-        Evento evento = nave.saltar();
-        this.registrarEvento(evento);
-    }
-
-    public void enfriar(){
-        Evento evento = nave.enfriar();
-        this.registrarEvento(evento);
-    }
-
-    public boolean ordenarSaltoWarp() {
-        if (!estaDisponibleParaSalto()) {
-            registrarEvento(new Evento(TipoEvento.ERROR, "No se puede iniciar un salto Warp desde el estado " + getEstadoMotorWarp()));
-            return false;
+    public ResultadoSalto saltar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        try {
+            ResultadoSalto resultado = nave.saltar();
+            registrarResultadoSalto(resultado);
+            return resultado;
+        } catch (RecursoInsuficienteExcepcion | OperacionRecursoInvalidaExcepcion e) {
+            registrarEvento(new Evento(TipoEvento.ERROR, e.getMessage()));
+            throw e;
         }
-        prepararSalto();
-        saltar();
-        enfriar();
-        return true;
+    }
+    
+    public ResultadoSalto saltarWarp() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
+        try {
+            ResultadoSalto resultado = nave.saltarWarp();
+            registrarResultadoSalto(resultado);
+            return resultado;
+        } catch (RecursoInsuficienteExcepcion | OperacionRecursoInvalidaExcepcion e) {
+            registrarEvento(new Evento(TipoEvento.ERROR, e.getMessage()));
+            throw e;
+        }
+    }
+    
+    private void registrarResultadoSalto(ResultadoSalto resultado) {
+        TipoEvento tipoEvento = (resultado.getTipo() == TipoResultadoSalto.INVALIDO) ? TipoEvento.ERROR : TipoEvento.MOTOR_WARP;
+        registrarEvento(new Evento(tipoEvento,resultado.getDescripcion()));
     }
 
     // ----- RECURSOS ----- //
@@ -147,6 +152,11 @@ public class AsistenteComando {
     public void realizarMantenimiento() {
         nave.realizarMantenimiento();
         this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se realizo el mantenimiento de la nave"));
+    }
+    
+    public void agregarGemas(int cantidad) throws OperacionRecursoInvalidaExcepcion {
+        nave.agregarGemas(cantidad);
+        registrarEvento(new Evento(TipoEvento.RECURSOS, "Se recolectaron " + cantidad + " gemas"));
     }
 
     // ----- CONSULTAS DE ESTADO Y DISPONIBILIDAD ----- //
@@ -225,16 +235,13 @@ public class AsistenteComando {
         return nave.usarRadarCortoAlcance(tablero);
     }
     
-    public void avanzar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        nave.avanzar();
-    }
-    
     public Ruta recalcularRuta(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         return nave.recalcularRuta(origen, destino);
     }
 
     public void interactuarCon(ElementoDelUniverso elemento) {
         elemento.interactuarCon(nave);
+        registrarEvento(new Evento(TipoEvento.MISION, "Interaccion con " + elemento));
     }
 
     // Observadores
