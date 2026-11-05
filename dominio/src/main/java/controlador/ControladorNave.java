@@ -1,8 +1,6 @@
 package controlador;
 
-import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
-import modelo.excepciones.RecursoInsuficienteExcepcion;
-import modelo.excepciones.TripulacionInvalidaExcepcion;
+import modelo.excepciones.NaveDestruidaExcepcion;
 import modelo.mision.Mision;
 import modelo.mision.Mision01;
 import modelo.mision.Mision02;
@@ -12,8 +10,6 @@ import modelo.tablero.Tablero;
 import modelo.nave.AsistenteComando;
 import modelo.universo.Universo;
 import vistas.VControlNave;
-import vistas.VTripulantes;
-import vistas.VVisorRecondito;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -50,18 +46,24 @@ public class ControladorNave extends WindowAdapter implements ActionListener
             vistaVisorRecondito();
         }
         else if  (comando.equalsIgnoreCase("Iniciar Mision")) {
-            iniciarMision();
+            try {
+                iniciarMision();
+            } catch (NaveDestruidaExcepcion ex) {
+                this.controlNave.mostrarMensaje(ex.getMessage());
+                this.controlNave.desactivarMision();
+            }
         }
     }
 
-    public void setDatosNave() {
+    public void configuracionInicial() {
         String nombre = this.asistenteComando.getNombreNave();
         String tipo = this.asistenteComando.getTipo();
         String recursos = this.asistenteComando.obtenerEstadoNaveActual();
         controlNave.setDatosNave(nombre, tipo, recursos);
+        controlNave.setTablero();
     }
 
-    public void iniciarMision(){
+    public void iniciarMision() throws NaveDestruidaExcepcion {
 
            String NombreMision = this.controlNave.getMisionSeleccionada();
 

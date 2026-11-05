@@ -19,6 +19,8 @@ import modelo.universo.Asteroide;
 import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
 import observer.ObservadorMision;
+import observer.ObservadorNave;
+import vistas.VControlNave;
 
 public abstract class Mision {
     private static final int PAUSA_TURNO_MS = 1000;
@@ -318,5 +320,9 @@ public abstract class Mision {
         sumarDesgasteGenerado(desgasteDespues - desgasteAntes);
         
         return resultadoSalto;
+    }
+
+    public void añadirObservador(ObservadorMision o) {
+        this.observadores.add(o);
     }
 }
