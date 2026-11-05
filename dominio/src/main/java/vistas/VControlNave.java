@@ -5,19 +5,25 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.event.ActionListener;
 
 import modelo.bitacora.Bitacora;
 import modelo.mision.InformeMision;
 import modelo.nave.Nave;
+import modelo.tablero.Tablero;
+import modelo.universo.Asteroide;
+import modelo.universo.ElementoDelUniverso;
+import modelo.universo.EstacionCarga;
 import observer.ObservadorBitacora;
 import observer.ObservadorMision;
 import observer.ObservadorNave;
+import observer.ObservadorTablero;
 
 import static vistas.Estilo.*;
 
-public class VControlNave extends JFrame implements IVista, ObservadorNave, ObservadorBitacora, ObservadorMision {
+public class VControlNave extends JFrame implements IVista, ObservadorNave, ObservadorBitacora, ObservadorMision, ObservadorTablero {
 
     private JLabel lblTituloBitacora;
     private JPanel panelSeleccion;
@@ -41,6 +47,8 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
     private JPanel panelTablero;
     private JPanel panelMapa;
+    private JTable tablaTablero;
+    private DefaultTableModel modeloTablero;
 
     private JLabel lblTitulo;
 
@@ -66,12 +74,17 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     private JScrollPane scrollBitacora;
     private JTextArea listaBitacora;
 
-    public VControlNave() {
+    private Tablero tablero;
+
+    public VControlNave(Tablero tablero) {
+
+        this.tablero = tablero;
+        this.tablero.agregarObservador(this);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 1600, 900);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setResizable(true);
         setLocationRelativeTo(null);
-        setResizable(false);
 
         this.contentPane = new JPanel();
         this.contentPane.setBackground(fondo);
@@ -332,10 +345,24 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
         this.panelTablero.add(this.panelMapa, BorderLayout.CENTER);
 
-        JScrollPane scrollTablero = new JScrollPane();
+        this.modeloTablero = new DefaultTableModel();
+
+        this.tablaTablero = new JTable();
+        JScrollPane scrollTablero = new JScrollPane(this.tablaTablero);
         scrollTablero.setBorder(null);
         scrollTablero.getViewport().setBackground(Estilo.fondoPanel);
+
+        this.tablaTablero.setTableHeader(null);
+        this.tablaTablero.setBackground(Estilo.fondoPanel);
+        this.tablaTablero.setForeground(Estilo.blanco);
+        this.tablaTablero.setModel(this.modeloTablero);
+        this.tablaTablero.setFillsViewportHeight(true);
+        this.tablaTablero.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+        scrollTablero.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
         this.panelMapa.add(scrollTablero, BorderLayout.CENTER);
+
 
         // PANEL INFERIOR
 
@@ -400,5 +427,65 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
         for (String linea : texto.split("\\n")) {
             modeloInformes.addElement(linea);
         }
+    }
+
+    @Override
+    public void actualizar() {
+        ElementoDelUniverso[][] matriz = this.tablero.verTablero();
+        modeloTablero.setRowCount(0);
+        modeloTablero.setColumnCount(tablero.getY());
+
+        int PosXnave = tablero.getPosicionNave().getX();
+        int PosYnave = tablero.getPosicionNave().getY();
+
+        setPosicionNave(PosXnave, PosYnave);
+
+        for(int i = 0; i < matriz.length; i++){
+            String[] fila = new String[matriz[i].length];
+            for(int j = 0; j < matriz[i].length; j++){
+                fila[j] = "";
+
+                if (i == PosXnave && j == PosYnave)
+                    fila[j] = "YO";
+
+                if (matriz[i][j] instanceof Asteroide) {
+                    fila[j] += fila[j].isEmpty() ? "A" : "/A";
+                }
+                else if (matriz[i][j] instanceof Nave) {
+                    fila[j] += fila[j].isEmpty() ? "N" : "/N";
+                }
+                else if (matriz[i][j] instanceof EstacionCarga) {
+                    fila[j] += fila[j].isEmpty() ? "E" : "/E";
+                }
+            }
+            modeloTablero.addRow(fila);
+        }
+    }
+
+    public void setTablero() {
+        actualizar();
+        ajustarTablero(tablero.getX(), tablero.getY());
+    }
+
+    public void ajustarTablero(int filas, int columnas) {
+        int tamañoCelda = 40;
+
+        modeloTablero.setColumnCount(tablero.getY());
+
+        this.tablaTablero.setRowHeight(tamañoCelda);
+
+        int ancho = columnas * tamañoCelda;
+        int alto = filas * tamañoCelda;
+
+        this.tablaTablero.setPreferredSize(new Dimension(ancho,alto));
+
+        for (int i = 0; i < columnas; i++) {
+            this.tablaTablero.getColumnModel()
+                    .getColumn(i).setPreferredWidth(tamañoCelda);
+        }
+    }
+
+    public void setPosicionNave(int x, int y){
+        this.lblCoordenadas.setText("X: " + x + " Y: " + y);
     }
 }

@@ -38,25 +38,6 @@ public class VAcceso extends JFrame implements IVista {
 	private JPanel panelBtnLogin;
 	private JPanel panelBtnRegistro;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					VAcceso frame = new VAcceso();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 */
 	public VAcceso()  {
 	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    setBounds(200, 200, 600, 450);

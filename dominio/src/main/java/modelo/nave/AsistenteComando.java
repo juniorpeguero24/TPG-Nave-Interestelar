@@ -239,10 +239,10 @@ public class AsistenteComando {
 
     // Observadores
     public void añadirObservadorNave(ObservadorNave observador) {
-        nave.añadirObservador(observador);
+        nave.agregarObservador(observador);
     }
 
     public void añadirObservadorBitacora(ObservadorBitacora observador) {
-        bitacora.añadirObservador(observador);
+        bitacora.agregarObservador(observador);
     }
 }

@@ -42,7 +42,7 @@ public class Navegador {
 
     public void iniciarJuego(Universo universo) {
         if (control == null) {
-            this.control = new VControlNave();
+            this.control = new VControlNave(tablero);
             ControladorNave controladorNave = new ControladorNave(universo, control, this, destino, tablero);
 
             AsistenteComando asistente = universo.getAsistenteEnOperacion();
@@ -50,7 +50,8 @@ public class Navegador {
             asistente.añadirObservadorNave(control);
             asistente.añadirObservadorBitacora(control);
 
-            controladorNave.setDatosNave();
+            controladorNave.configuracionInicial();
+
             creacion.setVisible(false);
             control.setVisible(true);
         }

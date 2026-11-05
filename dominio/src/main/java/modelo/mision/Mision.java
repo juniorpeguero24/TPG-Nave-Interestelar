@@ -192,7 +192,7 @@ public abstract class Mision {
 
     // OBSERVER
 
-    public void añadirObservador(ObservadorMision observador) {
+    public void agregarObservador(ObservadorMision observador) {
         this.observadores.add(observador);
     }
 

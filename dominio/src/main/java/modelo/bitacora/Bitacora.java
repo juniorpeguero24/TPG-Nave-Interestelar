@@ -41,7 +41,7 @@ public class Bitacora {
 
     // OBSERVER
 
-    public void añadirObservador(ObservadorBitacora observador){
+    public void agregarObservador(ObservadorBitacora observador){
         observadores.add(observador);
     }
 

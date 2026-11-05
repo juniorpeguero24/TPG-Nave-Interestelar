@@ -1,8 +1,5 @@
 package controlador;
 
-import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
-import modelo.excepciones.RecursoInsuficienteExcepcion;
-import modelo.excepciones.TripulacionInvalidaExcepcion;
 import modelo.mision.Mision;
 import modelo.mision.Mision01;
 import modelo.mision.Mision02;
@@ -12,8 +9,6 @@ import modelo.tablero.Tablero;
 import modelo.nave.AsistenteComando;
 import modelo.universo.Universo;
 import vistas.VControlNave;
-import vistas.VTripulantes;
-import vistas.VVisorRecondito;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -38,6 +33,7 @@ public class ControladorNave extends WindowAdapter implements ActionListener
         this.navegador = nav;
         this.destino = destino;
         this.tablero = tablero;
+
     }
 
     @Override
@@ -54,11 +50,13 @@ public class ControladorNave extends WindowAdapter implements ActionListener
         }
     }
 
-    public void setDatosNave() {
+    public void configuracionInicial() {
         String nombre = this.asistenteComando.getNombreNave();
         String tipo = this.asistenteComando.getTipo();
         String recursos = this.asistenteComando.obtenerEstadoNaveActual();
         controlNave.setDatosNave(nombre, tipo, recursos);
+
+        controlNave.setTablero();
     }
 
     public void iniciarMision(){
@@ -75,7 +73,7 @@ public class ControladorNave extends WindowAdapter implements ActionListener
                mision = new Mision03(destino, tablero);
            }
 
-           mision.añadirObservador(this.controlNave);
+           mision.agregarObservador(this.controlNave);
            mision.realizarMision(this.asistenteComando);
 
     }

@@ -230,7 +230,7 @@ public abstract class Nave implements ElementoDelUniverso {
 
     // OBSERVADORES
 
-    public void añadirObservador(ObservadorNave observador) {
+    public void agregarObservador(ObservadorNave observador) {
         observadores.add(observador);
     }
 

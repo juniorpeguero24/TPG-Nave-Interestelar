@@ -2,7 +2,9 @@ import controlador.ControladorAcceso;
 import controlador.ControladorCreacion;
 import controlador.Navegador;
 import modelo.excepciones.NaveInvalidaException;
+import modelo.nave.Nave;
 import modelo.universo.Universo;
+import vistas.VControlNave;
 import vistas.VCreacion;
 import modelo.tablero.Tablero;
 import modelo.tablero.Destino;
@@ -19,7 +21,7 @@ import modelo.persistencia.InicializadorBD;
 import vistas.VAcceso;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, NaveInvalidaException {
         // inicializar BD
         try {
             InicializadorBD.inicializar();
@@ -29,10 +31,16 @@ public class Main {
         }
                 
         // Creacion del tablero
-        int cantFilas = 5;
-        int cantColumnas = 5;
+        int cantFilas = 10;
+        int cantColumnas = 10;
         ArrayList<ElementoDelUniverso> elementos = new ArrayList<>();
 
+        elementos.add(new Asteroide(5));
+        elementos.add(new Asteroide(7));
+        elementos.add(new Asteroide(2));
+        elementos.add(new Asteroide(5));
+        elementos.add(new Asteroide(7));
+        elementos.add(new Asteroide(2));
         elementos.add(new Asteroide(5));
         elementos.add(new Asteroide(7));
         elementos.add(new Asteroide(2));
@@ -71,7 +79,7 @@ public class Main {
 
 
         // OBSERVADORES
-        
+
         vAcceso.setVisible(true);
 
 
