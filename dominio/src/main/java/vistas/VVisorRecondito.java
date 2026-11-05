@@ -175,8 +175,8 @@ public class VVisorRecondito extends JFrame implements IVista, ObservadorPlatafo
 	}
 
 	@Override
-	public void actualizar(String msj) {
-			this.textAreaConcurrencia.append(msj + "\n");
+	public void actualizar(String msj) { //Los mensajes llegan desde los hilos de la simulacion y Swing solo debe tocarse desde su propio hilo.
+		javax.swing.SwingUtilities.invokeLater(() -> this.textAreaConcurrencia.append(msj + "\n"));
 	}
 
 	public String getNombreNave(){

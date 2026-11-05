@@ -73,4 +73,9 @@ public class Mision01 extends Mision {
     protected int getEnergiaInicial() {
         return CostosMision.ENERGIA_INICIAL_M01;
     }
+
+    @Override
+    protected int getEnergiaInicial() {
+        return CostosMision.ENERGIA_INICIAL_M01;
+    }
 }

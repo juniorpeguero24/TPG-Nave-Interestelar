@@ -21,30 +21,31 @@ public class PlataformaDeCarga  {
     }
 
     public synchronized void depositarBateria(String idGeneradora) throws InterruptedException {
+        boolean avisado = false;
         while (this.cantBaterias >= this.capacidadMaxima) {
-            String msj = ("[" + idGeneradora + "] esperando a que se libere espacio en la Plataforma.");
-            notificarObservadores(msj);
-            Thread.sleep(2000);
+            if (!avisado) {
+                notificarObservadores("[" + idGeneradora + "] esperando a que se libere espacio en la Plataforma.");
+                avisado = true;
+            }
             wait();
         }
         this.cantBaterias++;
-        String msj = ("Batería producida por [" + idGeneradora + "]. Baterías en plataforma: " + this.cantBaterias);
-        notificarObservadores(msj);
-        Thread.sleep(2000);
+        notificarObservadores("Batería producida por [" + idGeneradora + "]. Baterías en plataforma: " + this.cantBaterias);
         notifyAll();
     }
 
     public synchronized void retirarBateria(String idNave) throws InterruptedException {
+        notificarObservadores("[" + idNave + "] solicitando batería.");
+        boolean avisado = false;
         while (this.cantBaterias == 0) {
-            String msj = ("[" + idNave + "] esperando por falta de baterías en la Plataforma.");
-            notificarObservadores(msj);
-            Thread.sleep(2000);
+            if (!avisado) {
+                notificarObservadores("[" + idNave + "] esperando por falta de baterías en la Plataforma.");
+                avisado = true;
+            }
             wait();
         }
         this.cantBaterias--;
-        String msj = ("Batería retirada y utilizada por [" + idNave + "]. Baterías en plataforma: " + this.cantBaterias);
-        notificarObservadores(msj);
-        Thread.sleep(2000);
+        notificarObservadores("Batería retirada y utilizada por [" + idNave + "]. Baterías en plataforma: " + this.cantBaterias);
         notifyAll();
     }
 

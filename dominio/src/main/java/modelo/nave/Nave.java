@@ -267,4 +267,16 @@ public abstract class Nave implements ElementoDelUniverso {
         return "Nave [nombre = " + nombre + ", tipo = " + getTipo() + "]";
     }
 
+    public int getGemas() {
+        return gemas;
+    }
+
+    public void agregarGemas(int cantidad) throws OperacionRecursoInvalidaExcepcion {
+        if (cantidad <= 0) {
+            throw new OperacionRecursoInvalidaExcepcion("La cantidad de gemas debe ser positiva");
+        }
+        gemas += cantidad;
+        notificarObservadores();
+    }
+
 }
