@@ -16,6 +16,7 @@ public class Navegador {
     private VVisorRecondito visor;
     private Destino destino;
     private Tablero tablero;
+    private AsistenteComando asistenteDelControl;
 
     public Navegador(VAcceso acceso, Destino destino, Tablero tablero){
         this.acceso = acceso;
@@ -41,6 +42,29 @@ public class Navegador {
     }
 
     public void iniciarJuego(Universo universo) {
+        AsistenteComando asistente = universo.getAsistenteEnOperacion();
+        if (asistente == null) {
+            return;
+        }
+
+        // Si cambiamos de nave, descartamos la vista anterior
+        if (control != null && asistenteDelControl != asistente) {
+            // Dejamos de observar a la nave anterior
+            asistenteDelControl.getNave().quitarObservador(control);
+            asistenteDelControl.getBitacora().quitarObservador(control);
+            tablero.quitarObservador(control);
+
+            control.setVisible(false);
+            control = null;
+
+            // La vista de tripulantes corresponde al asistente anterior
+            if (tripulantes != null) {
+                tripulantes.setVisible(false);
+                tripulantes = null;
+            }
+        }
+
+        // Si no existe un control para esta nave, lo creamos
         if (control == null) {
             this.control = new VControlNave(tablero);
             ControladorNave controladorNave = new ControladorNave(universo, control, this, destino, tablero);
@@ -51,10 +75,11 @@ public class Navegador {
             asistente.añadirObservadorBitacora(control);
 
             controladorNave.configuracionInicial();
-
-            creacion.setVisible(false);
-            control.setVisible(true);
         }
+
+        // Mostramos el control de la nave seleccionada
+        creacion.setVisible(false);
+        control.setVisible(true);
     }
 
     public void mostrarTripulantes(AsistenteComando asistenteComando) {
@@ -97,4 +122,11 @@ public class Navegador {
         visor.setVisible(false);
         control.setVisible(true);
     }
+
+    public void volverACreacion() {
+    if (control != null && creacion != null) {
+        control.setVisible(false);
+        creacion.setVisible(true);
+    }
+}
 }

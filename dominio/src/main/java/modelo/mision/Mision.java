@@ -104,22 +104,14 @@ public abstract class Mision {
                 energiaInicial + CostosMision.COSTO_RADAR_LARGO,
                 CostosMision.COSTO_BASE_DESGASTE);
 
-        asistente.consumirCombustible(CostosMision.COSTO_BASE_COMBUSTIBLE);
-        if (energiaInicial > 0) {
-            asistente.consumirEnergia(energiaInicial);
-        }
-        asistente.aumentarDesgaste(CostosMision.COSTO_BASE_DESGASTE);
-        sumarCombustibleConsumido(CostosMision.COSTO_BASE_COMBUSTIBLE);
-        sumarEnergiaConsumida(energiaInicial);
-        sumarDesgasteGenerado(CostosMision.COSTO_BASE_DESGASTE);
-
         Posicion origen = tablero.getPosicionNave();
         this.objetivo = elegirObjetivo(origen);
         ruta = asistente.usarRadarLargoAlcance(origen, this.objetivo);
+        energiaConsumida += CostosMision.COSTO_RADAR_LARGO;
+        
         if (asistente.naveDestruida()) {
             throw new NaveDestruidaExcepcion("La nave fue destruida durante la preparacion");
         }
-        energiaConsumida += CostosMision.COSTO_RADAR_LARGO;
     }
     
     protected void ejecutar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion, InterruptedException {
@@ -131,10 +123,13 @@ public abstract class Mision {
         asistente.verificarDisponibilidadRecursos(combustible, energia, desgaste);
         // Consumo efectivo de despegue.
         asistente.consumirCombustible(combustible);
+        sumarCombustibleConsumido(combustible);
         if (energia > 0) {
             asistente.consumirEnergia(energia);
+            sumarEnergiaConsumida(energia);
         }
         asistente.aumentarDesgaste(desgaste);
+        sumarDesgasteGenerado(desgaste);
         
         // Actualizamos los valores del informe.
         sumarCombustibleConsumido(combustible);
@@ -232,7 +227,7 @@ public abstract class Mision {
             observaciones
         );
 
-        asistente.registrarEvento(new Evento(TipoEvento.INFORME, informe.toString()));
+        asistente.registrarInforme(informe);
         notificarObservadores(informe);
 
         return informe;
@@ -294,8 +289,6 @@ public abstract class Mision {
         return !asistente.naveDestruida() && objetivo != null && tablero.getPosicionNave().equals(objetivo);
     }
 
-    // Por defecto el objetivo lo sortea el tablero;
-    // M-03 lo redefine.
     protected Posicion elegirObjetivo(Posicion origen) {
         return tablero.obtenerObjetivo();
     }

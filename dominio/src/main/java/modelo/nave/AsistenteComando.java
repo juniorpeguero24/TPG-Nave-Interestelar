@@ -25,6 +25,7 @@ import observer.ObservadorNave;
 public class AsistenteComando {
     private final Nave nave;
     private Bitacora bitacora;
+    private final ArrayList<InformeMision> historialInformes = new ArrayList<>();
 
     public AsistenteComando(Nave nave){
         this.nave = nave;
@@ -60,6 +61,14 @@ public class AsistenteComando {
 
     public ArrayList<Liquidacion> liquidarHaberesTripulacion() {
         return nave.liquidarHaberesTripulacion();
+    }
+
+    public void registrarInforme(InformeMision informe) {
+        historialInformes.add(informe);
+    }
+
+    public ArrayList<InformeMision> getHistorialInformes() {
+        return new ArrayList<>(historialInformes);
     }
 
     // ----- BITACORA ----- //
