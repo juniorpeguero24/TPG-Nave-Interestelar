@@ -48,18 +48,4 @@ public class Mision02 extends Mision {
         return CostosMision.ENERGIA_INICIAL_M02;
     }
 
-    @Override
-    protected void cerrar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
-        if (resultado == ResultadoMision.EXITO) {
-            int gemas = 20 + azar.nextInt(81);   // 20..100
-            asistente.agregarGemas(gemas);
-            agregarObservacion("Recolección completada: se obtuvieron " + gemas + " gemas");
-        }
-        super.cerrar(asistente);
-    }
-
-    @Override
-    protected int getEnergiaInicial() {
-        return CostosMision.ENERGIA_INICIAL_M02;
-    }
 }
