@@ -1,6 +1,5 @@
 package controlador;
 
-import modelo.excepciones.NaveDestruidaExcepcion;
 import modelo.mision.Mision;
 import modelo.mision.Mision01;
 import modelo.mision.Mision02;
@@ -14,23 +13,24 @@ import vistas.VControlNave;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
+
+import modelo.mision.InformeMision;
 
 
-public class ControladorNave extends WindowAdapter implements ActionListener
+public class ControladorNave implements ActionListener
 {
     private final VControlNave controlNave;
     private final AsistenteComando asistenteComando;
     private final Navegador navegador;
     private Destino destino;
     private Tablero tablero;
-    private boolean misionEnCurso = false;
+    private Universo universo;
 
     public ControladorNave(Universo universo, VControlNave controlNave, Navegador nav, Destino destino, Tablero tablero) {
 
         this.controlNave = controlNave;
         this.controlNave.setActionListener(this);
-        this.controlNave.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.universo = universo;
         this.asistenteComando = universo.getAsistenteEnOperacion();
         this.navegador = nav;
         this.destino = destino;
@@ -50,7 +50,7 @@ public class ControladorNave extends WindowAdapter implements ActionListener
             iniciarMision();
         }
         else if (comando.equalsIgnoreCase("Volver Creacion")) {
-            navegador.volverACreacion();
+            volverACreacion();
         }
     }
 
@@ -62,30 +62,47 @@ public class ControladorNave extends WindowAdapter implements ActionListener
         controlNave.setTablero();
     }
 
-    public void iniciarMision() {
-
-        try {
-            String NombreMision = this.controlNave.getMisionSeleccionada();
+    public void iniciarMision()  {
+            String nombreMision = this.controlNave.getMisionSeleccionada();
+            this.controlNave.setMisionEnCurso(true);
 
             Mision mision = null;
-
-            if (NombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
+            if (nombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
                 mision = new Mision01(destino, tablero);
-            } else if (NombreMision.equalsIgnoreCase("M-02 (Recolección)")) {
+            } else if (nombreMision.equalsIgnoreCase("M-02 (Recolección)")) {
                 mision = new Mision02(destino, tablero);
-            } else if (NombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
+            } else if (nombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
                 mision = new Mision03(destino, tablero);
+            } else {
+                throw new IllegalArgumentException("Misión seleccionada desconocida: " + nombreMision);
             }
 
-            assert mision != null;
-            mision.agregarObservador(this.controlNave);
-            mision.realizarMision(this.asistenteComando);
-        }
-        catch (NaveDestruidaExcepcion ex) {
-            this.controlNave.mostrarMensaje(ex.getMessage());
-            this.controlNave.desactivarMision();
-        }
+            ejecutarMisionenHilo(mision);
+            this.controlNave.setMisionEnCurso(false);
+    }
 
+
+    /*La mision debe ejecutarse en un hilo nuevo para que el hilo grafico se libere
+     y pueda seguir actualizando la vista paralelamente
+     */
+
+    private void ejecutarMisionenHilo(Mision mision) {
+        Thread hiloMision = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                    // mision.realizarMision(asistenteComando);
+                    InformeMision informe = mision.realizarMision(asistenteComando);
+
+                    if (asistenteComando.naveDestruida())
+                    {
+                        controlNave.desactivarMision();
+                        controlNave.mostrarMensaje("NAVE DESTRUIDA");
+                    }
+            }
+        });
+
+        hiloMision.start();
     }
 
     private void vistaTripulantes() {
@@ -96,4 +113,7 @@ public class ControladorNave extends WindowAdapter implements ActionListener
         navegador.mostrarVisorRecondito();
     }
 
+    private void volverACreacion() {
+        navegador.volverACreacion(universo);
+    }
 }

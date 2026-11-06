@@ -64,7 +64,6 @@ public class ControladorAcceso implements ActionListener {
         }
         try {
             if (usuarioDAO.validarCredenciales(nombre, contrasenia)) {
-                vista.setVisible(false);
                 navegador.mostrarCreacion(universo);
             } else {
                 vista.mostrarMensaje("Usuario o contraseña incorrectos");

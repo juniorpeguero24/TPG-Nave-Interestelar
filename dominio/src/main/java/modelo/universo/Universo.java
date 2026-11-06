@@ -44,6 +44,10 @@ public class Universo {
         this.tripulantesDisponibles.remove(tripulante);
     }
 
+    public ArrayList<Tripulante> getTripulanteDisponibles() {
+        return this.tripulantesDisponibles;
+    }
+
     public AsistenteComando getAsistenteEnOperacion() {
         return asistenteEnOperacion;
     }

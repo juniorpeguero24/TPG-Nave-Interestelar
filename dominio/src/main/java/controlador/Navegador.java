@@ -2,11 +2,21 @@ package controlador;
 
 import modelo.bitacora.Bitacora;
 import modelo.concurrencia.PlataformaDeCarga;
+import modelo.excepciones.CantidadDeElementosSuperaCasillaExcepcion;
+import modelo.excepciones.DimensionesDeTableroInconsistentesExcepcion;
+import modelo.excepciones.NaveInvalidaException;
 import modelo.nave.AsistenteComando;
+import modelo.nave.Nave;
+import modelo.nave.NaveFactory;
+import modelo.universo.Asteroide;
+import modelo.universo.ElementoDelUniverso;
+import modelo.universo.EstacionCarga;
 import modelo.universo.Universo;
 import vistas.*;
 import modelo.tablero.Tablero;
 import modelo.tablero.Destino;
+
+import java.util.ArrayList;
 
 public class Navegador {
     private VAcceso acceso;
@@ -16,16 +26,14 @@ public class Navegador {
     private VVisorRecondito visor;
     private Destino destino;
     private Tablero tablero;
-    private AsistenteComando asistenteDelControl;
+    private AsistenteComando asistente;
 
-    public Navegador(VAcceso acceso, Destino destino, Tablero tablero){
+    public Navegador(VAcceso acceso){
         this.acceso = acceso;
         this.creacion = null;
         this.control = null;
         this.tripulantes = null;
         this.visor = null;
-        this.destino = destino;
-        this.tablero = tablero;
     }
 
 
@@ -33,6 +41,8 @@ public class Navegador {
         if  (this.creacion == null) {
             this.creacion = new VCreacion();
             ControladorCreacion controladorCreacion = new ControladorCreacion(universo, creacion, this);
+
+            controladorCreacion.actualizarListaDisponibles();
 
             acceso.setVisible(false);
             creacion.setVisible(true);
@@ -42,46 +52,24 @@ public class Navegador {
     }
 
     public void iniciarJuego(Universo universo) {
-        AsistenteComando asistente = universo.getAsistenteEnOperacion();
-        if (asistente == null) {
-            return;
-        }
+        asistente = universo.getAsistenteEnOperacion();
 
-        // Si cambiamos de nave, descartamos la vista anterior
-        if (control != null && asistenteDelControl != null && asistenteDelControl != asistente) {
-            // Dejamos de observar a la nave anterior
-            asistenteDelControl.getNave().quitarObservador(control);
-            asistenteDelControl.getBitacora().quitarObservador(control);
-            tablero.quitarObservador(control);
-
-            control.setVisible(false);
-            control = null;
-
-            // La vista de tripulantes corresponde al asistente anterior
-            if (tripulantes != null) {
-                tripulantes.setVisible(false);
-                tripulantes = null;
-            }
-        }
-
-        // Si no existe un control para esta nave, lo creamos
         if (control == null) {
-            this.control = new VControlNave(tablero);
+
+            crearTablero();
+
+            this.control = new VControlNave(tablero, asistente);
             ControladorNave controladorNave = new ControladorNave(universo, control, this, destino, tablero);
 
-            asistente = universo.getAsistenteEnOperacion();
-
-            asistente.añadirObservadorNave(control);
-            asistente.añadirObservadorBitacora(control);
-
             controladorNave.configuracionInicial();
-            
-            asistenteDelControl = asistente;
-        }
 
-        // Mostramos el control de la nave seleccionada
-        creacion.setVisible(false);
-        control.setVisible(true);
+            creacion.setVisible(false);
+            control.setVisible(true);
+        }
+        else {
+            creacion.setVisible(false);
+            control.setVisible(true);
+        }
     }
 
     public void mostrarTripulantes(AsistenteComando asistenteComando) {
@@ -125,10 +113,66 @@ public class Navegador {
         control.setVisible(true);
     }
 
-    public void volverACreacion() {
-    if (control != null && creacion != null) {
-        control.setVisible(false);
-        creacion.setVisible(true);
+    public void volverACreacion(Universo universo) {
+        this.control.setVisible(false);
+
+        reiniciar();
+
+        mostrarCreacion(universo);
+
     }
-}
+
+    private void reiniciar(){
+        this.creacion = null;
+        this.asistente = null;
+        this.control = null;
+        this.tripulantes = null;
+        this.visor = null;
+    }
+
+    private void crearTablero(){
+        // Creacion del tablero
+        int cantFilas = 10;
+        int cantColumnas = 10;
+        ArrayList<ElementoDelUniverso> elementos = new ArrayList<>();
+
+        elementos.add(new Asteroide(5));
+        elementos.add(new Asteroide(7));
+        elementos.add(new Asteroide(2));
+        elementos.add(new Asteroide(5));
+        elementos.add(new EstacionCarga(5, 5));
+        elementos.add(new EstacionCarga(5, 3));
+        elementos.add(new EstacionCarga(5, 5));
+        elementos.add(new EstacionCarga(5, 3));
+        elementos.add(new EstacionCarga(5, 5));
+        elementos.add(new EstacionCarga(5, 3));
+        elementos.add(new EstacionCarga(5, 5));
+        elementos.add(new EstacionCarga(5, 3));
+        try {
+            elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
+            elementos.add(NaveFactory.crearNave("Enemiga 2", "combate"));
+            elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));
+            elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
+            elementos.add(NaveFactory.crearNave("Enemiga 2", "combate"));
+            elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));
+            elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
+            elementos.add(NaveFactory.crearNave("Enemiga 2", "combate"));
+            elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));
+        }
+        catch (NaveInvalidaException e){
+        }
+
+        Tablero tablero;
+        try {
+            tablero = new Tablero (cantFilas, cantColumnas, elementos);
+        }
+        catch(DimensionesDeTableroInconsistentesExcepcion | CantidadDeElementosSuperaCasillaExcepcion e) {
+            System.out.println("Error al crear el tablero: " + e.getMessage());
+            return;
+        }
+        Destino destino = new Destino(tablero);
+
+        this.tablero = tablero;
+        this.destino = destino;
+    }
 }
