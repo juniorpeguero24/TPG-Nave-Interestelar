@@ -47,4 +47,5 @@ public class Mision02 extends Mision {
     protected int getEnergiaInicial() {
         return CostosMision.ENERGIA_INICIAL_M02;
     }
+
 }

@@ -2030,3 +2030,572 @@ public String toString();
 
 - Devuelve una representación textual de la misión, resultado, acciones, recursos consumidos, estado final y observaciones.
 - No modifica el informe.
+
+
+---
+
+## `ElementoDelUniverso`
+
+### Responsabilidad
+
+Interfaz que implementan los objetos que pueden ocupar una casilla del tablero (`Nave`, `Asteroide` y `EstacionCarga`). Define cómo cada elemento afecta a la nave propia cuando coincide con ella en una casilla.
+
+### `interactuarCon`
+
+```java
+void interactuarCon(Nave nave);
+```
+
+#### Precondiciones
+
+- `nave` no debe ser `null`.
+
+#### Postcondiciones
+
+- Se aplican sobre `nave` las consecuencias propias del elemento. Cada implementación concreta detalla cuáles.
+
+---
+
+## `Asteroide`
+
+### Responsabilidad
+
+Obstáculo espacial que, al coincidir con la nave, le descuenta un monto fijo de energía.
+
+### Constructor
+
+```java
+public Asteroide(int danioEnergia);
+```
+
+#### Precondiciones
+
+- `danioEnergia` no debe ser negativo. El constructor no lo valida.
+
+#### Postcondiciones
+
+- Se crea un asteroide con el daño indicado.
+
+### `getDanioEnergia`
+
+```java
+public int getDanioEnergia();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelve el daño de energía configurado. El asteroide no cambia.
+
+### `interactuarCon`
+
+```java
+public void interactuarCon(Nave nave);
+```
+
+#### Precondiciones
+
+- `nave` no debe ser `null`.
+
+#### Postcondiciones
+
+- La energía de `nave` disminuye en `danioEnergia`, sin bajar de cero.
+- Se verifica la destrucción de la nave: si su energía o su combustible llegan a cero, o su desgaste alcanza 100, la nave queda destruida.
+- El asteroide no cambia, por lo que puede impactar más de una vez.
+
+---
+
+## `EstacionCarga`
+
+### Responsabilidad
+
+Ayuda espacial que reabastece a la nave con combustible y energía.
+
+### Constructor
+
+```java
+public EstacionCarga(int cargaCombustible, int cargaEnergia);
+```
+
+#### Precondiciones
+
+- `cargaCombustible` y `cargaEnergia` no deben ser negativos. El constructor no lo valida.
+
+#### Postcondiciones
+
+- Se crea una estación con las cargas indicadas.
+
+### `getCargaCombustible` y `getCargaEnergia`
+
+```java
+public int getCargaCombustible();
+public int getCargaEnergia();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelven las cargas configuradas. La estación no cambia.
+
+### `interactuarCon`
+
+```java
+public void interactuarCon(Nave nave);
+```
+
+#### Precondiciones
+
+- `nave` no debe ser `null`.
+
+#### Postcondiciones
+
+- El combustible de `nave` aumenta en `min(cargaCombustible, espacio libre de combustible)`.
+- La energía de `nave` aumenta en `min(cargaEnergia, espacio libre de energía)`.
+- Solo se carga un recurso si el monto a transferir es positivo.
+- Ningún recurso supera la capacidad máxima de la nave.
+- La estación no se agota: sus cargas no cambian.
+- Si el cálculo produjera una carga inválida, se lanza `IllegalStateException`. Con las precondiciones cumplidas no debería ocurrir.
+
+---
+
+## `Ruta`
+
+### Responsabilidad
+
+Secuencia ordenada de posiciones que la nave debe recorrer hasta su destino, con un cursor que indica cuál es la siguiente.
+
+### Constructor
+
+```java
+public Ruta(List<Posicion> posiciones);
+```
+
+#### Precondiciones
+
+- `posiciones` no debe ser `null`.
+
+#### Postcondiciones
+
+- La ruta guarda una copia de la lista; modificar la lista original no la afecta.
+- El cursor queda al inicio.
+
+#### Invariantes
+
+- El índice del cursor es mayor o igual que cero y menor o igual que la cantidad de posiciones.
+
+### `tieneSiguiente`
+
+```java
+public boolean tieneSiguiente();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelve `true` si quedan posiciones por recorrer. No modifica la ruta.
+
+### `siguiente`
+
+```java
+public Posicion siguiente();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Si quedan posiciones, devuelve la siguiente y avanza el cursor una posición.
+- Si no quedan, devuelve `null` y el cursor no cambia.
+
+### `verSiguiente`
+
+```java
+public Posicion verSiguiente();
+```
+
+#### Precondiciones
+
+- Ninguna.
+
+#### Postcondiciones
+
+- Devuelve la siguiente posición sin avanzar el cursor, o `null` si no quedan.
+
+### `getCantidadPosiciones`
+
+```java
+public int getCantidadPosiciones();
+```
+
+#### Postcondiciones
+
+- Devuelve la cantidad total de posiciones de la ruta, sin importar cuántas se hayan recorrido.
+
+### `reiniciar`
+
+```java
+public void reiniciar();
+```
+
+#### Postcondiciones
+
+- El cursor vuelve al inicio. Las posiciones no cambian.
+
+---
+
+## `RadarLargoAlcance`
+
+### Responsabilidad
+
+Componente de la nave que calcula el camino desde una posición de origen hasta un destino.
+
+### `calcularRuta`
+
+```java
+public Ruta calcularRuta(Posicion origen, Posicion destino);
+```
+
+#### Precondiciones
+
+- `origen` y `destino` no deben ser `null`.
+
+#### Postcondiciones
+
+- Devuelve una ruta que no incluye el origen y termina en el destino.
+- Primero recorre el eje x y luego el eje y, avanzando una casilla por vez.
+- La cantidad de posiciones es la suma de las diferencias absolutas entre ambas coordenadas; si origen y destino coinciden, la ruta queda vacía.
+- No consulta el tablero: la ruta no evita obstáculos.
+- No modifica ninguna de las posiciones recibidas.
+
+---
+
+## `RadarCortoAlcance`
+
+### Responsabilidad
+
+Componente de la nave que observa el entorno inmediato.
+
+### `escanear`
+
+```java
+public ElementoDelUniverso[][] escanear(Tablero tablero);
+```
+
+#### Precondiciones
+
+- `tablero` no debe ser `null`.
+
+#### Postcondiciones
+
+- Devuelve el resultado de `tablero.observarAlrededores()`: una matriz de 3 por 3 centrada en la nave, que ocupa la posición `[1][1]`.
+- Las casillas vacías o fuera del tablero se representan con `null`.
+- No modifica el tablero.
+
+---
+
+## `PlataformaDeCarga`
+
+### Responsabilidad
+
+Recurso compartido del problema Productor-Consumidor, implementado como monitor. Coordina el acceso de las generadoras de energía (que depositan baterías) y de las naves consumidoras (que las retiran), y notifica los acontecimientos a sus observadores.
+
+### Constructores
+
+```java
+public PlataformaDeCarga(int capacidadMaxima, int cantBateriasInicial);
+public PlataformaDeCarga();
+```
+
+#### Precondiciones
+
+- `capacidadMaxima` debe ser positiva.
+- `cantBateriasInicial` debe estar entre `0` y `capacidadMaxima`. Los constructores no lo validan.
+
+#### Postcondiciones
+
+- Se crea una plataforma con la capacidad y la cantidad inicial indicadas.
+- El constructor sin parámetros crea una plataforma de capacidad 5 y vacía.
+
+#### Invariantes
+
+- La cantidad de baterías está siempre entre `0` y `capacidadMaxima`.
+- A lo sumo un hilo a la vez ejecuta `depositarBateria` o `retirarBateria`.
+
+### `depositarBateria`
+
+```java
+public synchronized void depositarBateria(String idGeneradora) throws InterruptedException;
+```
+
+#### Precondiciones
+
+- Ninguna sobre el estado de la plataforma: si está llena, el hilo espera.
+
+#### Postcondiciones
+
+- Mientras la plataforma esté llena, el hilo espera con `wait()` y avisa una sola vez a los observadores.
+- Al haber lugar, la cantidad de baterías aumenta en uno.
+- Se notifica a los observadores y se despierta a los demás hilos con `notifyAll()`.
+- Si el hilo es interrumpido mientras espera, se lanza `InterruptedException` y la plataforma no cambia.
+
+### `retirarBateria`
+
+```java
+public synchronized void retirarBateria(String idNave) throws InterruptedException;
+```
+
+#### Precondiciones
+
+- Ninguna sobre el estado de la plataforma: si está vacía, el hilo espera.
+
+#### Postcondiciones
+
+- Se notifica a los observadores que la nave solicita una batería.
+- Mientras la plataforma esté vacía, el hilo espera con `wait()` y avisa una sola vez a los observadores.
+- Cuando hay baterías, la cantidad disminuye en uno.
+- Se notifica a los observadores y se despierta a los demás hilos con `notifyAll()`.
+- Si el hilo es interrumpido mientras espera, se lanza `InterruptedException` y la plataforma no cambia.
+
+### `añadirObservador`, `quitarObservador` y `notificarObservadores`
+
+```java
+public void añadirObservador(ObservadorPlataforma observador);
+public void quitarObservador(ObservadorPlataforma observador);
+public void notificarObservadores(String msj);
+```
+
+#### Precondiciones
+
+- `observador` no debe ser `null`.
+
+#### Postcondiciones
+
+- `añadirObservador` registra al observador; no comprueba duplicados.
+- `quitarObservador` lo elimina; si no estaba registrado, no hace nada.
+- `notificarObservadores` invoca `actualizar(msj)` en cada observador registrado.
+
+### `getCantBaterias` y `getCapacidadMaxima`
+
+```java
+public synchronized int getCantBaterias();
+public int getCapacidadMaxima();
+```
+
+#### Postcondiciones
+
+- Devuelven la cantidad actual de baterías y la capacidad máxima. No modifican la plataforma.
+
+---
+
+## `GeneradoraDeEnergia`
+
+### Responsabilidad
+
+Productor del problema Productor-Consumidor. Se ejecuta en su propio hilo y deposita baterías en la plataforma.
+
+### Constructor
+
+```java
+public GeneradoraDeEnergia(String id, PlataformaDeCarga plataforma, int tiempoProduccionMs) throws NaveInvalidaException;
+```
+
+#### Precondiciones
+
+- `id` y `plataforma` no deben ser `null`.
+
+#### Postcondiciones
+
+- Si `id` está en blanco o `tiempoProduccionMs` no es positivo, se lanza `NaveInvalidaException` y no se crea el objeto.
+- En caso contrario, queda lista para ejecutarse y en estado activo.
+
+### `run`
+
+```java
+public void run();
+```
+
+#### Postcondiciones
+
+- Mientras esté activa, repite: esperar `tiempoProduccionMs` y depositar una batería en la plataforma.
+- Si el hilo es interrumpido, termina y conserva la marca de interrupción.
+
+### `detener`
+
+```java
+public void detener();
+```
+
+#### Postcondiciones
+
+- Marca la generadora como inactiva; el ciclo termina al completar la iteración en curso.
+- Si el hilo está esperando en la plataforma, solo se interrumpe con `Thread.interrupt()`.
+
+---
+
+## `NaveConsumidora`
+
+### Responsabilidad
+
+Consumidor del problema Productor-Consumidor. Se ejecuta en su propio hilo y retira baterías de la plataforma.
+
+### Constructor
+
+```java
+public NaveConsumidora(String id, PlataformaDeCarga plataforma, int tiempoConsumoMs) throws NaveInvalidaException;
+```
+
+#### Precondiciones
+
+- `id` y `plataforma` no deben ser `null`.
+
+#### Postcondiciones
+
+- Si `id` está en blanco o `tiempoConsumoMs` no es positivo, se lanza `NaveInvalidaException` y no se crea el objeto.
+- En caso contrario, queda lista para ejecutarse y en estado activa.
+
+### `run`
+
+```java
+public void run();
+```
+
+#### Postcondiciones
+
+- Mientras esté activa, repite: retirar una batería de la plataforma (esperando si no hay) y consumirla durante `tiempoConsumoMs`.
+- Si el hilo es interrumpido, termina y conserva la marca de interrupción.
+
+### `detener`
+
+```java
+public void detener();
+```
+
+#### Postcondiciones
+
+- Marca la nave como inactiva; el ciclo termina al completar la iteración en curso.
+- Si el hilo está esperando en la plataforma, solo se interrumpe con `Thread.interrupt()`.
+
+---
+
+## `UsuarioDTO`
+
+### Responsabilidad
+
+Objeto de transferencia de datos que lleva el nombre de usuario y la contraseña entre el controlador y el DAO. No contiene lógica.
+
+### Constructor
+
+```java
+public UsuarioDTO(String nombreUsuario, String contrasenia);
+```
+
+#### Precondiciones
+
+- Ninguna. El DTO no valida los valores; la validación de campos vacíos la realiza `ControladorAcceso`.
+
+#### Postcondiciones
+
+- Almacena los valores recibidos.
+
+#### Invariantes
+
+- El objeto es inmutable: no ofrece operaciones de modificación.
+
+### `getNombreUsuario` y `getContrasenia`
+
+#### Postcondiciones
+
+- Devuelven los valores almacenados.
+
+---
+
+## `IUsuarioDAO` y `UsuarioDAO`
+
+### Responsabilidad
+
+`IUsuarioDAO` define las operaciones de persistencia de usuarios y `UsuarioDAO` las implementa con JDBC sobre H2. Es la única clase que ejecuta consultas SQL sobre la tabla `usuario`. Las consultas usan `PreparedStatement` y cierran la conexión al terminar.
+
+### `registrar`
+
+```java
+void registrar(UsuarioDTO usuario) throws Exception;
+```
+
+#### Precondiciones
+
+- `usuario` no debe ser `null`.
+- No debe existir un usuario con el mismo nombre.
+
+#### Postcondiciones
+
+- Se inserta una fila con el nombre y la contraseña del usuario.
+- Si el nombre ya existe o falla la conexión, se lanza una excepción y no se inserta nada.
+
+### `existeUsuario`
+
+```java
+boolean existeUsuario(String nombreUsuario) throws Exception;
+```
+
+#### Precondiciones
+
+- La tabla `usuario` debe existir.
+
+#### Postcondiciones
+
+- Devuelve `true` si hay un usuario con ese nombre. No modifica los datos.
+
+### `validarCredenciales`
+
+```java
+boolean validarCredenciales(String nombreUsuario, String contrasenia) throws Exception;
+```
+
+#### Precondiciones
+
+- La tabla `usuario` debe existir.
+
+#### Postcondiciones
+
+- Devuelve `true` solo si existe un usuario con ese nombre y esa contraseña exactos. No modifica los datos.
+
+---
+
+## `ConexionBD` e `InicializadorBD`
+
+### Responsabilidad
+
+`ConexionBD` entrega conexiones JDBC a la base H2 embebida en archivo (`jdbc:h2:./data/nave_interestelar`). `InicializadorBD` asegura que exista el esquema.
+
+### `obtenerConexion`
+
+```java
+public static Connection obtenerConexion() throws SQLException;
+```
+
+#### Postcondiciones
+
+- Devuelve una conexión nueva; quien la solicita es responsable de cerrarla.
+- Si no puede abrirse, se lanza `SQLException`.
+
+### `inicializar`
+
+```java
+public static void inicializar() throws SQLException;
+```
+
+#### Postcondiciones
+
+- La tabla `usuario` existe al terminar. Si ya existía, no se modifica ni se pierden sus datos, por lo que puede invocarse más de una vez.
+- Si falla la conexión, se lanza `SQLException`.

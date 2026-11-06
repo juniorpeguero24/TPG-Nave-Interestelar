@@ -5,6 +5,7 @@ import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
 
 import modelo.tablero.Destino;
+import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
 import modelo.tablero.Posicion;
 
@@ -50,14 +51,9 @@ public class Mision03 extends Mision {
         super.cerrar(asistente);
     }
     
-    // La base de origen es la posicion inicial de la nave: el centro del tablero.
-    @Override
-    protected Posicion elegirObjetivo(Posicion origen) {
-        return new Posicion(getTablero().getX() / 2, getTablero().getY() / 2);
-    }
-    
     @Override
     protected int getEnergiaInicial() {
         return CostosMision.ENERGIA_INICIAL_M03;
     }
+
 }

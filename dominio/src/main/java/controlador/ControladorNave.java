@@ -26,6 +26,7 @@ public class ControladorNave extends WindowAdapter implements ActionListener
     private Destino destino;
     private Tablero tablero;
     private SwingWorker<?, ?> trabajadorMision;
+    private boolean misionEnCurso = false;
 
     public ControladorNave(Universo universo, VControlNave controlNave, Navegador nav, Destino destino, Tablero tablero) {
 
@@ -48,7 +49,10 @@ public class ControladorNave extends WindowAdapter implements ActionListener
             vistaVisorRecondito();
         }
         else if  (comando.equalsIgnoreCase("Iniciar Mision")) {
-                iniciarMision();
+            iniciarMision();
+        }
+        else if (comando.equalsIgnoreCase("Volver Creacion")) {
+            navegador.volverACreacion();
         }
     }
 

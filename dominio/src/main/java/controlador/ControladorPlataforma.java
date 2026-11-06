@@ -59,6 +59,7 @@ public class ControladorPlataforma extends WindowAdapter implements ActionListen
                hilo.setDaemon(true);
                this.hilosNaves.add(hilo);
                hilo.start();
+               this.plataforma.notificarObservadores("¡Ingresó una nueva Nave al universo paralelo!");
            }
            catch (NumberFormatException e){
                this.VVisor.mostrarMensaje("No se pudo crear la nave");
@@ -79,6 +80,7 @@ public class ControladorPlataforma extends WindowAdapter implements ActionListen
                 hilo.setDaemon(true);
                 this.hilosNaves.add(hilo);
                 hilo.start();
+                this.plataforma.notificarObservadores("¡Ingresó una nueva Generadora al universo paralelo!");
             }
             catch (NumberFormatException e){
                 this.VVisor.mostrarMensaje("No se pudo crear la nave");

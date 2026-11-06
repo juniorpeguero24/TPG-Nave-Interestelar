@@ -5,8 +5,7 @@ public class CostosMision {
     public static final int COSTO_RADAR_CORTO = 1;
     public static final int COSTO_MOVIMIENTO_COMBUSTIBLE = 2;
     public static final int COSTO_ENERGIA_WARP = 5;
-    public static final int COSTO_DESGASTE_ENFRIAMIENTO_WARP = 5; // Confirmar: el anexo meciona 3 y 5
-    public static final int COSTO_MOVIMIENTO_DESGASTE = 0;     // el anexo no define desgaste por salto (pregunta pendiente)
+    public static final int COSTO_DESGASTE_ENFRIAMIENTO_WARP = 3;
     public static final int COSTO_RECALCULO = 2;
     
     public static final int COSTO_BASE_COMBUSTIBLE = 4;

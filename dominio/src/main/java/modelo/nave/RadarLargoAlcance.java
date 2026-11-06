@@ -16,23 +16,21 @@ public class RadarLargoAlcance {
         int xActual = origen.getX();
         int yActual = origen.getY();
 
-        // Primero avanzo en x
-        while (xActual != destino.getX()) {
+        while (xActual != destino.getX() || yActual != destino.getY()) {
+            // Modifico x
             if (xActual < destino.getX()) {
                 xActual++;
-            } else {
+            } else if (xActual > destino.getX()) {
                 xActual--;
             }
-            posiciones.add(new Posicion(xActual, yActual));
-        }
 
-        // Despues avanzo en y
-        while (yActual != destino.getY()) {
+            // Modifico y
             if (yActual < destino.getY()) {
                 yActual++;
-            } else {
+            } else if (yActual > destino.getY()) {
                 yActual--;
             }
+
             posiciones.add(new Posicion(xActual, yActual));
         }
 
