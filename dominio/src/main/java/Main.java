@@ -21,7 +21,29 @@ import modelo.persistencia.InicializadorBD;
 import vistas.VAcceso;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException, NaveInvalidaException {
+    public static void main(String[] args) {
+
+        inicializarBD();
+
+        // VISTA
+
+        VAcceso vAcceso = new VAcceso();
+
+        // MODELO
+
+        Universo universo = new Universo();
+
+        // CONTROLADORES
+
+        Navegador navegador = new Navegador(vAcceso);
+        new ControladorAcceso(vAcceso, navegador, universo);
+
+        vAcceso.setVisible(true);
+
+    }
+
+
+    private static void inicializarBD() {
         // inicializar BD
         try {
             InicializadorBD.inicializar();
@@ -29,65 +51,6 @@ public class Main {
             System.out.println("Error al inicializar la BD: " + e.getMessage());
             return;
         }
-                
-        // Creacion del tablero
-        int cantFilas = 10;
-        int cantColumnas = 10;
-        ArrayList<ElementoDelUniverso> elementos = new ArrayList<>();
-
-        elementos.add(new Asteroide(5));
-        elementos.add(new Asteroide(7));
-        elementos.add(new Asteroide(2));
-        elementos.add(new Asteroide(5));
-        elementos.add(new EstacionCarga(5, 5));
-        elementos.add(new EstacionCarga(5, 3));
-        elementos.add(new EstacionCarga(5, 5));
-        elementos.add(new EstacionCarga(5, 3));
-        elementos.add(new EstacionCarga(5, 5));
-        elementos.add(new EstacionCarga(5, 3));
-        elementos.add(new EstacionCarga(5, 5));
-        elementos.add(new EstacionCarga(5, 3));
-        try {
-            elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
-            elementos.add(NaveFactory.crearNave("Enemiga 2", "combate"));
-            elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));
-            elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
-            elementos.add(NaveFactory.crearNave("Enemiga 2", "combate"));
-            elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));
-            elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
-            elementos.add(NaveFactory.crearNave("Enemiga 2", "combate"));
-            elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));
-        }
-        catch (NaveInvalidaException e){
-        }
-
-        Tablero tablero;
-        try {
-            tablero = new Tablero (cantFilas, cantColumnas, elementos);
-        }
-        catch(DimensionesDeTableroInconsistentesExcepcion | CantidadDeElementosSuperaCasillaExcepcion e) {
-            System.out.println("Error al crear el tablero: " + e.getMessage());
-            return;
-        }
-        Destino destino = new Destino(tablero);
-
-        // VISTAS
-
-        VAcceso vAcceso = new VAcceso();
-
-        // MODELOS
-
-        Universo universo = new Universo();
-
-        // CONTROLADORES
-
-        Navegador navegador = new Navegador(vAcceso, destino, tablero);
-        new ControladorAcceso(vAcceso, navegador, universo);
-
-
-        // OBSERVADORES
-
-        vAcceso.setVisible(true);
-
     }
+
 }

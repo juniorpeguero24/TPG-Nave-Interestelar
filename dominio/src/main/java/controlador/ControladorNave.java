@@ -94,20 +94,15 @@ public class ControladorNave extends WindowAdapter implements ActionListener
         Thread hiloMision = new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
+
                     // mision.realizarMision(asistenteComando);
-                    InformeMision informe =
-                            mision.realizarMision(asistenteComando);
+                    InformeMision informe = mision.realizarMision(asistenteComando);
 
-                    System.out.println("Informe generado: " + informe);
-
-                    System.out.println(
-                            "Cantidad de informes: "
-                            + asistenteComando.getHistorialInformes().size()
-                    );
-                } catch (NaveDestruidaExcepcion e) {
-                    controlNave.mostrarMensaje(e.getMessage());
-                }
+                    if (asistenteComando.naveDestruida())
+                    {
+                        controlNave.desactivarMision();
+                        controlNave.mostrarMensaje("NAVE DESTRUIDA");
+                    }
             }
         });
 

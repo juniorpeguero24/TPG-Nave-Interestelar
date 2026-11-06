@@ -56,7 +56,7 @@ public abstract class Mision {
         return destino;
     }
 
-    public final InformeMision realizarMision(AsistenteComando asistente) throws NaveDestruidaExcepcion {
+    public final InformeMision realizarMision(AsistenteComando asistente) {
         InformeMision informe = null;
         try {
             preparar(asistente);
@@ -78,7 +78,6 @@ public abstract class Mision {
             observaciones.add(e.getMessage());
             asistente.registrarEvento(new Evento(TipoEvento.ERROR, "Fallo en " + nombre + ": " + e.getMessage()));
             informe = generarInforme(asistente);
-            throw e;
         }
         return informe;
     }
