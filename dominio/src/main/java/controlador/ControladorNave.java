@@ -80,7 +80,6 @@ public class ControladorNave extends WindowAdapter implements ActionListener
             }
 
             ejecutarMisionenHilo(mision);
-
             this.controlNave.setMisionEnCurso(false);
     }
 
