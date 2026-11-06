@@ -26,13 +26,14 @@ public class ControladorNave extends WindowAdapter implements ActionListener
     private Destino destino;
     private Tablero tablero;
     private SwingWorker<?, ?> trabajadorMision;
-    private boolean misionEnCurso = false;
+    private Universo universo;
 
     public ControladorNave(Universo universo, VControlNave controlNave, Navegador nav, Destino destino, Tablero tablero) {
 
         this.controlNave = controlNave;
         this.controlNave.setActionListener(this);
         this.controlNave.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.universo = universo;
         this.asistenteComando = universo.getAsistenteEnOperacion();
         this.navegador = nav;
         this.destino = destino;
@@ -52,7 +53,7 @@ public class ControladorNave extends WindowAdapter implements ActionListener
             iniciarMision();
         }
         else if (comando.equalsIgnoreCase("Volver Creacion")) {
-            navegador.volverACreacion();
+            volverACreacion();
         }
     }
 
@@ -127,4 +128,7 @@ public class ControladorNave extends WindowAdapter implements ActionListener
         navegador.mostrarVisorRecondito();
     }
 
+    private void volverACreacion() {
+        navegador.volverACreacion(universo);
+    }
 }

@@ -95,8 +95,12 @@ public class Tripulante {
 
     @Override
     public String toString() {
+        String consejos = "";
+        if (this.cargo.equals(Cargo.CONSEJERO)){
+            consejos = " Consejos: " + this.cantidadConsejos;
+        }
         return nombre + " - " + cargo
                 + " Planeta de Origen: " + planetaOrigen
-                + " Antiguedad: " + antiguedad;
+                + " Antiguedad: " + antiguedad + consejos;
     }
 }
