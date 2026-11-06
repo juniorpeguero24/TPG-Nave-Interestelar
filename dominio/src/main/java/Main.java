@@ -54,6 +54,9 @@ public class Main {
             elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
             elementos.add(NaveFactory.crearNave("Enemiga 2", "combate"));
             elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));
+            elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
+            elementos.add(NaveFactory.crearNave("Enemiga 2", "combate"));
+            elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));
         }
         catch (NaveInvalidaException e){
         }

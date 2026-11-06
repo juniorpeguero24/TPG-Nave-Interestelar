@@ -22,6 +22,8 @@ import observer.ObservadorNave;
 import modelo.motorwarp.ResultadoSalto;
 import modelo.motorwarp.TipoResultadoSalto;
 
+import modelo.universo.ResultadoInteraccion;
+
 public abstract class Nave implements ElementoDelUniverso {
     private String nombre;
     private Recursos recursos;
@@ -72,8 +74,7 @@ public abstract class Nave implements ElementoDelUniverso {
                 + "\n  Desgaste: " + recursos.getDesgaste()
                 + "\n  Requiere mantenimiento: " + recursos.requiereMantenimiento()
                 + "\n  Motor Warp: " + motorWarp
-                + "\n"
-                + "GEMAS: " + this.gemas;
+                + "\n Gemas: " + this.gemas;
     }
     
     // Operaciones delegadas sobre Tripulacion
@@ -187,11 +188,15 @@ public abstract class Nave implements ElementoDelUniverso {
     protected abstract ResultadoEncuentro enfrentarConCombate(NaveCombate combate);
     
     @Override
-    public void interactuarCon(Nave nave) {
+    public ResultadoInteraccion interactuarCon(Nave nave) {
         ResultadoEncuentro resultado = nave.enfrentar(this);
         if (resultado == ResultadoEncuentro.PIERDE) {
             nave.destruir();
         }
+        return new ResultadoInteraccion("Encuentro con " + getNombre()
+                + " (" + getTipo() + "). Resultado: "
+                + resultado
+        );
     }
     
     // Operaciones delegadas sobre el Motor Warp

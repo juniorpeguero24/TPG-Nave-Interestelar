@@ -9,6 +9,9 @@ import modelo.tablero.Tablero;
 
 import java.util.Random;
 
+import modelo.bitacora.Evento;
+import modelo.bitacora.TipoEvento;
+
 
 public class Mision01 extends Mision {
     private boolean asistenciaRealizada = false;
@@ -45,8 +48,7 @@ public class Mision01 extends Mision {
     protected InformeMision evaluar(AsistenteComando asistente) {
         if (this.asistenciaRealizada) {
             this.resultado = ResultadoMision.EXITO;
-            agregarObservacion("Auxilio entregado: " + auxilioEnergia + " de energía y "
-                + auxilioCombustible + " de combustible");
+            agregarObservacion("Se verifico disponibilidad de recursos para entregar el auxilio");
         }
         return generarInforme(asistente);
     }
@@ -63,8 +65,12 @@ public class Mision01 extends Mision {
                 asistente.consumirEnergia(auxilioEnergia);
                 sumarEnergiaConsumida(auxilioEnergia);
             }
-            agregarObservacion("Auxilio entregado: " + auxilioEnergia + " de energía y "
-                    + auxilioCombustible + " de combustible");
+            asistente.registrarEvento(new Evento(
+                    TipoEvento.MISION,
+                    "Auxilio entregado a la nave aliada: "
+                    + auxilioCombustible + " de combustible y "
+                    + auxilioEnergia + " de energia"
+            ));
         }
         super.cerrar(asistente);
     }

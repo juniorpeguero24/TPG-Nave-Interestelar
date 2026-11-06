@@ -17,6 +17,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.util.concurrent.ExecutionException;
 
+import modelo.mision.InformeMision;
+
 
 public class ControladorNave extends WindowAdapter implements ActionListener
 {
@@ -94,7 +96,16 @@ public class ControladorNave extends WindowAdapter implements ActionListener
             @Override
             public void run() {
                 try {
-                    mision.realizarMision(asistenteComando);
+                    // mision.realizarMision(asistenteComando);
+                    InformeMision informe =
+                            mision.realizarMision(asistenteComando);
+
+                    System.out.println("Informe generado: " + informe);
+
+                    System.out.println(
+                            "Cantidad de informes: "
+                            + asistenteComando.getHistorialInformes().size()
+                    );
                 } catch (NaveDestruidaExcepcion e) {
                     controlNave.mostrarMensaje(e.getMessage());
                 }
