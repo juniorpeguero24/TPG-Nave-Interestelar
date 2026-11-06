@@ -27,21 +27,4 @@ public class ResultadoSalto {
         return casillerosAvanzados > 0;
     }
     
-    public boolean debeContinuarWarp() {
-        return tipo == TipoResultadoSalto.PREPARANDO
-                || tipo == TipoResultadoSalto.WARP_LISTO
-                || tipo == TipoResultadoSalto.SIN_ENERGIA;
-    }
-
-    public boolean debeEnfriar() {
-        return tipo == TipoResultadoSalto.SALTO_WARP;
-    }
-    
-    /*
-    PREPARANDO   → 0 casilleros
-    WARP_LISTO   → 0 casilleros
-    SALTO_WARP   → 2 casilleros
-    ENFRIAMIENTO → 0 casilleros
-    SALTO_NORMAL → 1 casillero
-    */
 }

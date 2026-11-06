@@ -63,6 +63,7 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
     private JButton btnTripulantes;
     private JButton btnVisorRecondito;
+    private JButton btnVolverCreacion;
     private JPanel panelRecursos;
     private JPanel panelNave;
     private JLabel lblNave;
@@ -389,14 +390,23 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
         this.btnVisorRecondito.setActionCommand("VISOR");
 
         panelInferior.add(this.btnVisorRecondito);
+
+        this.btnVolverCreacion = new JButton("VOLVER A CREACION");
+        this.btnVolverCreacion.setBackground(Estilo.fondoPanel);
+        this.btnVolverCreacion.setForeground(Estilo.celeste);
+        this.btnVolverCreacion.setFont(Estilo.fuenteBold);
+        this.btnVolverCreacion.setFocusPainted(false);
+        this.btnVolverCreacion.setActionCommand("Volver Creacion");
+
+        panelInferior.add(this.btnVolverCreacion);
     }
 
     @Override
     public void setActionListener(ActionListener c) {
-
         this.btnVisorRecondito.addActionListener(c);
         this.btnTripulantes.addActionListener(c);
         this.btnIniciarMision.addActionListener(c);
+        this.btnVolverCreacion.addActionListener(c);
     }
 
     public void setDatosNave(String nombre, String tipo, String recursos) {
@@ -416,7 +426,6 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
     @Override
     public void actualizarBitacora(Bitacora bitacora) {
-
         this.listaBitacora.setText(bitacora.toString());
     }
 
@@ -430,7 +439,7 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     }
 
     public void mostrarMensaje(String mensaje) {
-            JOptionPane.showMessageDialog(this, mensaje);
+        JOptionPane.showMessageDialog(this, mensaje);
     }
 
     public void desactivarMision() {

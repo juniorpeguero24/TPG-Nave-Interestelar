@@ -9,6 +9,8 @@ import modelo.haberes.Liquidacion;
 import modelo.tripulacion.Tripulante;
 import java.util.ArrayList;
 
+import modelo.mision.InformeMision;
+
 import modelo.motorwarp.ResultadoSalto;
 import modelo.motorwarp.TipoResultadoSalto;
 
@@ -25,6 +27,7 @@ import observer.ObservadorNave;
 public class AsistenteComando {
     private final Nave nave;
     private Bitacora bitacora;
+    private final ArrayList<InformeMision> historialInformes = new ArrayList<>();
 
     public AsistenteComando(Nave nave){
         this.nave = nave;
@@ -60,6 +63,14 @@ public class AsistenteComando {
 
     public ArrayList<Liquidacion> liquidarHaberesTripulacion() {
         return nave.liquidarHaberesTripulacion();
+    }
+
+    public void registrarInforme(InformeMision informe) {
+        historialInformes.add(informe);
+    }
+
+    public ArrayList<InformeMision> getHistorialInformes() {
+        return new ArrayList<>(historialInformes);
     }
 
     // ----- BITACORA ----- //
@@ -107,6 +118,10 @@ public class AsistenteComando {
     private void registrarResultadoSalto(ResultadoSalto resultado) {
         TipoEvento tipoEvento = (resultado.getTipo() == TipoResultadoSalto.INVALIDO) ? TipoEvento.ERROR : TipoEvento.MOTOR_WARP;
         registrarEvento(new Evento(tipoEvento,resultado.getDescripcion()));
+    }
+    
+    public boolean puedeSaltarWarp() {
+        return nave.puedeSaltarWarp();
     }
 
     // ----- RECURSOS ----- //

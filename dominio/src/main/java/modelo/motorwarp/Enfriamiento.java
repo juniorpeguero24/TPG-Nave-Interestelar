@@ -14,12 +14,13 @@ class Enfriamiento implements EstadoWarp {
 
     @Override
     public ResultadoSalto saltar() {
-        return completarEnfriamiento();
+        motor.cambiarEstado(new PreparandoSalto(motor, 0));
+        return motor.resultado(TipoResultadoSalto.ENFRIAMIENTO, 1, "Salto normal durante el enfriamiento");
     }
 
     @Override
     public ResultadoSalto saltarWarp(boolean energiaSuficiente) {
-        return completarEnfriamiento();
+        return saltar();
     }
 
     @Override

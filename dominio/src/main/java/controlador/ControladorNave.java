@@ -47,7 +47,10 @@ public class ControladorNave extends WindowAdapter implements ActionListener
             vistaVisorRecondito();
         }
         else if  (comando.equalsIgnoreCase("Iniciar Mision")) {
-                iniciarMision();
+            iniciarMision();
+        }
+        else if (comando.equalsIgnoreCase("Volver Creacion")) {
+            navegador.volverACreacion();
         }
     }
 
