@@ -74,7 +74,7 @@ public abstract class Nave implements ElementoDelUniverso {
                 + "\n  Desgaste: " + recursos.getDesgaste()
                 + "\n  Requiere mantenimiento: " + recursos.requiereMantenimiento()
                 + "\n  Motor Warp: " + motorWarp
-                + "\n Gemas: " + this.gemas;
+                + "\n  Gemas: " + this.gemas;
     }
     
     // Operaciones delegadas sobre Tripulacion
