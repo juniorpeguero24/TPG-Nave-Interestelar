@@ -36,7 +36,6 @@ public class Main {
             InicializadorBD.inicializar();
         } catch (Exception e) {
             System.out.println("Error al inicializar la BD: " + e.getMessage());
-            return;
         }
     }
 

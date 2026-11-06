@@ -116,14 +116,16 @@ public class Navegador {
         this.control.setVisible(false);
 
         this.creacion = null;
+        this.asistente = null;
+        this.control = null;
+        this.tripulantes = null;
+        this.visor = null;
+
         this.creacion = new VCreacion();
 
         ControladorCreacion controladorCreacion = new ControladorCreacion(universo, creacion, this);
         this.creacion.setVisible(true);
 
-        this.control = null;
-        this.tripulantes = null;
-        this.visor = null;
     }
 
     private void crearTablero(){

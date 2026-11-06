@@ -80,6 +80,10 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     private ImageIcon iconoNaveEnemiga;
     private ImageIcon iconoEstacion;
     private ImageIcon iconoAsteroide;
+    private ImageIcon iconoNaveVsAsteroide;
+    private ImageIcon iconoNaveEstacion;
+    private ImageIcon iconoNaveVsNaveEnemiga;
+
 
     private Tablero tablero;
 
@@ -100,6 +104,9 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
         iconoNaveEnemiga = cargarIcono("naveEnemiga.png");
         iconoEstacion = cargarIcono("estacion.png");
         iconoAsteroide = cargarIcono("asteroide.png");
+        iconoNaveVsNaveEnemiga = cargarIcono("naveVsnaveEnemiga.png");
+        iconoNaveVsAsteroide = cargarIcono("naveVsAsteroide.png");
+        iconoNaveEstacion = cargarIcono("naveEstacion.png");
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -495,6 +502,11 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
     //SETEO Y ACTUALIZACION (OBSERVADOR) DE TABLERO
 
+    /* SwingUtilities.invokeLater(...) le pide a Swing que ejecute una tarea en su hilo de interfaz gráfica (EDT), apenas pueda.
+    La misión se ejecuta en otro hilo. En vez de modificar la tabla directamente desde ese hilo,
+    invokeLater pone la actualización en la cola del EDT, que es el hilo encargado de dibujar y actualizar los componentes Swing.
+    Así se evitan modificaciones simultáneas de la interfaz y del modelo.*/
+
     @Override
     public void actualizar() {
         ElementoDelUniverso[][] matriz = this.tablero.verTablero();
@@ -502,12 +514,13 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
         int PosXnave = tablero.getPosicionNave().getX();
         int PosYnave = tablero.getPosicionNave().getY();
 
-        actualizarTablero(matriz, PosXnave, PosYnave);
+        javax.swing.SwingUtilities.invokeLater(
+                () -> actualizarTablero(matriz, PosXnave, PosYnave)
+        );
     }
 
     private void actualizarTablero(ElementoDelUniverso[][] matriz, int PosXnave, int PosYnave) {
         modeloTablero.setRowCount(0);
-        modeloTablero.setColumnCount(tablero.getY());
 
         setPosicionNave(PosXnave, PosYnave);
 
@@ -517,14 +530,23 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
                 if (j == PosXnave && i == PosYnave) {
                     fila[j] = iconoNave;
                 }
-                else if (matriz[i][j] instanceof Asteroide) {
-                    fila[j] = iconoAsteroide;
+                if (matriz[i][j] instanceof Asteroide) {
+                    if (j == PosXnave && i == PosYnave)
+                        fila[j] = iconoNaveVsAsteroide;
+                    else
+                       fila[j] = iconoAsteroide;
                 }
-                else if (matriz[i][j] instanceof EstacionCarga) {
-                    fila[j] = iconoEstacion;
+                if (matriz[i][j] instanceof EstacionCarga) {
+                    if (j == PosXnave && i == PosYnave)
+                        fila[j] = iconoNaveEstacion;
+                    else
+                        fila[j] = iconoEstacion;
                 }
-                else if (matriz[i][j] instanceof Nave) {
-                    fila[j] = iconoNaveEnemiga;
+                if (matriz[i][j] instanceof Nave) {
+                    if (j == PosXnave && i == PosYnave)
+                        fila[j] = iconoNaveVsNaveEnemiga;
+                    else
+                        fila[j] = iconoNaveEnemiga;
                 }
             }
             modeloTablero.addRow(fila);
