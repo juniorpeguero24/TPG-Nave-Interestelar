@@ -69,7 +69,7 @@ public abstract class Nave implements ElementoDelUniverso {
     public abstract String getTipo();
     
     public String getEstadoActual() {
-        return "\n  Combustible: " + recursos.getCombustible()
+        return "Combustible: " + recursos.getCombustible()
                 + "\n  Energia: " + recursos.getEnergia()
                 + "\n  Desgaste: " + recursos.getDesgaste()
                 + "\n  Requiere mantenimiento: " + recursos.requiereMantenimiento()
