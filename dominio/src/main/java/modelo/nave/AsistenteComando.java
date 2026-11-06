@@ -18,6 +18,7 @@ import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
 
 import modelo.universo.ElementoDelUniverso;
+import modelo.universo.ResultadoInteraccion;
 import modelo.universo.Ruta;
 
 import observer.ObservadorBitacora;
@@ -244,8 +245,8 @@ public class AsistenteComando {
     }
 
     public void interactuarCon(ElementoDelUniverso elemento) {
-        elemento.interactuarCon(nave);
-        registrarEvento(new Evento(TipoEvento.MISION, "Interaccion con " + elemento));
+        ResultadoInteraccion resultado = elemento.interactuarCon(nave);
+        registrarEvento(new Evento(TipoEvento.MISION, resultado.getDescripcion()));
     }
 
 

@@ -484,13 +484,21 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
     @Override
     public void actualizarInformes(ArrayList<InformeMision> historial) {
-        modeloInformes.addElement("--------------------------------");
+        modeloInformes.clear();
+        
+        // Todavia no hay informes
+        if (historial.isEmpty()) {
+            modeloInformes.addElement("Sin informes registrados.");
+            return;
+        }
 
-        String texto = historial.toString();
-        String[] lineas = texto.split("\n");
-
-        for (String linea : lineas) {
-            modeloInformes.addElement(linea);
+        for (InformeMision informe : historial) {
+            modeloInformes.addElement("====================================");
+            String[] lineas = informe.toString().split("\n");
+            for (String linea : lineas) {
+                modeloInformes.addElement(linea);
+            }
+            modeloInformes.addElement("");
         }
     }
 
