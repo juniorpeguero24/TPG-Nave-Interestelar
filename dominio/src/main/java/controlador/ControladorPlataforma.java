@@ -24,7 +24,6 @@ public class ControladorPlataforma extends WindowAdapter implements ActionListen
             this.VVisor = VVisor;
             this.VVisor.setActionListener(this);
             this.VVisor.addWindowListener(this);
-            this.VVisor.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
             this.navegador = nav;
         }

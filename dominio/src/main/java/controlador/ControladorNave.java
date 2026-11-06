@@ -1,6 +1,5 @@
 package controlador;
 
-import modelo.excepciones.NaveDestruidaExcepcion;
 import modelo.mision.Mision;
 import modelo.mision.Mision01;
 import modelo.mision.Mision02;
@@ -14,13 +13,11 @@ import vistas.VControlNave;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.util.concurrent.ExecutionException;
 
 import modelo.mision.InformeMision;
 
 
-public class ControladorNave extends WindowAdapter implements ActionListener
+public class ControladorNave implements ActionListener
 {
     private final VControlNave controlNave;
     private final AsistenteComando asistenteComando;
@@ -33,7 +30,6 @@ public class ControladorNave extends WindowAdapter implements ActionListener
 
         this.controlNave = controlNave;
         this.controlNave.setActionListener(this);
-        this.controlNave.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.universo = universo;
         this.asistenteComando = universo.getAsistenteEnOperacion();
         this.navegador = nav;

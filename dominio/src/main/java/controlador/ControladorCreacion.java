@@ -11,18 +11,14 @@ import modelo.tripulacion.Cargo;
 import modelo.tripulacion.Origen;
 import modelo.tripulacion.Tripulante;
 import modelo.universo.Universo;
-import modelo.tablero.Posicion;
-import vistas.VControlNave;
 import vistas.VCreacion;
 
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.util.Objects;
 
-public class ControladorCreacion extends WindowAdapter implements ActionListener
+public class ControladorCreacion implements ActionListener
 {
     private final Universo universo;
     private final VCreacion vCreacion;
