@@ -51,6 +51,10 @@ public class ControladorCreacion extends WindowAdapter implements ActionListener
         else if (comando.equalsIgnoreCase("asignar a nave")) {
             asignarTripulante();
         }
+        else if (comando.equalsIgnoreCase("agregar consejo")) {
+            agregarConsejo();
+        }
+
     }
 
     private void crearNave(){
@@ -114,6 +118,22 @@ public class ControladorCreacion extends WindowAdapter implements ActionListener
                 this.vCreacion.habilitaIniciarJuego();
         }
         catch(CapitanExistenteException | TripulanteRepetidoException | TripulanteInvalidoException e){
+            this.vCreacion.mostrarMensaje(e.getMessage());
+        }
+    }
+
+    private void agregarConsejo(){
+        Tripulante tripulante = this.vCreacion.getTripulanteSeleccionado();
+        try {
+           tripulante.registrarConsejo();
+            universo.quitarTripulanteDisponible(tripulante);
+            this.vCreacion.quitarTripulanteDisponible(tripulante);
+            universo.agregarTripulanteDisponible(tripulante);
+            this.vCreacion.agregarTripulanteDisponible(tripulante);
+        }
+        catch (TripulanteRepetidoException e) {
+        }
+        catch (TripulanteInvalidoException e) {
             this.vCreacion.mostrarMensaje(e.getMessage());
         }
     }

@@ -40,6 +40,9 @@ public class ControladorTripulantes extends WindowAdapter implements ActionListe
         for (Tripulante tripulante : tripulantes) {
             nombre = tripulante.getNombre();
             cargo = tripulante.getCargo().name();
+            if (cargo.equalsIgnoreCase("Consejero"))
+                cargo = "CONSEJERO"+" (" + tripulante.getCantidadConsejos() + " consejos)";
+
             origen = tripulante.getPlanetaOrigen().name();
             antiguedad = tripulante.getAntiguedad();
             salario = tripulante.liquidarHaberes().calcularTotal();

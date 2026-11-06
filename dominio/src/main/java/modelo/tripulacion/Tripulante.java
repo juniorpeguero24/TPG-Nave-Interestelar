@@ -50,9 +50,11 @@ public class Tripulante {
         return liquidacion;
     }
 
-    public void registrarConsejo(){
+    public void registrarConsejo() throws TripulanteInvalidoException {
         if (this.cargo.equals(Cargo.CONSEJERO))
             this.cantidadConsejos++;
+        else
+            throw new TripulanteInvalidoException("El tripulante no es consejero");
     }
 
     public int getCantidadConsejos() {return cantidadConsejos;}
