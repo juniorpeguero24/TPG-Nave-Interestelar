@@ -32,6 +32,12 @@
           <include>*</include>
         </includes>
       </resource>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>vistas/recursos/**</include>
+        </includes>
+      </resource>
     </resources>
         <plugins>
             <plugin>

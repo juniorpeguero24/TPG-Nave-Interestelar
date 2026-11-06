@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
+import java.util.concurrent.ExecutionException;
 
 
 public class ControladorNave extends WindowAdapter implements ActionListener
@@ -24,6 +25,7 @@ public class ControladorNave extends WindowAdapter implements ActionListener
     private final Navegador navegador;
     private Destino destino;
     private Tablero tablero;
+    private SwingWorker<?, ?> trabajadorMision;
 
     public ControladorNave(Universo universo, VControlNave controlNave, Navegador nav, Destino destino, Tablero tablero) {
 
@@ -59,29 +61,58 @@ public class ControladorNave extends WindowAdapter implements ActionListener
     }
 
     public void iniciarMision() {
+        if (trabajadorMision != null) {
+            return;
+        }
 
-        try {
-            String NombreMision = this.controlNave.getMisionSeleccionada();
+        final String nombreMision = this.controlNave.getMisionSeleccionada();
+        this.controlNave.setMisionEnCurso(true);
 
-            Mision mision = null;
+        SwingWorker<Void, Void> trabajador = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                Mision mision;
+                if (nombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
+                    mision = new Mision01(destino, tablero);
+                } else if (nombreMision.equalsIgnoreCase("M-02 (Recolección)")) {
+                    mision = new Mision02(destino, tablero);
+                } else if (nombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
+                    mision = new Mision03(destino, tablero);
+                } else {
+                    throw new IllegalArgumentException("Misión seleccionada desconocida: " + nombreMision);
+                }
 
-            if (NombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
-                mision = new Mision01(destino, tablero);
-            } else if (NombreMision.equalsIgnoreCase("M-02 (Recolección)")) {
-                mision = new Mision02(destino, tablero);
-            } else if (NombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
-                mision = new Mision03(destino, tablero);
+                mision.agregarObservador(controlNave);
+                mision.realizarMision(asistenteComando);
+                return null;
             }
 
-            assert mision != null;
-            mision.agregarObservador(this.controlNave);
-            mision.realizarMision(this.asistenteComando);
-        }
-        catch (NaveDestruidaExcepcion ex) {
-            this.controlNave.mostrarMensaje(ex.getMessage());
-            this.controlNave.desactivarMision();
-        }
+            @Override
+            protected void done() {
+                try {
+                    get();
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    controlNave.mostrarMensaje("Se interrumpió la ejecución de la misión.");
+                } catch (ExecutionException ex) {
+                    Throwable causa = ex.getCause();
+                    if (causa instanceof NaveDestruidaExcepcion) {
+                        controlNave.mostrarMensaje(causa.getMessage());
+                        controlNave.desactivarMision();
+                    } else {
+                        controlNave.mostrarMensaje("No se pudo completar la misión: " + causa.getMessage());
+                    }
+                } finally {
+                    trabajadorMision = null;
+                    if (!asistenteComando.naveDestruida()) {
+                        controlNave.setMisionEnCurso(false);
+                    }
+                }
+            }
+        };
 
+        trabajadorMision = trabajador;
+        trabajador.execute();
     }
 
     private void vistaTripulantes() {

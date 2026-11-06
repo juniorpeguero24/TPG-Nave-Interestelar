@@ -5,6 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.event.ActionListener;
@@ -74,12 +75,22 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     private JScrollPane scrollBitacora;
     private JTextArea listaBitacora;
 
+    private ImageIcon iconoNave;
+    private ImageIcon iconoNaveEnemiga;
+    private ImageIcon iconoEstacion;
+    private ImageIcon iconoAsteroide;
+
     private Tablero tablero;
 
     public VControlNave(Tablero tablero) {
 
         this.tablero = tablero;
         this.tablero.agregarObservador(this);
+
+        iconoNave = cargarIcono("nave.png");
+        iconoNaveEnemiga = cargarIcono("naveEnemiga.png");
+        iconoEstacion = cargarIcono("estacion.png");
+        iconoAsteroide = cargarIcono("asteroide.png");
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -345,9 +356,26 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
         this.panelTablero.add(this.panelMapa, BorderLayout.CENTER);
 
-        this.modeloTablero = new DefaultTableModel();
+        this.modeloTablero = new DefaultTableModel() {
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return ImageIcon.class;
+            }
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
         this.tablaTablero = new JTable();
+        this.tablaTablero.setDefaultRenderer(ImageIcon.class, new DefaultTableCellRenderer() {
+            @Override
+            protected void setValue(Object value) {
+                setText("");
+                setIcon(value instanceof ImageIcon ? (ImageIcon) value : null);
+            }
+        });
         JScrollPane scrollTablero = new JScrollPane(this.tablaTablero);
         scrollTablero.setBorder(null);
         scrollTablero.getViewport().setBackground(Estilo.fondoPanel);
@@ -411,22 +439,25 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
     @Override
     public void actualizarNave(Nave nave) {
-        this.txtRecursos.setText(nave.getEstadoActual());
+        String estadoActual = nave.getEstadoActual();
+        ejecutarEnHiloSwing(() -> this.txtRecursos.setText(estadoActual));
     }
 
     @Override
     public void actualizarBitacora(Bitacora bitacora) {
-
-        this.listaBitacora.setText(bitacora.toString());
+        String eventos = bitacora.toString();
+        ejecutarEnHiloSwing(() -> this.listaBitacora.setText(eventos));
     }
 
     @Override
     public void actualizarInformes(InformeMision informe) {
-        modeloInformes.addElement("--------------------------------");
         String texto = informe.toString();
-        for (String linea : texto.split("\\n")) {
-            modeloInformes.addElement(linea);
-        }
+        ejecutarEnHiloSwing(() -> {
+            modeloInformes.addElement("--------------------------------");
+            for (String linea : texto.split("\\n")) {
+                modeloInformes.addElement(linea);
+            }
+        });
     }
 
     public void mostrarMensaje(String mensaje) {
@@ -437,36 +468,60 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
         btnIniciarMision.setEnabled(false);
     }
 
+    public void setMisionEnCurso(boolean enCurso) {
+
+        btnIniciarMision.setEnabled(!enCurso);
+    }
+
     @Override
     public void actualizar() {
         ElementoDelUniverso[][] matriz = this.tablero.verTablero();
-        modeloTablero.setRowCount(0);
-        modeloTablero.setColumnCount(tablero.getY());
-
         int PosXnave = tablero.getPosicionNave().getX();
         int PosYnave = tablero.getPosicionNave().getY();
 
+        ejecutarEnHiloSwing(() -> actualizarTablero(matriz, PosXnave, PosYnave));
+    }
+
+    private void actualizarTablero(ElementoDelUniverso[][] matriz, int PosXnave, int PosYnave) {
+        modeloTablero.setRowCount(0);
+        modeloTablero.setColumnCount(tablero.getY());
         setPosicionNave(PosXnave, PosYnave);
 
         for(int i = 0; i < matriz.length; i++){
-            String[] fila = new String[matriz[i].length];
-            for(int j = 0; j < matriz[i].length; j++){
-                fila[j] = "";
-
-                if (i == PosXnave && j == PosYnave)
-                    fila[j] = "YO";
-
-                if (matriz[i][j] instanceof Asteroide) {
-                    fila[j] += fila[j].isEmpty() ? "A" : "/A";
+            ImageIcon[] fila = new ImageIcon[matriz[i].length];
+            for(int j = 0; j < tablero.getY(); j++){
+                if (i == PosXnave && j == PosYnave) {
+                    fila[j] = iconoNave;
                 }
-                else if (matriz[i][j] instanceof Nave) {
-                    fila[j] += fila[j].isEmpty() ? "N" : "/N";
+                else if (matriz[i][j] instanceof Asteroide) {
+                    fila[j] = iconoAsteroide;
                 }
                 else if (matriz[i][j] instanceof EstacionCarga) {
-                    fila[j] += fila[j].isEmpty() ? "E" : "/E";
+                    fila[j] = iconoEstacion;
+                }
+                else if (matriz[i][j] instanceof Nave) {
+                    fila[j] = iconoNaveEnemiga;
                 }
             }
             modeloTablero.addRow(fila);
+        }
+    }
+
+    private ImageIcon cargarIcono(String nombreArchivo) {
+        java.net.URL recurso = getClass().getResource("/vistas/recursos/" + nombreArchivo);
+        if (recurso == null) {
+            throw new IllegalStateException("No se encontró la imagen /vistas/recursos/" + nombreArchivo);
+        }
+        Image imagen = new ImageIcon(recurso).getImage()
+                .getScaledInstance(36, 36, Image.SCALE_SMOOTH);
+        return new ImageIcon(imagen);
+    }
+
+    private void ejecutarEnHiloSwing(Runnable actualizacion) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            actualizacion.run();
+        } else {
+            SwingUtilities.invokeLater(actualizacion);
         }
     }
 
