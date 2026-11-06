@@ -17,6 +17,7 @@ import vistas.VCreacion;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class ControladorCreacion implements ActionListener
 {
@@ -88,8 +89,7 @@ public class ControladorCreacion implements ActionListener
            Tripulante tripulante = new Tripulante(antiguedad, nombre, cargo, origen);
 
            universo.agregarTripulanteDisponible(tripulante);
-
-           this.vCreacion.agregarTripulanteDisponible(tripulante);
+           actualizarListaDisponibles();
        }
 
         catch (NumberFormatException e)  {
@@ -108,7 +108,7 @@ public class ControladorCreacion implements ActionListener
             asistenteComando.agregarTripulante(tripulante);
 
             universo.quitarTripulanteDisponible(tripulante);
-            this.vCreacion.quitarTripulanteDisponible(tripulante);
+            actualizarListaDisponibles();
 
             if (asistenteComando.tieneTripulacionValida())
                 this.vCreacion.habilitaIniciarJuego();
@@ -118,16 +118,17 @@ public class ControladorCreacion implements ActionListener
         }
     }
 
+    public void actualizarListaDisponibles(){
+        ArrayList<Tripulante> tripulantes = universo.getTripulanteDisponibles();
+        this.vCreacion.actualizarListaDisponibles(tripulantes);
+    }
+
     private void agregarConsejo(){
         Tripulante tripulante = this.vCreacion.getTripulanteSeleccionado();
         try {
            tripulante.registrarConsejo();
-            universo.quitarTripulanteDisponible(tripulante);
-            this.vCreacion.quitarTripulanteDisponible(tripulante);
-            universo.agregarTripulanteDisponible(tripulante);
-            this.vCreacion.agregarTripulanteDisponible(tripulante);
-        }
-        catch (TripulanteRepetidoException e) {
+
+           actualizarListaDisponibles();
         }
         catch (TripulanteInvalidoException e) {
             this.vCreacion.mostrarMensaje(e.getMessage());

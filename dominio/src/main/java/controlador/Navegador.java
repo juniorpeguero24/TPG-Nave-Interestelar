@@ -42,6 +42,8 @@ public class Navegador {
             this.creacion = new VCreacion();
             ControladorCreacion controladorCreacion = new ControladorCreacion(universo, creacion, this);
 
+            controladorCreacion.actualizarListaDisponibles();
+
             acceso.setVisible(false);
             creacion.setVisible(true);
         }
@@ -53,7 +55,6 @@ public class Navegador {
         asistente = universo.getAsistenteEnOperacion();
 
         if (control == null) {
-            asistente = universo.getAsistenteEnOperacion();
 
             crearTablero();
 
@@ -115,17 +116,18 @@ public class Navegador {
     public void volverACreacion(Universo universo) {
         this.control.setVisible(false);
 
+        reiniciar();
+
+        mostrarCreacion(universo);
+
+    }
+
+    private void reiniciar(){
         this.creacion = null;
         this.asistente = null;
         this.control = null;
         this.tripulantes = null;
         this.visor = null;
-
-        this.creacion = new VCreacion();
-
-        ControladorCreacion controladorCreacion = new ControladorCreacion(universo, creacion, this);
-        this.creacion.setVisible(true);
-
     }
 
     private void crearTablero(){

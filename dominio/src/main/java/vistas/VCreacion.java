@@ -5,6 +5,7 @@ import modelo.tripulacion.Tripulante;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -364,9 +365,12 @@ public class VCreacion extends JFrame implements IVista {
         return seleccionado;
     }
 
-    public void agregarTripulanteDisponible(Tripulante tripulante) {
+    public void actualizarListaDisponibles(ArrayList<Tripulante> tripulantes) {
 
-        this.modeloDisponibles.addElement(tripulante);
+        this.modeloDisponibles.removeAllElements();
+        for (Tripulante tripulante : tripulantes) {
+            this.modeloDisponibles.addElement(tripulante);
+        }
     }
 
     public void habilitaIniciarJuego(){
@@ -379,10 +383,6 @@ public class VCreacion extends JFrame implements IVista {
 
     public Tripulante getTripulanteSeleccionado() {
         return this.listaDisponibles.getSelectedValue();
-    }
-
-    public void quitarTripulanteDisponible(Tripulante tripulante) {
-        this.modeloDisponibles.removeElement(tripulante);
     }
 
     public void mostrarMensaje(String mensaje) {
