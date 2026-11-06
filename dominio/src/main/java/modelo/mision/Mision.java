@@ -33,7 +33,6 @@ public abstract class Mision {
     private Destino destino;
     private Tablero tablero;
     private Ruta ruta;
-    private final ArrayList<ObservadorMision> observadores;
     private Posicion objetivo;
 
     public Mision(String nombre, Destino destino, Tablero tablero) {
@@ -46,7 +45,6 @@ public abstract class Mision {
         this.combustibleConsumido = 0;
         this.energiaConsumida = 0;
         this.desgasteGenerado = 0;
-        this.observadores = new ArrayList<>();
         this.objetivo = null;
     }
 
@@ -85,15 +83,6 @@ public abstract class Mision {
         if (asistente.naveDestruida()) {
             throw new NaveDestruidaExcepcion("No se puede iniciar una mision con la nave destruida");
         }
-
-        // Verificamos los recursos necesarios para iniciar.
-        // Incluimos los 5 de energia del radar largo,
-        // porque se consume durante la preparacion.
-        asistente.verificarDisponibilidadParaMision(
-                CostosMision.COSTO_BASE_COMBUSTIBLE,
-                getEnergiaInicial() + CostosMision.COSTO_RADAR_LARGO,
-                CostosMision.COSTO_BASE_DESGASTE
-        );
             
         asistente.registrarEvento(new Evento(TipoEvento.MISION, "Iniciando preparativos de misión: " + nombre));
 
@@ -205,7 +194,6 @@ public abstract class Mision {
         );
 
         asistente.registrarInforme(informe);
-        notificarObservadores(informe);
 
         return informe;
     }
@@ -270,21 +258,6 @@ public abstract class Mision {
         return tablero.obtenerObjetivo();
     }
 
-    // OBSERVER
-
-    public void agregarObservador(ObservadorMision observador) {
-        this.observadores.add(observador);
-    }
-
-    public void quitarObservador(ObservadorMision observador) {
-        this.observadores.remove(observador);
-    }
-
-    public void notificarObservadores(InformeMision informe) {
-        for (ObservadorMision observador : observadores) {
-            observador.actualizarInformes(informe);
-        }
-    }
     
     private ResultadoSalto realizarMovimiento(AsistenteComando asistente, boolean usarWarp) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         int combustibleAntes = asistente.getCombustible();

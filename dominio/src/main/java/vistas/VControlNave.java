@@ -9,9 +9,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import modelo.bitacora.Bitacora;
 import modelo.mision.InformeMision;
+import modelo.nave.AsistenteComando;
 import modelo.nave.Nave;
 import modelo.tablero.Tablero;
 import modelo.universo.Asteroide;
@@ -83,10 +85,18 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
     private Tablero tablero;
 
-    public VControlNave(Tablero tablero) {
+    public VControlNave(Tablero tablero, AsistenteComando asistente) {
 
         this.tablero = tablero;
         this.tablero.agregarObservador(this);
+
+        Nave nave = asistente.getNave();
+        nave.agregarObservador(this);
+
+        Bitacora bitacora = asistente.getBitacora();
+        bitacora.agregarObservador(this);
+
+        asistente.agregarObservador(this);
 
         iconoNave = cargarIcono("nave.png");
         iconoNaveEnemiga = cargarIcono("naveEnemiga.png");
@@ -358,25 +368,19 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
         this.panelTablero.add(this.panelMapa, BorderLayout.CENTER);
 
         this.modeloTablero = new DefaultTableModel() {
+
             @Override
-            public Class<?> getColumnClass(int columnIndex) {
+            public Class getColumnClass(int columna) {
                 return ImageIcon.class;
             }
 
             @Override
-            public boolean isCellEditable(int row, int column) {
+            public boolean isCellEditable(int fila, int columna) {
                 return false;
             }
         };
 
         this.tablaTablero = new JTable();
-        this.tablaTablero.setDefaultRenderer(ImageIcon.class, new DefaultTableCellRenderer() {
-            @Override
-            protected void setValue(Object value) {
-                setText("");
-                setIcon(value instanceof ImageIcon ? (ImageIcon) value : null);
-            }
-        });
         JScrollPane scrollTablero = new JScrollPane(this.tablaTablero);
         scrollTablero.setBorder(null);
         scrollTablero.getViewport().setBackground(Estilo.fondoPanel);
@@ -387,7 +391,10 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
         this.tablaTablero.setModel(this.modeloTablero);
         this.tablaTablero.setFillsViewportHeight(true);
         this.tablaTablero.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-
+        this.tablaTablero.setCellSelectionEnabled(false);
+        this.tablaTablero.setRowSelectionAllowed(false);
+        this.tablaTablero.setColumnSelectionAllowed(false);
+        this.tablaTablero.setFocusable(false);
         scrollTablero.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         this.panelMapa.add(scrollTablero, BorderLayout.CENTER);
@@ -447,31 +454,6 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
         return this.cbMisiones.getSelectedItem().toString();
     }
 
-    @Override
-    public void actualizarNave(Nave nave) {
-        String estadoActual = nave.getEstadoActual();
-        ejecutarEnHiloSwing(() -> this.txtRecursos.setText(estadoActual));
-    }
-
-    @Override
-    public void actualizarBitacora(Bitacora bitacora) {
-        String eventos = bitacora.toString();
-        ejecutarEnHiloSwing(() -> this.listaBitacora.setText(eventos));
-        this.listaBitacora.setText(bitacora.toString());
-    }
-
-    @Override
-    public void actualizarInformes(InformeMision informe) {
-        modeloInformes.addElement("--------------------------------");
-        String texto = informe.toString();
-        ejecutarEnHiloSwing(() -> {
-            modeloInformes.addElement("--------------------------------");
-            for (String linea : texto.split("\\n")) {
-                modeloInformes.addElement(linea);
-            }
-        });
-    }
-
     public void mostrarMensaje(String mensaje) {
         JOptionPane.showMessageDialog(this, mensaje);
     }
@@ -485,24 +467,55 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
         btnIniciarMision.setEnabled(!enCurso);
     }
 
+    // OBSERVADOR DE NAVE BITACORA E INFORMES
+
+
+    @Override
+    public void actualizarNave(Nave nave) {
+        String estadoActual = nave.getEstadoActual();
+        txtRecursos.setText(estadoActual);
+    }
+
+    @Override
+    public void actualizarBitacora(Bitacora bitacora) {
+        String eventos = bitacora.toString();
+        listaBitacora.setText(eventos);
+    }
+
+    @Override
+    public void actualizarInformes(ArrayList<InformeMision> historial) {
+        modeloInformes.addElement("--------------------------------");
+
+        String texto = historial.toString();
+        String[] lineas = texto.split("\n");
+
+        for (String linea : lineas) {
+            modeloInformes.addElement(linea);
+        }
+    }
+
+    //SETEO Y ACTUALIZACION (OBSERVADOR) DE TABLERO
+
     @Override
     public void actualizar() {
         ElementoDelUniverso[][] matriz = this.tablero.verTablero();
+
         int PosXnave = tablero.getPosicionNave().getX();
         int PosYnave = tablero.getPosicionNave().getY();
 
-        ejecutarEnHiloSwing(() -> actualizarTablero(matriz, PosXnave, PosYnave));
+        actualizarTablero(matriz, PosXnave, PosYnave);
     }
 
     private void actualizarTablero(ElementoDelUniverso[][] matriz, int PosXnave, int PosYnave) {
         modeloTablero.setRowCount(0);
         modeloTablero.setColumnCount(tablero.getY());
+
         setPosicionNave(PosXnave, PosYnave);
 
         for(int i = 0; i < matriz.length; i++){
             ImageIcon[] fila = new ImageIcon[matriz[i].length];
             for(int j = 0; j < tablero.getY(); j++){
-                if (i == PosXnave && j == PosYnave) {
+                if (j == PosXnave && i == PosYnave) {
                     fila[j] = iconoNave;
                 }
                 else if (matriz[i][j] instanceof Asteroide) {
@@ -516,24 +529,6 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
                 }
             }
             modeloTablero.addRow(fila);
-        }
-    }
-
-    private ImageIcon cargarIcono(String nombreArchivo) {
-        java.net.URL recurso = getClass().getResource("/vistas/recursos/" + nombreArchivo);
-        if (recurso == null) {
-            throw new IllegalStateException("No se encontró la imagen /vistas/recursos/" + nombreArchivo);
-        }
-        Image imagen = new ImageIcon(recurso).getImage()
-                .getScaledInstance(36, 36, Image.SCALE_SMOOTH);
-        return new ImageIcon(imagen);
-    }
-
-    private void ejecutarEnHiloSwing(Runnable actualizacion) {
-        if (SwingUtilities.isEventDispatchThread()) {
-            actualizacion.run();
-        } else {
-            SwingUtilities.invokeLater(actualizacion);
         }
     }
 
@@ -561,6 +556,19 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     }
 
     public void setPosicionNave(int x, int y){
+
         this.lblCoordenadas.setText("X: " + x + " Y: " + y);
+    }
+
+    //IMAGENES
+
+    private ImageIcon cargarIcono(String nombreArchivo) {
+        java.net.URL recurso = getClass().getResource("/vistas/recursos/" + nombreArchivo);
+        if (recurso == null) {
+            throw new IllegalStateException("No se encontró la imagen /vistas/recursos/" + nombreArchivo);
+        }
+        Image imagen = new ImageIcon(recurso).getImage()
+                .getScaledInstance(36, 36, Image.SCALE_SMOOTH);
+        return new ImageIcon(imagen);
     }
 }

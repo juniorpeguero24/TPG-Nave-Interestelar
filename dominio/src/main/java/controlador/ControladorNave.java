@@ -25,7 +25,6 @@ public class ControladorNave extends WindowAdapter implements ActionListener
     private final Navegador navegador;
     private Destino destino;
     private Tablero tablero;
-    private SwingWorker<?, ?> trabajadorMision;
     private Universo universo;
 
     public ControladorNave(Universo universo, VControlNave controlNave, Navegador nav, Destino destino, Tablero tablero) {
@@ -65,59 +64,44 @@ public class ControladorNave extends WindowAdapter implements ActionListener
         controlNave.setTablero();
     }
 
-    public void iniciarMision() {
-        if (trabajadorMision != null) {
-            return;
-        }
+    public void iniciarMision()  {
+            String nombreMision = this.controlNave.getMisionSeleccionada();
+            this.controlNave.setMisionEnCurso(true);
 
-        final String nombreMision = this.controlNave.getMisionSeleccionada();
-        this.controlNave.setMisionEnCurso(true);
-
-        SwingWorker<Void, Void> trabajador = new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() throws Exception {
-                Mision mision;
-                if (nombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
-                    mision = new Mision01(destino, tablero);
-                } else if (nombreMision.equalsIgnoreCase("M-02 (Recolección)")) {
-                    mision = new Mision02(destino, tablero);
-                } else if (nombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
-                    mision = new Mision03(destino, tablero);
-                } else {
-                    throw new IllegalArgumentException("Misión seleccionada desconocida: " + nombreMision);
-                }
-
-                mision.agregarObservador(controlNave);
-                mision.realizarMision(asistenteComando);
-                return null;
+            Mision mision = null;
+            if (nombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
+                mision = new Mision01(destino, tablero);
+            } else if (nombreMision.equalsIgnoreCase("M-02 (Recolección)")) {
+                mision = new Mision02(destino, tablero);
+            } else if (nombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
+                mision = new Mision03(destino, tablero);
+            } else {
+                throw new IllegalArgumentException("Misión seleccionada desconocida: " + nombreMision);
             }
 
+            ejecutarMisionenHilo(mision);
+
+            this.controlNave.setMisionEnCurso(false);
+    }
+
+
+    /*La mision debe ejecutarse en un hilo nuevo para que el hilo grafico se libere
+     y pueda seguir actualizando la vista paralelamente
+     */
+
+    private void ejecutarMisionenHilo(Mision mision) {
+        Thread hiloMision = new Thread(new Runnable() {
             @Override
-            protected void done() {
+            public void run() {
                 try {
-                    get();
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                    controlNave.mostrarMensaje("Se interrumpió la ejecución de la misión.");
-                } catch (ExecutionException ex) {
-                    Throwable causa = ex.getCause();
-                    if (causa instanceof NaveDestruidaExcepcion) {
-                        controlNave.mostrarMensaje(causa.getMessage());
-                        controlNave.desactivarMision();
-                    } else {
-                        controlNave.mostrarMensaje("No se pudo completar la misión: " + causa.getMessage());
-                    }
-                } finally {
-                    trabajadorMision = null;
-                    if (!asistenteComando.naveDestruida()) {
-                        controlNave.setMisionEnCurso(false);
-                    }
+                    mision.realizarMision(asistenteComando);
+                } catch (NaveDestruidaExcepcion e) {
+                    controlNave.mostrarMensaje(e.getMessage());
                 }
             }
-        };
+        });
 
-        trabajadorMision = trabajador;
-        trabajador.execute();
+        hiloMision.start();
     }
 
     private void vistaTripulantes() {

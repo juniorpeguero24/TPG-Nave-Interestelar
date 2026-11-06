@@ -21,6 +21,7 @@ import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
 
 import observer.ObservadorBitacora;
+import observer.ObservadorMision;
 import observer.ObservadorNave;
 
 
@@ -28,6 +29,7 @@ public class AsistenteComando {
     private final Nave nave;
     private Bitacora bitacora;
     private final ArrayList<InformeMision> historialInformes = new ArrayList<>();
+    private final ArrayList<ObservadorMision> observadores = new ArrayList<>();
 
     public AsistenteComando(Nave nave){
         this.nave = nave;
@@ -67,6 +69,7 @@ public class AsistenteComando {
 
     public void registrarInforme(InformeMision informe) {
         historialInformes.add(informe);
+        notificarObservadores();
     }
 
     public ArrayList<InformeMision> getHistorialInformes() {
@@ -226,20 +229,6 @@ public class AsistenteComando {
             throw e;
         }
     }
-
-    public void verificarDisponibilidadParaMision(int combustibleNecesario, int energiaNecesaria,int desgasteGenerado) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
-        try {
-            if (!this.estaDisponibleParaSalto())
-                throw new OperacionRecursoInvalidaExcepcion("\n[ERROR] Operacion Recurso Invalida." +
-                        "\nLa nave no esta disponible para iniciar la mision." +
-                        "\n Motor en estado: "+this.nave.getEstadoMotorWarp());
-            this.nave.verificarDisponibilidadRecursos(combustibleNecesario,energiaNecesaria,desgasteGenerado);
-        }
-        catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion e) {
-            registrarEvento(new Evento(TipoEvento.ERROR, e.getMessage()));
-            throw e;
-        }
-    }
     
     // Acciones delegadas a la nave durante la mision
     public Ruta usarRadarLargoAlcance(Posicion origen, Posicion destino) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
@@ -259,12 +248,20 @@ public class AsistenteComando {
         registrarEvento(new Evento(TipoEvento.MISION, "Interaccion con " + elemento));
     }
 
-    // Observadores
-    public void añadirObservadorNave(ObservadorNave observador) {
-        nave.agregarObservador(observador);
+
+    //OBSERVER INFORMES
+
+    public void agregarObservador(ObservadorMision observador) {
+        this.observadores.add(observador);
     }
 
-    public void añadirObservadorBitacora(ObservadorBitacora observador) {
-        bitacora.agregarObservador(observador);
+    public void quitarObservador(ObservadorMision observador) {
+        this.observadores.remove(observador);
+    }
+
+    public void notificarObservadores() {
+        for (ObservadorMision observador : observadores) {
+            observador.actualizarInformes(this.historialInformes);
+        }
     }
 }

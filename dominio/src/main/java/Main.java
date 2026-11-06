@@ -39,14 +39,18 @@ public class Main {
         elementos.add(new Asteroide(7));
         elementos.add(new Asteroide(2));
         elementos.add(new Asteroide(5));
-        elementos.add(new Asteroide(7));
-        elementos.add(new Asteroide(2));
-        elementos.add(new Asteroide(5));
-        elementos.add(new Asteroide(7));
-        elementos.add(new Asteroide(2));
+        elementos.add(new EstacionCarga(5, 5));
+        elementos.add(new EstacionCarga(5, 3));
+        elementos.add(new EstacionCarga(5, 5));
+        elementos.add(new EstacionCarga(5, 3));
+        elementos.add(new EstacionCarga(5, 5));
+        elementos.add(new EstacionCarga(5, 3));
         elementos.add(new EstacionCarga(5, 5));
         elementos.add(new EstacionCarga(5, 3));
         try {
+            elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
+            elementos.add(NaveFactory.crearNave("Enemiga 2", "combate"));
+            elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));
             elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
             elementos.add(NaveFactory.crearNave("Enemiga 2", "combate"));
             elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));
@@ -81,7 +85,6 @@ public class Main {
         // OBSERVADORES
 
         vAcceso.setVisible(true);
-
 
     }
 }
