@@ -58,8 +58,7 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     private JComboBox<String> cbMisiones;
     private JButton btnIniciarMision;
 
-    private JList<String> listaInformes;
-    private DefaultListModel<String> modeloInformes;
+    private JTextArea listaInformes;
 
     private JLabel lblCoordenadas;
     private JLabel lblEstado;
@@ -303,15 +302,13 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
         this.panelHistorial.add(lblHistorial, BorderLayout.NORTH);
 
-        this.modeloInformes = new DefaultListModel<String>();
-        this.modeloInformes.addElement("Sin informes registrados.");
-
-        this.listaInformes = new JList<String>(this.modeloInformes);
+        this.listaInformes = new JTextArea();
         this.listaInformes.setBackground(Estilo.fondoPanel);
         this.listaInformes.setForeground(Estilo.blanco);
         this.listaInformes.setFont(Estilo.fuentePlain);
-        this.listaInformes.setSelectionMode(0);
         this.listaInformes.setFocusable(false);
+        this.listaInformes.setEditable(false);
+        this.listaInformes.setText("Sin informes registrados.");
 
         this.scrollInformes = new JScrollPane(this.listaInformes);
         scrollInformes.getViewport().setBackground(Estilo.fondoPanel);
@@ -484,21 +481,16 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
     @Override
     public void actualizarInformes(ArrayList<InformeMision> historial) {
-        modeloInformes.clear();
-        
-        // Todavia no hay informes
-        if (historial.isEmpty()) {
-            modeloInformes.addElement("Sin informes registrados.");
-            return;
-        }
+
+        this.listaInformes.setText("");
 
         for (InformeMision informe : historial) {
-            modeloInformes.addElement("====================================");
+            listaInformes.append("====================================\n");
             String[] lineas = informe.toString().split("\n");
             for (String linea : lineas) {
-                modeloInformes.addElement(linea);
+                listaInformes.append(linea+"\n");
             }
-            modeloInformes.addElement("");
+            listaInformes.append("");
         }
     }
 
