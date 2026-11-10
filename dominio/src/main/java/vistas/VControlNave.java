@@ -476,28 +476,32 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     @Override
     public void actualizarNave(Nave nave) {
         String estadoActual = nave.getEstadoActual();
-        txtRecursos.setText(estadoActual);
+        SwingUtilities.invokeLater(
+            () -> txtRecursos.setText(estadoActual)
+        );
     }
 
     @Override
     public void actualizarBitacora(Bitacora bitacora) {
         String eventos = bitacora.toString();
-        listaBitacora.setText(eventos);
+        SwingUtilities.invokeLater(
+            () -> listaBitacora.setText(eventos)
+        );
     }
 
     @Override
     public void actualizarInformes(ArrayList<InformeMision> historial) {
-
-        this.listaInformes.setText("");
-
-        for (InformeMision informe : historial) {
-            listaInformes.append("====================================\n");
-            String[] lineas = informe.toString().split("\n");
-            for (String linea : lineas) {
-                listaInformes.append(linea+"\n");
-            }
-            listaInformes.append("");
+        ArrayList<InformeMision> copia = new ArrayList<>(historial);
+        String texto = "";
+        for (InformeMision informe : copia) {
+            texto += "====================================\n";
+            texto += informe.toString();
+            texto += "\n\n";
         }
+        final String textoFinal = texto;
+        SwingUtilities.invokeLater(() -> {
+            listaInformes.setText(textoFinal);
+        });
     }
 
     //SETEO Y ACTUALIZACION (OBSERVADOR) DE TABLERO
