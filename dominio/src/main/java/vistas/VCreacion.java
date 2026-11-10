@@ -300,7 +300,7 @@ public class VCreacion extends JFrame implements IVista {
         btnAsignarTodos.setForeground(fondo);
         btnAsignarTodos.setFont(fuenteBold);
         btnAsignarTodos.setFocusPainted(false);
-        btnAsignarTodos.setEnabled(true);
+        btnAsignarTodos.setEnabled(false);
 
         panelDisponibles.add(scrollDisponibles, BorderLayout.CENTER);
         panelDisponibles.add(panelBotonesTripulante, BorderLayout.SOUTH);
@@ -366,7 +366,6 @@ public class VCreacion extends JFrame implements IVista {
     }
 
     public void actualizarListaDisponibles(ArrayList<Tripulante> tripulantes) {
-
         this.modeloDisponibles.removeAllElements();
         for (Tripulante tripulante : tripulantes) {
             this.modeloDisponibles.addElement(tripulante);
