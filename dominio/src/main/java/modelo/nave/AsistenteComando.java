@@ -244,9 +244,10 @@ public class AsistenteComando {
         return nave.recalcularRuta(origen, destino);
     }
 
-    public void interactuarCon(ElementoDelUniverso elemento) {
+    public ResultadoInteraccion  interactuarCon(ElementoDelUniverso elemento) {
         ResultadoInteraccion resultado = elemento.interactuarCon(nave);
         registrarEvento(new Evento(TipoEvento.MISION, resultado.getDescripcion()));
+        return resultado;
     }
 
 

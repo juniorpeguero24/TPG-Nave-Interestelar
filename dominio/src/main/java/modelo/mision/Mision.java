@@ -9,18 +9,13 @@ import java.util.ArrayList;
 import modelo.motorwarp.ResultadoSalto;
 import modelo.motorwarp.TipoResultadoSalto;
 
-import modelo.nave.Nave;
-
 import modelo.tablero.Destino;
 import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
 
-import modelo.universo.Asteroide;
 import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
-import observer.ObservadorMision;
-import observer.ObservadorNave;
-import vistas.VControlNave;
+import modelo.universo.ResultadoInteraccion;
 
 public abstract class Mision {
     private static final int PAUSA_TURNO_MS = 1000;
@@ -130,6 +125,10 @@ public abstract class Mision {
         sumarDesgasteGenerado(desgaste);
         agregarAccionPrincipal("Consumo de recursos iniciales");
 
+        // Seteo banderas
+        ElementoDelUniverso ultimoElementoInteractuado = null;
+        Posicion ultimaPosicionInteraccion = null;
+
         // Ciclo de navegación
         while (ruta.tieneSiguiente() && !asistente.naveDestruida()) {
             // Pausa para ver la simulación
@@ -139,10 +138,19 @@ public abstract class Mision {
             
             // Inspeccionar e interactuar
             ElementoDelUniverso elemento = tablero.inspeccionarPosicion();
+            
             if (elemento != null) {
-                asistente.interactuarCon(elemento);
-                agregarObservacion("Se interactuo con un elemento del espacio. Posicion: " + actual);
+                boolean yaInteractuo = elemento == ultimoElementoInteractuado && actual.equals(ultimaPosicionInteraccion);
+                if (!yaInteractuo) {
+                    asistente.interactuarCon(elemento);
+                    agregarObservacion("Se interactuo con un elemento del espacio. Posicion: " + actual);
+                }
             }
+            
+            // La marca evita repetir la interacción causada por el movimiento del turno anterior.
+            ultimoElementoInteractuado = null;
+            ultimaPosicionInteraccion = null;
+            
             if (asistente.naveDestruida()) {
                 break;
             }
@@ -198,6 +206,15 @@ public abstract class Mision {
                         + " (" + resultado.getCasillerosAvanzados()
                         + " casilleros)"
                 ));
+                
+                // Verifico si me movi hacia un elemento del universo
+                ElementoDelUniverso elementoDestino = tablero.inspeccionarPosicion();
+                if (elementoDestino != null) {
+                    asistente.interactuarCon(elemento);
+                    agregarObservacion("Se interactuo con un elemento del espacio. Posicion: " + actual);
+                    ultimoElementoInteractuado = elementoDestino;
+                    ultimaPosicionInteraccion = nuevaPosicion;
+                }
             }
 
             if (asistente.naveDestruida()) {
