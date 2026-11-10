@@ -154,18 +154,6 @@ public class ControladorCreacion implements ActionListener
         vCreacion.mostrarMensaje(mensaje);
     }
 
-    private void agregarConsejo(){
-        Tripulante tripulante = this.vCreacion.getTripulanteSeleccionado();
-        try {
-           tripulante.registrarConsejo();
-
-           actualizarListaDisponibles();
-        }
-        catch (TripulanteInvalidoException e) {
-            this.vCreacion.mostrarMensaje(e.getMessage());
-        }
-    }
-
     private void iniciarJuego(){
         navegador.iniciarJuego(universo);
     }

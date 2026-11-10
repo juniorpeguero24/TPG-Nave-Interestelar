@@ -2,7 +2,9 @@ package controlador;
 
 import modelo.nave.AsistenteComando;
 import modelo.tripulacion.Tripulante;
+import modelo.tripulacion.Cargo;
 import vistas.VTripulantes;
+import modelo.excepciones.TripulanteInvalidoException;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -32,9 +34,13 @@ public class ControladorTripulantes extends WindowAdapter implements ActionListe
         if (comando.equalsIgnoreCase("volver")) {
             this.navegador.volverAlControlDesdeTripulantes();
         }
+        else if (comando.equalsIgnoreCase("Agregar Consejo")) {
+            agregarConsejo();
+        }
     }
 
     public void setTablaTripulantes() {
+        vTripulantes.limpiarTablaTripulantes();
         ArrayList<Tripulante> tripulantes = asistenteComando.getTripulantes();
 
         String nombre, cargo, origen;
@@ -44,9 +50,8 @@ public class ControladorTripulantes extends WindowAdapter implements ActionListe
         for (Tripulante tripulante : tripulantes) {
             nombre = tripulante.getNombre();
             cargo = tripulante.getCargo().name();
-            if (cargo.equalsIgnoreCase("Consejero"))
-                cargo = "CONSEJERO"+" (" + tripulante.getCantidadConsejos() + " consejos)";
-
+            if (tripulante.getCargo() == Cargo.CONSEJERO)
+                cargo += " (" + tripulante.getCantidadConsejos() + " consejos)";
             origen = tripulante.getPlanetaOrigen().name();
             antiguedad = tripulante.getAntiguedad();
             salario = tripulante.liquidarHaberes().calcularTotal();
@@ -59,5 +64,21 @@ public class ControladorTripulantes extends WindowAdapter implements ActionListe
     @Override
     public void windowClosing(WindowEvent e) {
         navegador.volverAlControlDesdeTripulantes();
+    }
+    
+    private void agregarConsejo() {
+        int fila = vTripulantes.getFilaSeleccionada();
+        if (fila == -1) {
+            vTripulantes.mostrarMensaje("Seleccione un tripulante");
+            return;
+        }
+        ArrayList<Tripulante> tripulantes = asistenteComando.getTripulantes();
+        Tripulante tripulante = tripulantes.get(fila);
+        try {
+            tripulante.registrarConsejo();
+            setTablaTripulantes();
+        } catch (TripulanteInvalidoException e) {
+            vTripulantes.mostrarMensaje(e.getMessage());
+        }
     }
 }
