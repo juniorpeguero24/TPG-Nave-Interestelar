@@ -56,6 +56,8 @@ public class Mision01 extends Mision {
     @Override
     protected void cerrar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
         if (resultado == ResultadoMision.EXITO) {
+            asistente.verificarDisponibilidadRecursos(auxilioCombustible, auxilioEnergia, 0);
+            
             // Entregamos los recursos a la nave aliada.
             if (auxilioCombustible > 0) {
                 asistente.consumirCombustible(auxilioCombustible);
