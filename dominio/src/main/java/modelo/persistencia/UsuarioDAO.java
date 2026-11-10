@@ -3,10 +3,11 @@ package modelo.persistencia;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class UsuarioDAO implements IUsuarioDAO {
     @Override
-    public void registrar(UsuarioDTO usuario) throws Exception {
+    public void registrar(UsuarioDTO usuario) throws SQLException  {
         String sql = "INSERT INTO usuario(nombre_usuario, contrasenia) VALUES (?, ?)";
         try (
             Connection conexion = ConexionBD.obtenerConexion();
@@ -19,7 +20,7 @@ public class UsuarioDAO implements IUsuarioDAO {
     }
 
     @Override
-    public boolean existeUsuario(String nombreUsuario) throws Exception {
+    public boolean existeUsuario(String nombreUsuario) throws SQLException  {
         String sql = "SELECT 1 FROM usuario WHERE nombre_usuario = ?";
         try (
             Connection conexion = ConexionBD.obtenerConexion();
@@ -33,7 +34,7 @@ public class UsuarioDAO implements IUsuarioDAO {
     }
 
     @Override
-    public boolean validarCredenciales(String nombreUsuario, String contrasenia) throws Exception {
+    public boolean validarCredenciales(String nombreUsuario, String contrasenia) throws SQLException  {
         String sql = "SELECT 1 FROM usuario WHERE nombre_usuario = ? AND contrasenia = ?";
         try (
             Connection conexion = ConexionBD.obtenerConexion();
