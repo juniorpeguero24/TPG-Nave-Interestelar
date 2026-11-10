@@ -14,8 +14,11 @@ public class Asteroide implements ElementoDelUniverso {
     }
     
     @Override
-    public void interactuarCon(Nave nave) {
+    public ResultadoInteraccion interactuarCon(Nave nave) {
+        int energiaAntes = nave.getEnergia();
         nave.recibirDanioEnergia(danioEnergia);
+        int energiaPerdida = energiaAntes - nave.getEnergia();
+        return new ResultadoInteraccion("Impacto con asteroide. Energia perdida: "+ energiaPerdida);
     }
     
     @Override

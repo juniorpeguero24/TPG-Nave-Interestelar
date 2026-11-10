@@ -5,6 +5,7 @@ import modelo.tripulacion.Tripulante;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -25,6 +26,7 @@ public class VCreacion extends JFrame implements IVista {
     private JPanel panelNave;
     private JPanel panelTripulante;
     private JPanel panelFormularioTripulante;
+    private JPanel panelBotonesTripulante;
     private JScrollPane scrollDisponibles;
     
     private JPanel panelDisponibles;
@@ -43,6 +45,7 @@ public class VCreacion extends JFrame implements IVista {
     private JButton btnCrearTripulante;
     private JButton btnAsignar;
     private JButton btnIniciar;
+    private JButton btnConsejo;
 
     private JList<Tripulante> listaDisponibles;
     private DefaultListModel<Tripulante> modeloDisponibles;
@@ -59,7 +62,7 @@ public class VCreacion extends JFrame implements IVista {
     public VCreacion() {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(100, 100, 1700, 700);
+        setBounds(100, 100, 1800, 900);
         setLocationRelativeTo(null);
         setResizable(false);
 
@@ -280,6 +283,11 @@ public class VCreacion extends JFrame implements IVista {
         scrollDisponibles.setBorder(null);
         scrollDisponibles.getViewport().setBackground(fondoPanel);
 
+
+        panelBotonesTripulante = new JPanel(new GridLayout(1,2));
+        panelBotonesTripulante.setBackground(fondoPanel);
+
+
         btnAsignar = new JButton("Asignar a nave");
         btnAsignar.setBackground(celeste);
         btnAsignar.setForeground(fondo);
@@ -287,8 +295,18 @@ public class VCreacion extends JFrame implements IVista {
         btnAsignar.setFocusPainted(false);
         btnAsignar.setEnabled(false);
 
+        btnConsejo = new JButton("Agregar Consejo");
+        btnConsejo.setBackground(celeste);
+        btnConsejo.setForeground(fondo);
+        btnConsejo.setFont(fuenteBold);
+        btnConsejo.setFocusPainted(false);
+        btnConsejo.setEnabled(true);
+
         panelDisponibles.add(scrollDisponibles, BorderLayout.CENTER);
-        panelDisponibles.add(btnAsignar, BorderLayout.SOUTH);
+        panelDisponibles.add(panelBotonesTripulante, BorderLayout.SOUTH);
+
+        panelBotonesTripulante.add(btnAsignar);
+        panelBotonesTripulante.add(btnConsejo);
 
         // AGREGAR PANELES
 
@@ -322,6 +340,7 @@ public class VCreacion extends JFrame implements IVista {
         this.btnAsignar.addActionListener(c);
         this.btnCrearNave.addActionListener(c);
         this.btnCrearTripulante.addActionListener(c);
+        this.btnConsejo.addActionListener(c);
     }
 
     public void setDatosNaveCreada(String nombre, String tipo){
@@ -346,9 +365,12 @@ public class VCreacion extends JFrame implements IVista {
         return seleccionado;
     }
 
-    public void agregarTripulanteDisponible(Tripulante tripulante) {
+    public void actualizarListaDisponibles(ArrayList<Tripulante> tripulantes) {
 
-        this.modeloDisponibles.addElement(tripulante);
+        this.modeloDisponibles.removeAllElements();
+        for (Tripulante tripulante : tripulantes) {
+            this.modeloDisponibles.addElement(tripulante);
+        }
     }
 
     public void habilitaIniciarJuego(){
@@ -361,10 +383,6 @@ public class VCreacion extends JFrame implements IVista {
 
     public Tripulante getTripulanteSeleccionado() {
         return this.listaDisponibles.getSelectedValue();
-    }
-
-    public void quitarTripulanteDisponible(Tripulante tripulante) {
-        this.modeloDisponibles.removeElement(tripulante);
     }
 
     public void mostrarMensaje(String mensaje) {

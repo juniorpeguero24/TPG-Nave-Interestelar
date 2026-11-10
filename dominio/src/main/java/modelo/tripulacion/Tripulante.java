@@ -50,9 +50,11 @@ public class Tripulante {
         return liquidacion;
     }
 
-    public void registrarConsejo(){
+    public void registrarConsejo() throws TripulanteInvalidoException {
         if (this.cargo.equals(Cargo.CONSEJERO))
             this.cantidadConsejos++;
+        else
+            throw new TripulanteInvalidoException("El tripulante no es consejero");
     }
 
     public int getCantidadConsejos() {return cantidadConsejos;}
@@ -95,8 +97,12 @@ public class Tripulante {
 
     @Override
     public String toString() {
+        String consejos = "";
+        if (this.cargo.equals(Cargo.CONSEJERO)){
+            consejos = " Consejos: " + this.cantidadConsejos;
+        }
         return nombre + " - " + cargo
                 + " Planeta de Origen: " + planetaOrigen
-                + " Antiguedad: " + antiguedad;
+                + " Antiguedad: " + antiguedad + consejos;
     }
 }

@@ -11,18 +11,15 @@ import modelo.tripulacion.Cargo;
 import modelo.tripulacion.Origen;
 import modelo.tripulacion.Tripulante;
 import modelo.universo.Universo;
-import modelo.tablero.Posicion;
-import vistas.VControlNave;
 import vistas.VCreacion;
 
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.util.Objects;
+import java.util.ArrayList;
 
-public class ControladorCreacion extends WindowAdapter implements ActionListener
+public class ControladorCreacion implements ActionListener
 {
     private final Universo universo;
     private final VCreacion vCreacion;
@@ -51,6 +48,10 @@ public class ControladorCreacion extends WindowAdapter implements ActionListener
         else if (comando.equalsIgnoreCase("asignar a nave")) {
             asignarTripulante();
         }
+        else if (comando.equalsIgnoreCase("agregar consejo")) {
+            agregarConsejo();
+        }
+
     }
 
     private void crearNave(){
@@ -88,8 +89,7 @@ public class ControladorCreacion extends WindowAdapter implements ActionListener
            Tripulante tripulante = new Tripulante(antiguedad, nombre, cargo, origen);
 
            universo.agregarTripulanteDisponible(tripulante);
-
-           this.vCreacion.agregarTripulanteDisponible(tripulante);
+           actualizarListaDisponibles();
        }
 
         catch (NumberFormatException e)  {
@@ -108,12 +108,29 @@ public class ControladorCreacion extends WindowAdapter implements ActionListener
             asistenteComando.agregarTripulante(tripulante);
 
             universo.quitarTripulanteDisponible(tripulante);
-            this.vCreacion.quitarTripulanteDisponible(tripulante);
+            actualizarListaDisponibles();
 
             if (asistenteComando.tieneTripulacionValida())
                 this.vCreacion.habilitaIniciarJuego();
         }
         catch(CapitanExistenteException | TripulanteRepetidoException | TripulanteInvalidoException e){
+            this.vCreacion.mostrarMensaje(e.getMessage());
+        }
+    }
+
+    public void actualizarListaDisponibles(){
+        ArrayList<Tripulante> tripulantes = universo.getTripulanteDisponibles();
+        this.vCreacion.actualizarListaDisponibles(tripulantes);
+    }
+
+    private void agregarConsejo(){
+        Tripulante tripulante = this.vCreacion.getTripulanteSeleccionado();
+        try {
+           tripulante.registrarConsejo();
+
+           actualizarListaDisponibles();
+        }
+        catch (TripulanteInvalidoException e) {
             this.vCreacion.mostrarMensaje(e.getMessage());
         }
     }

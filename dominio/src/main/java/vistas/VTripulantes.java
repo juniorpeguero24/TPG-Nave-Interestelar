@@ -23,7 +23,7 @@ public class VTripulantes extends JFrame implements IVista {
     public VTripulantes() {
         setSize(950, 650);
         setResizable(false);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setLocationRelativeTo(null);
 
         getContentPane().setLayout(new BorderLayout(10, 10));

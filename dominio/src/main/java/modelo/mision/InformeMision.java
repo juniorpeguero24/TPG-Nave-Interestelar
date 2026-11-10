@@ -73,18 +73,41 @@ public class InformeMision {
     protected void agregarObservacion(String observacion) {
         observaciones.add(observacion);
     }
-
+    
     @Override
     public String toString() {
-        return "Informe de Mision\n"
-                + "Mision ejecutada: " + misionEjecutada + "\n"
-                + "Resultado: " + resultado + "\n"
-                + "Acciones principales: " + accionesPrincipales + "\n"
-                + "Recursos consumidos:\n"
-                + "  Combustible: " + combustibleConsumido + "\n"
-                + "  Energia: " + energiaConsumida + "\n"
-                + "  Desgaste generado: " + desgasteGenerado + "\n"
-                + "Estado final de la nave: " + estadoFinalNave + "\n"
-                + "Observaciones: " + observaciones;
+        String texto = "";
+
+        texto += "INFORME DE MISION\n";
+        texto += "Mision ejecutada: " + misionEjecutada + "\n";
+        texto += "Resultado: " + resultado + "\n\n";
+
+        texto += "ACCIONES PRINCIPALES:\n";
+        if (accionesPrincipales.isEmpty()) {
+            texto += "  Ninguna accion registrada\n";
+        } else {
+            for (String accion : accionesPrincipales) {
+                texto += "  - " + accion + "\n";
+            }
+        }
+
+        texto += "\nRECURSOS CONSUMIDOS:\n";
+        texto += "  Combustible: " + combustibleConsumido + "\n";
+        texto += "  Energia: " + energiaConsumida + "\n";
+        texto += "  Desgaste generado: " + desgasteGenerado + "\n";
+
+        texto += "\nESTADO FINAL DE LA NAVE:\n";
+        texto += estadoFinalNave + "\n";
+
+        texto += "\nOBSERVACIONES:\n";
+        if (observaciones.isEmpty()) {
+            texto += "  Ninguna registrada\n";
+        } else {
+            for (String observacion : observaciones) {
+                texto += "  - " + observacion + "\n";
+            }
+        }
+
+        return texto;
     }
 }

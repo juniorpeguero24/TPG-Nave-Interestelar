@@ -33,7 +33,6 @@ public abstract class Mision {
     private Destino destino;
     private Tablero tablero;
     private Ruta ruta;
-    private final ArrayList<ObservadorMision> observadores;
     private Posicion objetivo;
 
     public Mision(String nombre, Destino destino, Tablero tablero) {
@@ -46,7 +45,6 @@ public abstract class Mision {
         this.combustibleConsumido = 0;
         this.energiaConsumida = 0;
         this.desgasteGenerado = 0;
-        this.observadores = new ArrayList<>();
         this.objetivo = null;
     }
 
@@ -58,11 +56,17 @@ public abstract class Mision {
         return destino;
     }
 
-    public final InformeMision realizarMision(AsistenteComando asistente) throws NaveDestruidaExcepcion {
+    public final InformeMision realizarMision(AsistenteComando asistente) {
         InformeMision informe = null;
         try {
             preparar(asistente);
             ejecutar(asistente);
+            
+            if (asistente.naveDestruida()) {
+                this.resultado = ResultadoMision.FALLO;
+                agregarObservacion("La nave fue destruida durante la mision");
+            }
+            
             informe = evaluar(asistente);
             cerrar(asistente);
         } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion | InterruptedException e) {
@@ -72,8 +76,8 @@ public abstract class Mision {
         } catch (NaveDestruidaExcepcion e) {
             this.resultado = ResultadoMision.FALLO;
             observaciones.add(e.getMessage());
+            asistente.registrarEvento(new Evento(TipoEvento.ERROR, "Fallo en " + nombre + ": " + e.getMessage()));
             informe = generarInforme(asistente);
-            throw e;
         }
         return informe;
     }
@@ -85,19 +89,10 @@ public abstract class Mision {
         if (asistente.naveDestruida()) {
             throw new NaveDestruidaExcepcion("No se puede iniciar una mision con la nave destruida");
         }
-
-        // Verificamos los recursos necesarios para iniciar.
-        // Incluimos los 5 de energia del radar largo,
-        // porque se consume durante la preparacion.
-        asistente.verificarDisponibilidadParaMision(
-                CostosMision.COSTO_BASE_COMBUSTIBLE,
-                getEnergiaInicial() + CostosMision.COSTO_RADAR_LARGO,
-                CostosMision.COSTO_BASE_DESGASTE
-        );
             
         asistente.registrarEvento(new Evento(TipoEvento.MISION, "Iniciando preparativos de misión: " + nombre));
 
-        // Se verifica todo junto antes de consumir nada: si falta algo, no queda ningun cambio parcial.
+        // Se verifica tood junto antes de consumir nada: si falta algo, no queda ningun cambio parcial.
         int energiaInicial = getEnergiaInicial();
         asistente.verificarDisponibilidadRecursos(
                 CostosMision.COSTO_BASE_COMBUSTIBLE,
@@ -109,6 +104,8 @@ public abstract class Mision {
         ruta = asistente.usarRadarLargoAlcance(origen, this.objetivo);
         energiaConsumida += CostosMision.COSTO_RADAR_LARGO;
         
+        asistente.registrarEvento(new Evento(TipoEvento.NAVEGACION, "Ruta calculada desde " + origen + " hasta " + objetivo));
+        
         if (asistente.naveDestruida()) {
             throw new NaveDestruidaExcepcion("La nave fue destruida durante la preparacion");
         }
@@ -119,6 +116,8 @@ public abstract class Mision {
         int combustible = CostosMision.COSTO_BASE_COMBUSTIBLE;
         int energia = getEnergiaInicial();
         int desgaste = CostosMision.COSTO_BASE_DESGASTE;
+
+        agregarAccionPrincipal("Despegue realizado hacia el objetivo " + objetivo);
 
         asistente.verificarDisponibilidadRecursos(combustible, energia, desgaste);
         asistente.consumirCombustible(combustible);
@@ -133,10 +132,16 @@ public abstract class Mision {
 
         // Ciclo de navegación
         while (ruta.tieneSiguiente() && !asistente.naveDestruida()) {
+            // Pausa para ver la simulación
+            Thread.sleep(PAUSA_TURNO_MS);
+            
+            Posicion actual = tablero.getPosicionNave();
+            
             // Inspeccionar e interactuar
             ElementoDelUniverso elemento = tablero.inspeccionarPosicion();
             if (elemento != null) {
                 asistente.interactuarCon(elemento);
+                agregarObservacion("Se interactuo con un elemento del espacio. Posicion: " + actual);
             }
             if (asistente.naveDestruida()) {
                 break;
@@ -145,27 +150,38 @@ public abstract class Mision {
             // Radar corto
             ElementoDelUniverso[][] alrededores = asistente.usarRadarCortoAlcance(tablero);
             sumarEnergiaConsumida(CostosMision.COSTO_RADAR_CORTO);
+            
+            asistente.registrarEvento(new Evento( TipoEvento.NAVEGACION, "Radar corto utilizado en " + actual));
+            
             if (asistente.naveDestruida()) {
                 break;
             }
 
             // Inspeccionar la siguiente posición de la ruta
-            Posicion actual = tablero.getPosicionNave();
             Posicion siguiente = ruta.verSiguiente();
 
             ElementoDelUniverso siguienteElemento = obtenerElementoEnSiguientePosicion(alrededores, actual, siguiente);
 
             // El radar solamente necesita decirnos si existe algún ElementoDelUniverso.
             boolean hayElemento = siguienteElemento != null;
+            if (hayElemento) {
+                agregarObservacion("Se detectó un elemento del universo en la ruta. Posicion: " + siguiente);
+            }
 
             // Decidir si se utiliza Warp
             boolean usarWarp = hayElemento && asistente.puedeSaltarWarp() && ruta.puedeAvanzar(2);
-
+            if (hayElemento && !usarWarp) {
+                agregarObservacion("No fue posible utilizar Warp. Se realizara un salto normal");
+            }
+            
             // Ejecutar el movimiento
             ResultadoSalto resultado = realizarMovimiento(asistente, usarWarp);
             if (resultado.getTipo() == TipoResultadoSalto.INVALIDO) {
                 agregarObservacion(resultado.getDescripcion());
                 break;
+            }
+            if (resultado.getTipo() == TipoResultadoSalto.SALTO_WARP) {
+                agregarAccionPrincipal("Salto Warp realizado para evitar un elemento del universo");
             }
 
             // Mover la nave según la cantidad de casilleros
@@ -176,17 +192,27 @@ public abstract class Mision {
                     break;
                 }
                 tablero.moverNave(nuevaPosicion);
+                asistente.registrarEvento(new Evento(TipoEvento.NAVEGACION,
+                        "Nave desplazada desde " + actual
+                        + " hasta " + nuevaPosicion
+                        + " (" + resultado.getCasillerosAvanzados()
+                        + " casilleros)"
+                ));
             }
 
             if (asistente.naveDestruida()) {
                 break;
             }
 
-            // Turno de los elementos del tablero
-            destino.turnoDestino();
-
             // Pausa para ver la simulación
             Thread.sleep(PAUSA_TURNO_MS);
+
+            // Turno de los elementos del tablero
+            destino.turnoDestino();
+        }
+        
+        if (!asistente.naveDestruida() && !ruta.tieneSiguiente()) {
+            agregarAccionPrincipal("La nave alcanzo el objetivo " + objetivo);
         }
     }
 
@@ -205,16 +231,13 @@ public abstract class Mision {
         );
 
         asistente.registrarInforme(informe);
-        notificarObservadores(informe);
 
         return informe;
     }
     
     // Cierre: las misiones lo redefinen para entregar o recibir recursos y llaman a super.cerrar.
     protected void cerrar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
-        if (asistente.naveDestruida()) {
-            agregarObservacion("La nave fue destruida durante la misión");
-        } else if (resultado == ResultadoMision.EXITO) {
+        if (resultado == ResultadoMision.EXITO) {
             asistente.registrarEvento(new Evento(TipoEvento.MISION, "Misión cumplida: " + nombre));
         } else {
             agregarObservacion("La misión no alcanzó su objetivo");
@@ -270,21 +293,6 @@ public abstract class Mision {
         return tablero.obtenerObjetivo();
     }
 
-    // OBSERVER
-
-    public void agregarObservador(ObservadorMision observador) {
-        this.observadores.add(observador);
-    }
-
-    public void quitarObservador(ObservadorMision observador) {
-        this.observadores.remove(observador);
-    }
-
-    public void notificarObservadores(InformeMision informe) {
-        for (ObservadorMision observador : observadores) {
-            observador.actualizarInformes(informe);
-        }
-    }
     
     private ResultadoSalto realizarMovimiento(AsistenteComando asistente, boolean usarWarp) throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion {
         int combustibleAntes = asistente.getCombustible();
