@@ -180,6 +180,9 @@ public abstract class Mision {
             
             // Ejecutar el movimiento
             ResultadoSalto resultado = realizarMovimiento(asistente, usarWarp);
+            if (asistente.naveDestruida()) {
+                break;
+            }
             if (resultado.getTipo() == TipoResultadoSalto.INVALIDO) {
                 agregarObservacion(resultado.getDescripcion());
                 break;

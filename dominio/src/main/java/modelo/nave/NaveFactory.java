@@ -19,8 +19,7 @@ public class NaveFactory {
                 return new NaveCarguero(nombre);
             case "combate":
                 return new NaveCombate(nombre);
-            default:
-                return null;
+            default: throw new NaveInvalidaException("Tipo de nave desconocido: " + clase);
         }
     }
 }

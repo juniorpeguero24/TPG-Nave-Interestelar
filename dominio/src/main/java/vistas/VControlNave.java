@@ -89,7 +89,6 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
 
     private Tablero tablero;
-    private Posicion objetivo;
 
     public VControlNave(Tablero tablero, AsistenteComando asistente) {
 
@@ -558,13 +557,6 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
             }
             modeloTablero.addRow(fila);
         }
-    }
-    
-    public void mostrarObjetivo(Posicion objetivo) {
-        SwingUtilities.invokeLater(() -> {
-            this.objetivo = objetivo;
-            actualizar();
-        });
     }
     
     public void setTablero() {
