@@ -204,11 +204,11 @@ public abstract class Mision {
                 ));
                 
                 // Verifico si me movi hacia un elemento del universo
-                ElementoDelUniverso elementoDestino = tablero.inspeccionarPosicion();
-                if (elementoDestino != null) {
+                elemento = tablero.inspeccionarPosicion();
+                if (elemento != null) {
                     asistente.interactuarCon(elemento);
                     agregarObservacion("Se interactuo con un elemento del espacio. Posicion: " + actual);
-                    ultimoElementoInteractuado = elementoDestino;
+                    ultimoElementoInteractuado = elemento;
                     ultimaPosicionInteraccion = nuevaPosicion;
                 }
             }
