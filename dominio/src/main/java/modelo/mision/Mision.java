@@ -64,11 +64,7 @@ public abstract class Mision {
             
             informe = evaluar(asistente);
             cerrar(asistente);
-        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion | InterruptedException e) {
-            this.resultado = ResultadoMision.FALLO;
-            observaciones.add(e.getMessage());
-            informe = generarInforme(asistente);
-        } catch (NaveDestruidaExcepcion e) {
+        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion | InterruptedException | NaveDestruidaExcepcion e) {
             this.resultado = ResultadoMision.FALLO;
             observaciones.add(e.getMessage());
             asistente.registrarEvento(new Evento(TipoEvento.ERROR, "Fallo en " + nombre + ": " + e.getMessage()));
@@ -257,7 +253,7 @@ public abstract class Mision {
         if (resultado == ResultadoMision.EXITO) {
             asistente.registrarEvento(new Evento(TipoEvento.MISION, "Misión cumplida: " + nombre));
         } else {
-            agregarObservacion("La misión no alcanzó su objetivo");
+            asistente.registrarEvento(new Evento(TipoEvento.MISION, "La nave no alcanzó el objetivo de la misión"));
         }
     }
 
