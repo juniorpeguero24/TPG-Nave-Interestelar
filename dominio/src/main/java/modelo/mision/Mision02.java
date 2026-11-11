@@ -12,7 +12,8 @@ import java.util.Random;
 public class Mision02 extends Mision {
     private boolean elementoObtenido = false;
     private final Random azar = new Random();
-    
+    private int gemasObtenidas;
+
     public Mision02(Destino destino, Tablero tablero) {
         super( "M-02 - Recoleccion", destino, tablero);
     }
@@ -28,17 +29,18 @@ public class Mision02 extends Mision {
 
     @Override
     protected InformeMision evaluar(AsistenteComando asistente) {
-        if (this.elementoObtenido)
+        if (this.elementoObtenido) {
             this.resultado = ResultadoMision.EXITO;
+            this.gemasObtenidas = 20 + azar.nextInt(81);   // 20..100
+            agregarObservacion("Recolección completada: se obtuvieron " + gemasObtenidas + " gemas");
+        }
         return generarInforme(asistente);
     }
-    
+
     @Override
     protected void cerrar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
         if (resultado == ResultadoMision.EXITO) {
-            int gemas = 20 + azar.nextInt(81);   // 20..100
-            asistente.agregarGemas(gemas);
-            agregarObservacion("Recolección completada: se obtuvieron " + gemas + " gemas");
+            asistente.agregarGemas(gemasObtenidas);
         }
         super.cerrar(asistente);
     }

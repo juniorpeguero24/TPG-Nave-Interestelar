@@ -153,41 +153,41 @@ public String toString();
 
 ### Responsabilidad
 
-`EstadoWarp` define el contrato común que deben cumplir todos los estados del motor Warp. 
-Cada implementación determina qué operaciones son válidas para el estado actual y cuál es el siguiente estado cuando se realiza una transición válida.
+`EstadoWarp` define el contrato común de los estados del motor Warp. Cada
+implementación determina el tipo de salto que se produce, cuántos casilleros
+avanza la nave y cuál es el estado siguiente.
 
-Las clases que implementan esta interfaz son `Disponible`,
-`PreparandoSalto`, `EnWarp` y `Enfriamiento`.
+Las clases que implementan esta interfaz son `Disponible`, `PreparandoSalto` y
+`Enfriamiento`.
 
-### Operaciones de transición
+### Operaciones
 
 ```java
-Evento prepararSalto();
-Evento saltar();
-Evento enfriar();
-
+ResultadoSalto saltar();
+ResultadoSalto saltarWarp(boolean energiaSuficiente);
 ```
 
 #### Precondiciones
 
-- La operación debe ser invocada a través del motor, quien delega a su estado actual.
+- La operación debe ser invocada a través del motor, que delega en su estado actual.
 
 #### Postcondiciones
 
-- Devuelve un `Evento` no nulo.
-- Si la operación es válida para el estado:
-  - solicita a `MotorWarp` el cambio al estado siguiente;
-  - el evento informa la transición realizada.
-- Si la operación es inválida:
-  - solicita a `MotorWarp` el registro de un error;
-  - el estado actual del motor no cambia;
+- Devuelve un `ResultadoSalto` no nulo.
+- `Disponible`:
+  - `saltar()` devuelve un salto normal de 1 casillero y no cambia de estado;
+  - `saltarWarp(true)` devuelve un salto Warp de 2 casilleros y el motor pasa a
+    `Enfriamiento`; `saltarWarp(false)` equivale a `saltar()`.
+- `Enfriamiento`: `saltar()` y `saltarWarp(...)` devuelven un resultado de tipo
+  `ENFRIAMIENTO` de 1 casillero y el motor pasa a `PreparandoSalto` con 0 turnos.
+- `PreparandoSalto`: `saltar()` y `saltarWarp(...)` devuelven un salto normal de
+  1 casillero y cuentan un turno; al completar 2 turnos el motor pasa a
+  `Disponible`.
 
 #### Invariantes
 
-- Cada implementación respeta las reglas de transición correspondientes a su estado.
-- Una operación inválida no modifica el estado del motor.
-- Todas las operaciones definidas por la interfaz devuelven un evento
-  `Evento`.
+- Cada estado respeta las reglas de transición correspondientes.
+- Los estados no consumen recursos de la nave; solo determinan el movimiento.
 
 ---
 
@@ -195,11 +195,9 @@ Evento enfriar();
 
 ### Responsabilidad
 
-`MotorWarp` administra el estado actual del motor y delega cada operación al objeto que representa dicho estado. 
-También genera un `Evento` utilizado para registrar una transición válida o inválida.
-
-`MotorWarp` no registra los eventos directamente en una `Bitacora`. Devuelve los eventos a su llamador, que se encarga de
-registrarlos.
+`MotorWarp` administra el estado actual del motor y delega en él cada operación.
+Es el contexto del patrón State. No registra eventos ni consume recursos: devuelve
+resultados a su llamador (`Nave`), que aplica los costos.
 
 ### Constructor
 
@@ -214,108 +212,109 @@ public MotorWarp();
 #### Postcondiciones
 
 - El motor queda inicializado en el estado `Disponible`.
-- El objeto de estado actual queda asociado al motor.
 
 #### Invariantes
 
-- El estado actual nunca es `null`.
-- El motor siempre tiene exactamente un estado actual.
-- El estado actual implementa `EstadoWarp`.
+- El estado actual nunca es `null` y el motor tiene exactamente un estado actual.
 
-### `getEstado`
+### `saltar`
 
 ```java
-public String getEstado();
+public ResultadoSalto saltar();
 ```
 
 #### Precondiciones
 
-- El motor debe estar correctamente inicializado.
+- Ninguna.
 
 #### Postcondiciones
 
-- Devuelve el nombre del estado actual.
+- Delega en el estado actual y devuelve su `ResultadoSalto`.
+- El motor puede cambiar de estado según las reglas de `EstadoWarp`.
 
-#### Invariantes
-
-- El nombre devuelto corresponde al estado que controla actualmente al
-  motor.
-
-### Operaciones de transición
+### `saltarWarp`
 
 ```java
-public Evento prepararSalto();
-public Evento saltar();
-public Evento enfriar();
-
+public ResultadoSalto saltarWarp(boolean energiaSuficiente);
 ```
 
 #### Precondiciones
 
-- El motor debe estar inicializado.
-
-#### Postcondiciones generales
-
-- Se delega la operación al estado actual.
-- Se devuelve un `Evento` no nulo.
-- Si la transición es válida:
-  - el motor cambia al estado siguiente;
-  - devuelve un evento de tipo `MOTOR_WARP` cuya descripción es `"Cambio de estado a "` seguida del nombre del nuevo estado.
-- Si la transición es inválida:
-  - el motor conserva su estado actual;
-  - devuelve un evento de tipo `MOTOR_WARP` con la descripción `"Transición inválida"`.
-
-#### Invariantes
-
-- El motor siempre permanece en uno de los estados definidos.
-- Una transición inválida no cambia el estado.
-- Cada invocación devuelve un evento que puede ser registrado en la bitacora.
-
-### `cambiarEstado`
-
-```java
-Evento cambiarEstado(EstadoWarp estado);
-```
-
-Este método tiene visibilidad de paquete y es utilizado por los estados
-concretos para solicitar una transición.
-
-#### Precondiciones
-
-- El nuevo estado debe implementar `EstadoWarp`.
+- Ninguna. `energiaSuficiente` indica si la nave cuenta con la energía necesaria,
+  dato que el motor no conoce por sí mismo.
 
 #### Postcondiciones
 
-- El estado recibido pasa a ser el estado actual del motor.
-- Se devuelve un evento que describe el nuevo estado.
+- Delega en el estado actual y devuelve su `ResultadoSalto`.
+- Solo ejecuta un salto Warp si el motor está `Disponible` y `energiaSuficiente`
+  es `true`; en cualquier otro caso se realiza un salto normal.
 
-#### Invariantes
-
-- El estado actual nunca queda en `null`.
-- El cambio de estado solo se realiza a través de una transición definida
-  por el patrón State.
-
-### `registrarError`
+### `puedeSaltarWarp`
 
 ```java
-Evento registrarError();
+public boolean puedeSaltarWarp();
 ```
-
-Este método tiene visibilidad de paquete y es utilizado por los estados
-cuando una operación no está permitida.
-
-#### Precondiciones
-
-- El motor debe estar inicializado.
 
 #### Postcondiciones
 
-- Se devuelve un evento que informa una transición inválida.
-- El estado actual no cambia.
+- Devuelve `true` si y solo si el estado actual es `Disponible`.
+- No modifica el motor.
+
+### `toString`
+
+```java
+public String toString();
+```
+
+#### Postcondiciones
+
+- Devuelve el nombre del estado actual (`"Disponible"`, `"Preparando salto (n/2)"`
+  o `"Enfriamiento"`).
+
+### `cambiarEstado` y `resultado`
+
+```java
+void cambiarEstado(EstadoWarp estado);
+ResultadoSalto resultado(TipoResultadoSalto tipo, int casilleros, String descripcion);
+```
+
+Ambos métodos tienen visibilidad de paquete y los usan los estados concretos.
+
+#### Postcondiciones
+
+- `cambiarEstado` establece el estado recibido como estado actual.
+- `resultado` crea un `ResultadoSalto` con los datos indicados.
 
 #### Invariantes
 
-- Una operación inválida nunca altera el estado del motor.
+- El cambio de estado solo ocurre a través de una transición definida por los
+  estados.
+
+---
+
+## `ResultadoSalto` y `TipoResultadoSalto`
+
+### Responsabilidad
+
+`ResultadoSalto` describe lo que produjo una operación del motor: el tipo de
+salto, la cantidad de casilleros que avanza la nave y una descripción.
+`TipoResultadoSalto` toma los valores `SALTO_NORMAL`, `SALTO_WARP`,
+`ENFRIAMIENTO` e `INVALIDO`.
+
+### Consultas
+
+```java
+public TipoResultadoSalto getTipo();
+public int getCasillerosAvanzados();
+public String getDescripcion();
+public boolean huboMovimiento();
+```
+
+#### Postcondiciones
+
+- Devuelven los valores con los que se creó el resultado, que es inmutable.
+- `huboMovimiento` devuelve `true` si y solo si `getCasillerosAvanzados()` es
+  mayor que cero.
 
 ---
 
@@ -582,43 +581,6 @@ public AsistenteComando(Nave nave);
 #### Invariantes
 - Cada asistente opera exactamente una única nave a lo largo de su ciclo de vida.   
 
-### `verificarDisponibilidadParaMision`
-
-```java
-public void verificarDisponibilidadParaMision(int combustibleNecesario, int energiaNecesaria, int desgasteGenerado)
-throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion;
-```
-
-#### Precondiciones
-- Ninguna.
-
-#### Postcondiciones
-- Si el motor está en estado "Disponible" y la nave cuenta con combustible, energía y margen de desgaste suficiente, la ejecución concluye normalmente.   
-- Si el motor no está disponible, lanza OperacionRecursoInvalidaExcepcion.   
-- Si alguno de los recursos es insuficiente, lanza RecursoInsuficienteExcepcion.   
-Las excepciones son registradas en la bitacora.
-- No altera los recursos de la nave.   
-
-#### Invariantes
-- No modifica el estado del motor ni los consumos de la nave si se produce una falla.   
-
-### `OrdenarSaltoWarp`
-
-```java
-public void ordenarSaltoWarp();
-```
-
-#### Precondiciones
-- El motor de la nave debe encontrarse en estado "Disponible".   
-
-#### Postcondiciones
-- Ejecuta en secuencia: prepararSalto() -> saltar() -> enfriar().   
-- El motor concluye en estado "Disponible".   
-- Registra cada transición como un Evento en la bitácora.   
-
-#### Invariantes
-- La bitácora incrementa su tamaño según los eventos generados.   
-
 ### `getNombreNave`
 
 ```java
@@ -718,47 +680,85 @@ public String getEstadoMotorWarp();
 
 - Devuelve el nombre del estado actual del motor Warp.
 
-### `prepararSalto`
-
-```java
-public void prepararSalto();
-```
-
-#### Precondiciones
-
-- Ninguna; la validez de la operación depende del estado actual del motor Warp.
-
-#### Postcondiciones
-
-- Delega la operación al motor Warp y registra en la bitácora el evento devuelto, incluso si la transición es inválida.
-
 ### `saltar`
 
 ```java
-public void saltar();
+public ResultadoSalto saltar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion;
 ```
 
 #### Precondiciones
 
-- Ninguna; la validez de la operación depende del estado actual del motor Warp.
+- La nave debe tener combustible suficiente para un salto normal.
 
 #### Postcondiciones
 
-- Delega la operación al motor Warp y registra en la bitácora el evento devuelto, incluso si la transición es inválida.
+- Delega en `Nave.saltar()` y devuelve el `ResultadoSalto`.
+- Registra el resultado en la bitácora como evento de tipo `MOTOR_WARP`
+  (o `ERROR` si el tipo es `INVALIDO`).
+- Si falla por recursos, registra el error en la bitácora y relanza la excepción.
 
-### `enfriar`
+### `saltarWarp`
 
 ```java
-public void enfriar();
+public ResultadoSalto saltarWarp() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion;
 ```
 
 #### Precondiciones
 
-- Ninguna; la validez de la operación depende del estado actual del motor Warp.
+- Ninguna; si el Warp no está disponible, se realiza un salto normal.
 
 #### Postcondiciones
 
-- Delega la operación al motor Warp y registra en la bitácora el evento devuelto, incluso si la transición es inválida.
+- Delega en `Nave.saltarWarp()` y registra el resultado igual que `saltar`.
+
+### `puedeSaltarWarp`
+
+```java
+public boolean puedeSaltarWarp();
+```
+
+#### Postcondiciones
+
+- Devuelve `true` si el motor está `Disponible` y la nave tiene al menos 5 de
+  energía. No modifica la nave.
+
+### `agregarGemas`
+
+```java
+public void agregarGemas(int cantidad) throws OperacionRecursoInvalidaExcepcion;
+```
+
+#### Precondiciones
+
+- `cantidad` debe ser positiva.
+
+#### Postcondiciones
+
+- Suma las gemas a la nave y registra el evento de tipo `RECURSOS`.
+- Si `cantidad` no es positiva, no cambia nada y se lanza la excepción.
+
+### `registrarInforme` y `getHistorialInformes`
+
+```java
+public void registrarInforme(InformeMision informe);
+public ArrayList<InformeMision> getHistorialInformes();
+```
+
+#### Postcondiciones
+
+- `registrarInforme` agrega el informe al historial y notifica a los
+  `ObservadorMision`.
+- `getHistorialInformes` devuelve una copia del historial.
+
+### `naveDestruida`
+
+```java
+public boolean naveDestruida();
+```
+
+#### Postcondiciones
+
+- Devuelve si la nave está destruida. No modifica la nave.
 
 ### `getCombustible`
 
@@ -1732,53 +1732,67 @@ public String getEstadoMotorWarp();
 - Devuelve el nombre del estado actual del motor Warp.
 - No modifica el estado del motor ni de la nave.
 
-### `prepararSalto`
-
-```java
-public Evento prepararSalto();
-```
-
-#### Precondiciones
-
-- Ninguna.
-
-#### Postcondiciones
-
-- Delegada en `MotorWarp` la operación de preparación del salto.
-- Devuelve el `Evento` producido por la transición del motor.
-- No registra el evento en una `Bitacora`.
-
 ### `saltar`
 
 ```java
-public Evento saltar();
+public ResultadoSalto saltar() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion;
 ```
 
 #### Precondiciones
 
-- Ninguna.
+- La nave debe tener al menos 2 unidades de combustible.
 
 #### Postcondiciones
 
-- Delegada en `MotorWarp` la operación de salto.
-- Devuelve el `Evento` generado por la transición del motor.
-- No modifica los recursos de la nave de forma directa.
+- Si falta combustible, se lanza la excepción antes de modificar el motor.
+- Delega en el motor y aplica los costos según el resultado: 2 de combustible
+  si el salto es normal o de enfriamiento, y 5 de desgaste adicionales si es de
+  enfriamiento (sin superar el máximo).
+- Verifica la destrucción de la nave y notifica a los observadores.
 
-### `enfriar`
+### `saltarWarp`
 
 ```java
-public Evento enfriar();
+public ResultadoSalto saltarWarp() throws RecursoInsuficienteExcepcion, OperacionRecursoInvalidaExcepcion;
 ```
 
 #### Precondiciones
 
-- Ninguna.
+- Si el Warp está disponible, la nave debe tener al menos 5 de energía.
 
 #### Postcondiciones
 
-- Delegada en `MotorWarp` la operación de enfriamiento.
-- Devuelve el `Evento` generado por la transición del motor.
-- No registra ni persiste el evento en una bitácora.
+- Si el Warp no puede usarse (motor no disponible o energía menor a 5), realiza
+  un salto normal.
+- Si puede usarse, delega en el motor y consume 5 de energía.
+- Verifica la destrucción de la nave y notifica a los observadores.
+
+### `puedeSaltarWarp`
+
+```java
+public boolean puedeSaltarWarp();
+```
+
+#### Postcondiciones
+
+- Devuelve `true` si el motor está `Disponible` y la energía es al menos 5.
+
+### `getGemas` y `agregarGemas`
+
+```java
+public int getGemas();
+public void agregarGemas(int cantidad) throws OperacionRecursoInvalidaExcepcion;
+```
+
+#### Precondiciones
+
+- `agregarGemas`: `cantidad` debe ser positiva.
+
+#### Postcondiciones
+
+- `agregarGemas` suma la cantidad al total y notifica a los observadores. Si la
+  cantidad no es positiva, no cambia nada y se lanza la excepción.
+- `getGemas` devuelve el total acumulado (inicia en 0).
 
 #### Invariantes
 
@@ -1798,22 +1812,25 @@ public Evento enfriar();
 
 ### Responsabilidad
 
-Clase abstracta que define el flujo común de una misión mediante el patrón Template Method. Las subclases implementan la ejecución y la evaluación del resultado.
+Clase abstracta que define el flujo común de una misión mediante el patrón
+Template Method, en cuatro fases: preparar, ejecutar, evaluar y cerrar. Las
+subclases implementan la evaluación y, opcionalmente, amplían la ejecución, el
+cierre y la elección del objetivo.
 
 ### Constructor
 
 ```java
-public Mision(String nombre, int combustibleNecesario, int energiaNecesaria, int desgasteNecesario);
+public Mision(String nombre, Destino destino, Tablero tablero);
 ```
+
 #### Precondiciones
 
-- Sin precondiciones.
+- `destino` y `tablero` no deben ser `null`. El constructor no lo valida.
 
 #### Postcondiciones
 
-- Se crea una mision con el nombre y los recursos indicados.
-- Inicializa el resultado como `FALLO`, los consumos en cero y las listas de acciones y observaciones vacías.
-
+- Se crea una misión con el nombre indicado, el resultado `FALLO`, los consumos
+  en cero y las listas de acciones y observaciones vacías.
 
 ### `realizarMision`
 
@@ -1827,22 +1844,91 @@ public final InformeMision realizarMision(AsistenteComando asistente);
 
 #### Postcondiciones
 
-- Ejecuta, en orden, `preparar`, `ejecutar`, `evaluar` y `finalizar`.
-- Si la tripulación o los recursos no cumplen los requisitos, o si ocurre una `OperacionRecursoInvalidaExcepcion`, `RecursoInsuficienteExcepcion` o `TripulacionInvalidaExcepcion`, establece el resultado `FALLO` y agrega el mensaje de la excepción a las observaciones. Estas excepciones no se propagan al llamador.
-- Para las excepciones anteriores, continúa con `finalizar` y devuelve un `InformeMision`.
-- Si el resultado es `EXITO`, ordena el salto Warp antes de obtener el estado final de la nave para el informe.
-- Registra en la bitácora el informe como evento de tipo `INFORME`. Al superar la preparación, también registra el inicio como evento de tipo `MISION`.
+- Ejecuta en orden `preparar`, `ejecutar`, `evaluar` y `cerrar`.
+- Si la nave resulta destruida durante la ejecución, el resultado es `FALLO` y se
+  agrega una observación.
+- Ante una `OperacionRecursoInvalidaExcepcion`, `RecursoInsuficienteExcepcion`,
+  `TripulacionInvalidaExcepcion`, `NaveDestruidaExcepcion` o
+  `InterruptedException`, establece `FALLO` y agrega el mensaje a las
+  observaciones. Estas excepciones no se propagan.
+- Siempre devuelve un `InformeMision`, que se registra en el historial del
+  asistente y en la bitácora como evento de tipo `INFORME`.
 
 #### Invariantes
 
-- El orden del flujo de ejecución no puede ser alterado por las subclases porque `realizarMision` es `final`.
+- Las subclases no pueden alterar el orden de las fases porque `realizarMision`
+  es `final`.
+
+### `preparar`
+
+#### Precondiciones
+
+- La tripulación debe ser válida y la nave no debe estar destruida.
+
+#### Postcondiciones
+
+- Verifica en una sola operación que existan combustible, energía y tolerancia al
+  desgaste para el consumo inicial más el radar de largo alcance. Si no alcanzan,
+  falla sin modificar la nave.
+- Elige el objetivo (`elegirObjetivo`), calcula la ruta con el radar de largo
+  alcance (5 de energía) y registra los eventos de inicio y de ruta.
+
+### `ejecutar`
+
+#### Postcondiciones
+
+- Consume los recursos iniciales: 4 de combustible, 4 de desgaste y la energía
+  propia de la misión.
+- Mientras haya ruta y la nave no esté destruida: inspecciona la casilla actual e
+  interactúa con su elemento, escanea con el radar de corto alcance (1 de
+  energía), realiza un salto Warp si hay un elemento adelante y el motor puede
+  saltar (si no, un salto normal), mueve la nave en el tablero y da el turno al
+  `Destino`.
+- Cada turno incluye una pausa para que la vista muestre el avance.
+
+### `evaluar`
+
+```java
+protected abstract InformeMision evaluar(AsistenteComando asistente);
+```
+
+#### Postcondiciones
+
+- La subclase fija el resultado (`EXITO` o `FALLO`), registra el balance de
+  recursos ganados o entregados y devuelve el informe generado con
+  `generarInforme`.
+
+### `cerrar`
+
+```java
+protected void cerrar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion;
+```
+
+#### Postcondiciones
+
+- Por defecto registra en la bitácora si la misión se cumplió o terminó sin éxito.
+- Las subclases lo redefinen para aplicar sobre la nave los recursos ganados o
+  entregados, y luego llaman a `super.cerrar`.
+
+### Ganchos
+
+- `protected abstract int getEnergiaInicial()`: energía adicional que consume la
+  misión al comenzar.
+- `protected Posicion elegirObjetivo(Posicion origen)`: por defecto devuelve el
+  objetivo que sortea el tablero.
 
 ### Misiones concretas
 
-- `Mision01` ("M-01 - Intercepcion y asistencia"): requiere 4 unidades de combustible, 5 de energía y 4 de desgaste.
-- `Mision02` ("M-02 - Recoleccion"): requiere 4 unidades de combustible, 5 de energía y 4 de desgaste.
-- `Mision03` ("M-03 - Retorno seguro"): requiere 4 unidades de combustible, 0 de energía y 4 de desgaste.
-- Cada misión concreta registra una acción principal y establece `EXITO` si su ejecución termina y la evaluación correspondiente se completa; ante las excepciones de dominio capturadas, el resultado es `FALLO`.
+- `Mision01` ("M-01 - Intercepcion y asistencia"): energía inicial 5. Al llegar,
+  la nave debe conservar más energía y combustible que el auxilio solicitado
+  (aleatorio de 0 a 50 cada uno); si no, el resultado es `FALLO`. Si tiene éxito,
+  el auxilio se suma a los consumos en `evaluar` y se descuenta en `cerrar`.
+- `Mision02` ("M-02 - Recoleccion"): energía inicial 10. Si llega al objetivo,
+  obtiene de 20 a 100 gemas, que se suman a la nave en `cerrar`.
+- `Mision03` ("M-03 - Retorno seguro"): energía inicial 0. El objetivo es la base
+  de origen (el centro del tablero). Si llega, en `cerrar` recarga combustible y
+  energía al máximo y reinicia el desgaste.
+- Las tres consumen 4 de combustible y 4 de desgaste al comenzar.
 
 ---
 
@@ -1872,7 +1958,7 @@ public InformeMision(
 
 #### Postcondiciones
 
-- Almacena los valores recibidos, incluidas las referencias a las listas, sin crear copias.
+- Almacena los valores recibidos. Las listas de acciones y observaciones se copian, por lo que cambios posteriores sobre las listas originales no afectan al informe.
 
 ### `getMisionEjecutada`
 
@@ -2043,7 +2129,7 @@ Interfaz que implementan los objetos que pueden ocupar una casilla del tablero (
 ### `interactuarCon`
 
 ```java
-void interactuarCon(Nave nave);
+ResultadoInteraccion interactuarCon(Nave nave);
 ```
 
 #### Precondiciones
@@ -2053,6 +2139,27 @@ void interactuarCon(Nave nave);
 #### Postcondiciones
 
 - Se aplican sobre `nave` las consecuencias propias del elemento. Cada implementación concreta detalla cuáles.
+- Devuelve un `ResultadoInteraccion` no nulo con una descripción de lo ocurrido (por ejemplo, la energía perdida o los recursos recuperados).
+
+---
+
+## `ResultadoInteraccion`
+
+### Responsabilidad
+
+Describe el resultado de una interacción entre un elemento del universo y la nave.
+`AsistenteComando.interactuarCon` lo registra en la bitácora.
+
+### Constructor y consulta
+
+```java
+public ResultadoInteraccion(String descripcion);
+public String getDescripcion();
+```
+
+#### Postcondiciones
+
+- Almacena la descripción recibida y la devuelve sin modificarla.
 
 ---
 
@@ -2093,7 +2200,7 @@ public int getDanioEnergia();
 ### `interactuarCon`
 
 ```java
-public void interactuarCon(Nave nave);
+public ResultadoInteraccion interactuarCon(Nave nave);
 ```
 
 #### Precondiciones
@@ -2105,6 +2212,7 @@ public void interactuarCon(Nave nave);
 - La energía de `nave` disminuye en `danioEnergia`, sin bajar de cero.
 - Se verifica la destrucción de la nave: si su energía o su combustible llegan a cero, o su desgaste alcanza 100, la nave queda destruida.
 - El asteroide no cambia, por lo que puede impactar más de una vez.
+- Devuelve un `ResultadoInteraccion` no nulo con una descripción de lo ocurrido (por ejemplo, la energía perdida o los recursos recuperados).
 
 ---
 
@@ -2146,7 +2254,7 @@ public int getCargaEnergia();
 ### `interactuarCon`
 
 ```java
-public void interactuarCon(Nave nave);
+public ResultadoInteraccion interactuarCon(Nave nave);
 ```
 
 #### Precondiciones
@@ -2161,6 +2269,7 @@ public void interactuarCon(Nave nave);
 - Ningún recurso supera la capacidad máxima de la nave.
 - La estación no se agota: sus cargas no cambian.
 - Si el cálculo produjera una carga inválida, se lanza `IllegalStateException`. Con las precondiciones cumplidas no debería ocurrir.
+- Devuelve un `ResultadoInteraccion` no nulo con una descripción de lo ocurrido (por ejemplo, la energía perdida o los recursos recuperados).
 
 ---
 

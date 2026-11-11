@@ -5,22 +5,13 @@ import modelo.bitacora.Evento;
 import modelo.bitacora.TipoEvento;
 import modelo.excepciones.*;
 import java.util.ArrayList;
-
 import modelo.motorwarp.ResultadoSalto;
 import modelo.motorwarp.TipoResultadoSalto;
-
-import modelo.nave.Nave;
-
 import modelo.tablero.Destino;
 import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
-
-import modelo.universo.Asteroide;
 import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
-import observer.ObservadorMision;
-import observer.ObservadorNave;
-import vistas.VControlNave;
 
 public abstract class Mision {
     private static final int PAUSA_TURNO_MS = 1000;
@@ -61,26 +52,28 @@ public abstract class Mision {
         try {
             preparar(asistente);
             ejecutar(asistente);
-            
+
             if (asistente.naveDestruida()) {
                 this.resultado = ResultadoMision.FALLO;
                 agregarObservacion("La nave fue destruida durante la mision");
             }
-            
+
             informe = evaluar(asistente);
             cerrar(asistente);
         } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion | InterruptedException e) {
             this.resultado = ResultadoMision.FALLO;
             observaciones.add(e.getMessage());
-            informe = generarInforme(asistente);
+            if (informe == null) informe = generarInforme(asistente);
         } catch (NaveDestruidaExcepcion e) {
             this.resultado = ResultadoMision.FALLO;
             observaciones.add(e.getMessage());
             asistente.registrarEvento(new Evento(TipoEvento.ERROR, "Fallo en " + nombre + ": " + e.getMessage()));
-            informe = generarInforme(asistente);
+            if (informe == null) informe = generarInforme(asistente);
         }
         return informe;
     }
+
+    protected abstract InformeMision evaluar(AsistenteComando asistente);
 
     protected void preparar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion, TripulacionInvalidaExcepcion, NaveDestruidaExcepcion {
         if (!asistente.tieneTripulacionValida()) {
@@ -216,8 +209,6 @@ public abstract class Mision {
         }
     }
 
-    protected abstract InformeMision evaluar(AsistenteComando asistente);
-
     protected InformeMision generarInforme(AsistenteComando asistente) {
         InformeMision informe = new InformeMision(
             nombre,
@@ -229,7 +220,7 @@ public abstract class Mision {
             asistente.obtenerEstadoNaveActual(),
             observaciones
         );
-
+        asistente.registrarEvento(new Evento(TipoEvento.INFORME, informe.toString()));
         asistente.registrarInforme(informe);
 
         return informe;
@@ -240,7 +231,7 @@ public abstract class Mision {
         if (resultado == ResultadoMision.EXITO) {
             asistente.registrarEvento(new Evento(TipoEvento.MISION, "Misión cumplida: " + nombre));
         } else {
-            agregarObservacion("La misión no alcanzó su objetivo");
+            asistente.registrarEvento(new Evento(TipoEvento.MISION, "Misión finalizada sin éxito: " + nombre));
         }
     }
 
