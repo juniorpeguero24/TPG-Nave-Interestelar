@@ -36,8 +36,8 @@ public class Mision03 extends Mision {
     @Override
     protected void cerrar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
         if (resultado == ResultadoMision.EXITO) {
-            int combustible = asistente.getNave().getEspacioCombustible();
-            int energia = asistente.getNave().getEspacioEnergia();
+            int combustible = asistente.getEspacioCombustible();
+            int energia = asistente.getEspacioEnergia();
             if (combustible > 0) {
                 asistente.cargarCombustible(combustible);
             }

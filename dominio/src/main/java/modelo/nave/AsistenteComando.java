@@ -133,9 +133,17 @@ public class AsistenteComando {
     public int getCombustible() {
         return nave.getCombustible();
     }
+    
+    public int getEspacioCombustible() {
+        return nave.getEspacioCombustible();
+    }
 
     public int getEnergia() {
         return nave.getEnergia();
+    }
+    
+    public int getEspacioEnergia() {
+        return nave.getEspacioEnergia();
     }
 
     public int getDesgaste() {
