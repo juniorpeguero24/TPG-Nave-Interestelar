@@ -133,9 +133,17 @@ public class AsistenteComando {
     public int getCombustible() {
         return nave.getCombustible();
     }
+    
+    public int getEspacioCombustible() {
+        return nave.getEspacioCombustible();
+    }
 
     public int getEnergia() {
         return nave.getEnergia();
+    }
+    
+    public int getEspacioEnergia() {
+        return nave.getEspacioEnergia();
     }
 
     public int getDesgaste() {
@@ -244,9 +252,10 @@ public class AsistenteComando {
         return nave.recalcularRuta(origen, destino);
     }
 
-    public void interactuarCon(ElementoDelUniverso elemento) {
+    public ResultadoInteraccion  interactuarCon(ElementoDelUniverso elemento) {
         ResultadoInteraccion resultado = elemento.interactuarCon(nave);
         registrarEvento(new Evento(TipoEvento.MISION, resultado.getDescripcion()));
+        return resultado;
     }
 
 

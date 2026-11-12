@@ -14,6 +14,8 @@ import modelo.bitacora.Bitacora;
 import modelo.mision.InformeMision;
 import modelo.nave.AsistenteComando;
 import modelo.nave.Nave;
+
+import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
 import modelo.universo.Asteroide;
 import modelo.universo.ElementoDelUniverso;
@@ -83,6 +85,7 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     private ImageIcon iconoNaveVsAsteroide;
     private ImageIcon iconoNaveEstacion;
     private ImageIcon iconoNaveVsNaveEnemiga;
+    private ImageIcon iconoDestino;
 
 
     private Tablero tablero;
@@ -107,6 +110,7 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
         iconoNaveVsNaveEnemiga = cargarIcono("naveVsnaveEnemiga.png");
         iconoNaveVsAsteroide = cargarIcono("naveVsAsteroide.png");
         iconoNaveEstacion = cargarIcono("naveEstacion.png");
+        iconoDestino = cargarIcono("destino.png");
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -142,10 +146,8 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
         this.panelInformacionNave = new JPanel();
         this.panelInformacionNave.setBackground(Estilo.fondoPanel);
-        this.panelInformacionNave.setBorder(
-                new EmptyBorder(12, 12, 12, 12));
-        this.panelInformacionNave.setLayout(
-                new GridLayout(2, 1, 0, 12));
+        this.panelInformacionNave.setBorder(new EmptyBorder(12, 12, 12, 12));
+        this.panelInformacionNave.setLayout(new GridLayout(2, 1, 0, 12));
 
         this.panelPrincipal.add(this.panelInformacionNave);
 
@@ -325,8 +327,7 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
         this.panelTablero = new JPanel();
         this.panelTablero.setBackground(Estilo.fondoPanel);
-        this.panelTablero.setBorder(
-                new EmptyBorder(12, 12, 12, 12));
+        this.panelTablero.setBorder(new EmptyBorder(12, 12, 12, 12));
         this.panelTablero.setLayout(new BorderLayout(5, 8));
         
 
@@ -466,7 +467,6 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     }
 
     public void setMisionEnCurso(boolean enCurso) {
-
         btnIniciarMision.setEnabled(!enCurso);
     }
 
@@ -476,28 +476,32 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     @Override
     public void actualizarNave(Nave nave) {
         String estadoActual = nave.getEstadoActual();
-        txtRecursos.setText(estadoActual);
+        SwingUtilities.invokeLater(
+            () -> txtRecursos.setText(estadoActual)
+        );
     }
 
     @Override
     public void actualizarBitacora(Bitacora bitacora) {
         String eventos = bitacora.toString();
-        listaBitacora.setText(eventos);
+        SwingUtilities.invokeLater(
+            () -> listaBitacora.setText(eventos)
+        );
     }
 
     @Override
     public void actualizarInformes(ArrayList<InformeMision> historial) {
-
-        this.listaInformes.setText("");
-
-        for (InformeMision informe : historial) {
-            listaInformes.append("====================================\n");
-            String[] lineas = informe.toString().split("\n");
-            for (String linea : lineas) {
-                listaInformes.append(linea+"\n");
-            }
-            listaInformes.append("");
+        ArrayList<InformeMision> copia = new ArrayList<>(historial);
+        String texto = "";
+        for (InformeMision informe : copia) {
+            texto += "====================================\n";
+            texto += informe.toString();
+            texto += "\n\n";
         }
+        final String textoFinal = texto;
+        SwingUtilities.invokeLater(() -> {
+            listaInformes.setText(textoFinal);
+        });
     }
 
     //SETEO Y ACTUALIZACION (OBSERVADOR) DE TABLERO
@@ -523,45 +527,44 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
         modeloTablero.setRowCount(0);
 
         setPosicionNave(PosXnave, PosYnave);
+        Posicion objetivo = tablero.getObjetivo();
 
         for(int i = 0; i < matriz.length; i++){
             ImageIcon[] fila = new ImageIcon[matriz[i].length];
             for(int j = 0; j < tablero.getY(); j++){
-                if (j == PosXnave && i == PosYnave) {
+                boolean esPosicionNave = i == PosXnave && j == PosYnave;
+                
+                if (esPosicionNave) {
                     fila[j] = iconoNave;
                 }
                 if (matriz[i][j] instanceof Asteroide) {
-                    if (j == PosXnave && i == PosYnave)
-                        fila[j] = iconoNaveVsAsteroide;
-                    else
-                       fila[j] = iconoAsteroide;
+                    fila[j] = esPosicionNave ? iconoNaveVsAsteroide : iconoAsteroide;
                 }
-                if (matriz[i][j] instanceof EstacionCarga) {
-                    if (j == PosXnave && i == PosYnave)
-                        fila[j] = iconoNaveEstacion;
-                    else
-                        fila[j] = iconoEstacion;
+                else if (matriz[i][j] instanceof EstacionCarga) {
+                    fila[j] = esPosicionNave ? iconoNaveEstacion : iconoEstacion;
                 }
-                if (matriz[i][j] instanceof Nave) {
-                    if (j == PosXnave && i == PosYnave)
-                        fila[j] = iconoNaveVsNaveEnemiga;
-                    else
-                        fila[j] = iconoNaveEnemiga;
+                else if (matriz[i][j] instanceof Nave) {
+                    fila[j] = esPosicionNave ? iconoNaveVsNaveEnemiga : iconoNaveEnemiga;
+                }
+                
+                boolean esDestino = objetivo != null  && i == objetivo.getX()  && j == objetivo.getY();
+                if (esDestino && !esPosicionNave) {
+                    fila[j] = iconoDestino;
                 }
             }
             modeloTablero.addRow(fila);
         }
     }
-
+    
     public void setTablero() {
-        actualizar();
         ajustarTablero(tablero.getX(), tablero.getY());
+        actualizar();
     }
 
     public void ajustarTablero(int filas, int columnas) {
         int tamañoCelda = 40;
 
-        modeloTablero.setColumnCount(tablero.getY());
+        modeloTablero.setColumnCount(columnas);
 
         this.tablaTablero.setRowHeight(tamañoCelda);
 
@@ -583,13 +586,15 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
     //IMAGENES
 
+    
     private ImageIcon cargarIcono(String nombreArchivo) {
         java.net.URL recurso = getClass().getResource("/vistas/recursos/" + nombreArchivo);
         if (recurso == null) {
             throw new IllegalStateException("No se encontró la imagen /vistas/recursos/" + nombreArchivo);
         }
-        Image imagen = new ImageIcon(recurso).getImage()
-                .getScaledInstance(36, 36, Image.SCALE_SMOOTH);
+        Image imagen = new ImageIcon(recurso).getImage();
+        imagen = imagen.getScaledInstance(36, 36, Image.SCALE_SMOOTH);
         return new ImageIcon(imagen);
     }
+    
 }

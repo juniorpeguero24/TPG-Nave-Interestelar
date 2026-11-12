@@ -9,18 +9,13 @@ import java.util.ArrayList;
 import modelo.motorwarp.ResultadoSalto;
 import modelo.motorwarp.TipoResultadoSalto;
 
-import modelo.nave.Nave;
-
 import modelo.tablero.Destino;
 import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
 
-import modelo.universo.Asteroide;
 import modelo.universo.ElementoDelUniverso;
 import modelo.universo.Ruta;
-import observer.ObservadorMision;
-import observer.ObservadorNave;
-import vistas.VControlNave;
+import modelo.universo.ResultadoInteraccion;
 
 public abstract class Mision {
     private static final int PAUSA_TURNO_MS = 1000;
@@ -69,11 +64,7 @@ public abstract class Mision {
             
             informe = evaluar(asistente);
             cerrar(asistente);
-        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion | InterruptedException e) {
-            this.resultado = ResultadoMision.FALLO;
-            observaciones.add(e.getMessage());
-            informe = generarInforme(asistente);
-        } catch (NaveDestruidaExcepcion e) {
+        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion | InterruptedException | NaveDestruidaExcepcion e) {
             this.resultado = ResultadoMision.FALLO;
             observaciones.add(e.getMessage());
             asistente.registrarEvento(new Evento(TipoEvento.ERROR, "Fallo en " + nombre + ": " + e.getMessage()));
@@ -130,6 +121,10 @@ public abstract class Mision {
         sumarDesgasteGenerado(desgaste);
         agregarAccionPrincipal("Consumo de recursos iniciales");
 
+        // Seteo banderas
+        ElementoDelUniverso ultimoElementoInteractuado = null;
+        Posicion ultimaPosicionInteraccion = null;
+
         // Ciclo de navegación
         while (ruta.tieneSiguiente() && !asistente.naveDestruida()) {
             // Pausa para ver la simulación
@@ -139,10 +134,19 @@ public abstract class Mision {
             
             // Inspeccionar e interactuar
             ElementoDelUniverso elemento = tablero.inspeccionarPosicion();
+            
             if (elemento != null) {
-                asistente.interactuarCon(elemento);
-                agregarObservacion("Se interactuo con un elemento del espacio. Posicion: " + actual);
+                boolean yaInteractuo = elemento == ultimoElementoInteractuado && actual.equals(ultimaPosicionInteraccion);
+                if (!yaInteractuo) {
+                    asistente.interactuarCon(elemento);
+                    agregarObservacion("Se interactuo con un elemento del espacio. Posicion: " + actual);
+                }
             }
+            
+            // La marca evita repetir la interacción causada por el movimiento del turno anterior.
+            ultimoElementoInteractuado = null;
+            ultimaPosicionInteraccion = null;
+            
             if (asistente.naveDestruida()) {
                 break;
             }
@@ -176,6 +180,9 @@ public abstract class Mision {
             
             // Ejecutar el movimiento
             ResultadoSalto resultado = realizarMovimiento(asistente, usarWarp);
+            if (asistente.naveDestruida()) {
+                break;
+            }
             if (resultado.getTipo() == TipoResultadoSalto.INVALIDO) {
                 agregarObservacion(resultado.getDescripcion());
                 break;
@@ -198,6 +205,15 @@ public abstract class Mision {
                         + " (" + resultado.getCasillerosAvanzados()
                         + " casilleros)"
                 ));
+                
+                // Verifico si me movi hacia un elemento del universo
+                elemento = tablero.inspeccionarPosicion();
+                if (elemento != null) {
+                    asistente.interactuarCon(elemento);
+                    agregarObservacion("Se interactuo con un elemento del espacio. Posicion: " + actual);
+                    ultimoElementoInteractuado = elemento;
+                    ultimaPosicionInteraccion = nuevaPosicion;
+                }
             }
 
             if (asistente.naveDestruida()) {
@@ -240,7 +256,7 @@ public abstract class Mision {
         if (resultado == ResultadoMision.EXITO) {
             asistente.registrarEvento(new Evento(TipoEvento.MISION, "Misión cumplida: " + nombre));
         } else {
-            agregarObservacion("La misión no alcanzó su objetivo");
+            asistente.registrarEvento(new Evento(TipoEvento.MISION, "La nave no alcanzó el objetivo de la misión"));
         }
     }
 

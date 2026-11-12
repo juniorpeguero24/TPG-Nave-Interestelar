@@ -48,8 +48,8 @@ public class ControladorCreacion implements ActionListener
         else if (comando.equalsIgnoreCase("asignar a nave")) {
             asignarTripulante();
         }
-        else if (comando.equalsIgnoreCase("agregar consejo")) {
-            agregarConsejo();
+        else if (comando.equalsIgnoreCase("asignar todos")) {
+            asignarTodos();
         }
 
     }
@@ -123,16 +123,35 @@ public class ControladorCreacion implements ActionListener
         this.vCreacion.actualizarListaDisponibles(tripulantes);
     }
 
-    private void agregarConsejo(){
-        Tripulante tripulante = this.vCreacion.getTripulanteSeleccionado();
-        try {
-           tripulante.registrarConsejo();
-
-           actualizarListaDisponibles();
+    private void asignarTodos() {
+        if (asistenteComando == null) {
+            vCreacion.mostrarMensaje("Primero debe crear una nave");
+            return;
         }
-        catch (TripulanteInvalidoException e) {
-            this.vCreacion.mostrarMensaje(e.getMessage());
+        ArrayList<Tripulante> disponibles = new ArrayList<>(universo.getTripulanteDisponibles());
+        int asignados = 0;
+        String errores = "";
+        for (Tripulante tripulante : disponibles) {
+            try {
+                asistenteComando.agregarTripulante(tripulante);
+                // Solo lo quitamos de disponibles si se asignó.
+                universo.quitarTripulanteDisponible(tripulante);
+                asignados++;
+            } catch (CapitanExistenteException | TripulanteRepetidoException | TripulanteInvalidoException e) {
+                errores += tripulante.getNombre() + ": " + e.getMessage() + "\n";
+            }
         }
+        actualizarListaDisponibles();
+        if (asistenteComando.tieneTripulacionValida()) {
+            vCreacion.habilitaIniciarJuego();
+        }
+        String mensaje = "Tripulantes asignados: " + asignados
+                + "\nTripulantes no asignados: "
+                + (disponibles.size() - asignados);
+        if (!errores.isEmpty()) {
+            mensaje += "\n\nNo se pudieron asignar:\n" + errores;
+        }
+        vCreacion.mostrarMensaje(mensaje);
     }
 
     private void iniciarJuego(){

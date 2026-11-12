@@ -19,6 +19,7 @@ public class VTripulantes extends JFrame implements IVista {
     private JScrollPane scrollTripulantes;
     private JPanel panelBotones;
     private JPanel panelTabla;
+    private JButton btnAgregarConsejo;
 
     public VTripulantes() {
         setSize(950, 650);
@@ -76,10 +77,17 @@ public class VTripulantes extends JFrame implements IVista {
         btnVolver.setBackground(celeste);
         btnVolver.setForeground(fondo);
         btnVolver.setFocusPainted(false);
+        
+        btnAgregarConsejo = new JButton("Agregar Consejo");
+        btnAgregarConsejo.setFont(fuenteBold);
+        btnAgregarConsejo.setBackground(celeste);
+        btnAgregarConsejo.setForeground(fondo);
+        btnAgregarConsejo.setFocusPainted(false);
 
         panelBotones = new JPanel(new FlowLayout());
         panelBotones.setBackground(fondo);
         panelBotones.add(btnVolver);
+        panelBotones.add(btnAgregarConsejo);
 
         getContentPane().add(panelBotones, BorderLayout.SOUTH);
 
@@ -88,13 +96,30 @@ public class VTripulantes extends JFrame implements IVista {
     @Override
     public void setActionListener(ActionListener c){
         this.btnVolver.addActionListener(c);
+        this.btnAgregarConsejo.addActionListener(c);
     }
 
     public void setTablaTripulantes(Object[] tripulante) {
-
         this.modeloTabla.addRow(tripulante);
-
+    }
+    
+    public int getFilaSeleccionada() {
+        return tablaTripulantes.getSelectedRow();
+    }
+    
+    public void seleccionarFila(int fila) {
+        if (fila >= 0 && fila < tablaTripulantes.getRowCount()) {
+            // este metodo selecciona una fila de la tabla
+            tablaTripulantes.setRowSelectionInterval(fila, fila);
+        }
     }
 
+    public void limpiarTablaTripulantes() {
+        modeloTabla.setRowCount(0);
+    }
+
+    public void mostrarMensaje(String mensaje) {
+        JOptionPane.showMessageDialog(this, mensaje);
+    }
 }
 
