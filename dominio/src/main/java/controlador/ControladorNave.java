@@ -25,9 +25,9 @@ public class ControladorNave implements ActionListener
     private Destino destino;
     private Tablero tablero;
     private Universo universo;
+    private boolean misionEnCurso = false;
 
     public ControladorNave(Universo universo, VControlNave controlNave, Navegador nav, Destino destino, Tablero tablero) {
-
         this.controlNave = controlNave;
         this.controlNave.setActionListener(this);
         this.universo = universo;
@@ -63,22 +63,26 @@ public class ControladorNave implements ActionListener
     }
 
     public void iniciarMision()  {
-            String nombreMision = this.controlNave.getMisionSeleccionada();
-            this.controlNave.setMisionEnCurso(true);
+        if (misionEnCurso) {
+            return;
+        }
+        String nombreMision = this.controlNave.getMisionSeleccionada();
 
-            Mision mision = null;
-            if (nombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
-                mision = new Mision01(destino, tablero);
-            } else if (nombreMision.equalsIgnoreCase("M-02 (Recolección)")) {
-                mision = new Mision02(destino, tablero);
-            } else if (nombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
-                mision = new Mision03(destino, tablero);
-            } else {
-                throw new IllegalArgumentException("Misión seleccionada desconocida: " + nombreMision);
-            }
-
-            ejecutarMisionenHilo(mision);
-            this.controlNave.setMisionEnCurso(false);
+        Mision mision = null;
+        if (nombreMision.equalsIgnoreCase("M-01 (Intercepción y Asistencia)")) {
+            mision = new Mision01(destino, tablero);
+        } else if (nombreMision.equalsIgnoreCase("M-02 (Recolección)")) {
+            mision = new Mision02(destino, tablero);
+        } else if (nombreMision.equalsIgnoreCase("M-03 (Retorno Seguro)")) {
+            mision = new Mision03(destino, tablero);
+        } else {
+            throw new IllegalArgumentException("Misión seleccionada desconocida: " + nombreMision);
+        }
+        
+        misionEnCurso = true;
+        controlNave.setMisionEnCurso(true);
+        ejecutarMisionenHilo(mision);
+        controlNave.setMisionEnCurso(false);
     }
 
 

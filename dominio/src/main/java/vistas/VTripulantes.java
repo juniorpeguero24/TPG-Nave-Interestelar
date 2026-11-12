@@ -106,6 +106,13 @@ public class VTripulantes extends JFrame implements IVista {
     public int getFilaSeleccionada() {
         return tablaTripulantes.getSelectedRow();
     }
+    
+    public void seleccionarFila(int fila) {
+        if (fila >= 0 && fila < tablaTripulantes.getRowCount()) {
+            // este metodo selecciona una fila de la tabla
+            tablaTripulantes.setRowSelectionInterval(fila, fila);
+        }
+    }
 
     public void limpiarTablaTripulantes() {
         modeloTabla.setRowCount(0);

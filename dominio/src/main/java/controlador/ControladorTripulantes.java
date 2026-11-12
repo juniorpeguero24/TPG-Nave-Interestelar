@@ -77,6 +77,7 @@ public class ControladorTripulantes extends WindowAdapter implements ActionListe
         try {
             tripulante.registrarConsejo();
             setTablaTripulantes();
+            vTripulantes.seleccionarFila(fila);
         } catch (TripulanteInvalidoException e) {
             vTripulantes.mostrarMensaje(e.getMessage());
         }
