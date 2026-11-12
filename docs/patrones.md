@@ -60,68 +60,63 @@ el resultado antes de utilizar la nave.
 
 ## ¿Qué problema resuelve?
 
-El motor Warp tiene un comportamiento diferente según su estado actual.
-Por ejemplo, preparar un salto es válido cuando el motor está `Disponible`,
-pero no es válido cuando está `En Warp` o en `Enfriamiento`.
+El motor Warp se comporta de manera diferente según la fase operativa en la que
+se encuentra. Un salto Warp solo puede ejecutarse cuando el motor está
+`Disponible`; después del salto el motor necesita un turno de enfriamiento y dos
+turnos de preparación antes de volver a estarlo.
 
-El patrón State permite representar cada estado como un objeto separado.
-De esta manera, cada estado define qué operaciones acepta y a qué estado
-debe pasar el motor después de una operación válida.
-
-Sin este patrón, `MotorWarp` tendría que contener muchos condicionales para
-consultar el estado actual.
-
-Con State, la decisión se delega al objeto que representa el estado actual.
+Sin el patrón State, `MotorWarp` tendría que consultar con condicionales qué
+fase está atravesando y qué debe hacer en cada caso. Con State, esa decisión se
+delega en el objeto que representa la fase actual.
 
 ## Participantes del patrón
 
 ### Contexto: `MotorWarp`
 
-`MotorWarp` es el **Contexto** del patrón. Mantiene una referencia al estado
-actual:
+`MotorWarp` es el **Contexto**. Mantiene una referencia al estado actual y
+expone hacia el exterior las operaciones `saltar()` y `saltarWarp(...)`, que
+delega en ese estado:
 
 ```java
 private EstadoWarp estado;
-```
 
-También expone las operaciones del motor y las delega al estado:
+public ResultadoSalto saltar() {
+    return estado.saltar();
+}
 
-```java
-public Evento prepararSalto() {
-    return this.estado.prepararSalto();
+public ResultadoSalto saltarWarp(boolean energiaSuficiente) {
+    return estado.saltarWarp(energiaSuficiente);
+}
+
+public boolean puedeSaltarWarp() {
+    return estado instanceof Disponible;
 }
 ```
 
-`MotorWarp` no implementa directamente las reglas de cada situación. Su
-responsabilidad es conservar el estado actual, delegar las operaciones y
-permitir el cambio de estado.
+`MotorWarp` no decide el comportamiento de cada fase: conserva el estado actual,
+delega las operaciones y permite cambiarlo.
 
 ### Interfaz de estado: `EstadoWarp`
 
-`EstadoWarp` define el contrato común para todos los estados:
-
 ```java
 public interface EstadoWarp {
-    Evento prepararSalto();
-    Evento saltar();
-    Evento enfriar();
+    ResultadoSalto saltar();
+    ResultadoSalto saltarWarp(boolean energiaSuficiente);
 }
 ```
 
-Gracias a esta interfaz, `MotorWarp` puede trabajar con cualquier estado sin
-conocer los detalles de su implementación.
-
 ### Estados concretos
 
-Las clases que implementan `EstadoWarp` son:
+- `Disponible`: el motor puede ejecutar un salto Warp.
+- `Enfriamiento`: fase posterior al salto Warp.
+- `PreparandoSalto`: recuperación posterior al enfriamiento; cuenta turnos.
 
-- `Disponible`;
-- `PreparandoSalto`;
-- `EnWarp`;
-- `Enfriamiento`.
+### Resultado de un salto: `ResultadoSalto`
 
-Cada una define las operaciones válidas y las operaciones inválidas para su
-estado.
+Cada operación devuelve un `ResultadoSalto`, con el tipo de salto
+(`TipoResultadoSalto`: `SALTO_NORMAL`, `SALTO_WARP`, `ENFRIAMIENTO`,
+`INVALIDO`), la cantidad de casilleros que avanza la nave y una descripción.
+Los estados deciden el movimiento y el próximo estado; no consumen recursos.
 
 ## Estados y transiciones
 
@@ -133,42 +128,45 @@ public MotorWarp() {
 }
 ```
 
-Las transiciones válidas son:
+| Estado | `saltar()` | `saltarWarp(energiaSuficiente)` |
+| --- | --- | --- |
+| `Disponible` | Salto normal de 1 casillero. No cambia de estado. | Con energía suficiente: salto Warp de 2 casilleros y pasa a `Enfriamiento`. Sin energía suficiente: salto normal. |
+| `Enfriamiento` | Salto de 1 casillero (resultado `ENFRIAMIENTO`) y pasa a `PreparandoSalto` con 0 turnos. | Igual que `saltar()`. |
+| `PreparandoSalto` | Salto normal de 1 casillero y cuenta un turno; al completar 2 turnos pasa a `Disponible`. | Igual que `saltar()`. |
 
 ```text
 Disponible
-    -- prepararSalto() -->
-Preparando salto
-    -- saltar() -->
-En Warp
-    -- enfriar() -->
+    -- saltarWarp (con energía) -->
 Enfriamiento
-    -- pasa un tiempo -->
+    -- siguiente salto -->
+Preparando salto (0/2)
+    -- 2 saltos -->
 Disponible
 ```
 
-El estado concreto crea el siguiente estado y solicita a `MotorWarp` que lo establezca como estado actual.
+## División de responsabilidades
 
+- Los **estados** deciden qué tipo de salto se produce, cuántos casilleros avanza
+  la nave y cuál es el estado siguiente.
+- `Nave` verifica antes de delegar que existan los recursos necesarios y aplica
+  después los costos según el resultado: 2 de combustible por salto normal,
+  5 de energía por salto Warp y 3 de desgaste en el enfriamiento.
+- `AsistenteComando` registra cada resultado como evento de la bitácora.
+- `Mision` decide cuándo intentar un salto Warp (ante un elemento en la ruta) y
+  mueve la nave en el tablero según los casilleros del resultado.
 
 ## Ventajas de esta aplicación
 
-- Evita condicionales complejos dentro de `MotorWarp`.
-- Cada estado tiene su propio comportamiento.
-- Agregar un nuevo estado no requiere modificar toda la lógica del motor.
+- Evita condicionales sobre el estado dentro de `MotorWarp`.
+- Cada fase tiene su propio comportamiento y su propia transición.
+- Agregar una fase nueva no obliga a modificar la lógica del motor ni de la
+  misión.
 
 ## Consideración de diseño
 
 Las clases concretas de estado tienen visibilidad de paquete y reciben una
-referencia al motor:
-
-```java
-private final MotorWarp motor;
-```
-
-Esto permite que un estado solicite una transición sin exponer las
-operaciones internas de cambio de estado fuera del paquete
-`motorwarp`. Es una decisión adecuada para mantener encapsulada la
-implementación del patrón.
+referencia al motor, lo que les permite pedir una transición sin exponer
+`cambiarEstado` fuera del paquete `motorwarp`.
 
 <br><br>
 
@@ -216,59 +214,90 @@ Añaden su propio concepto al acumulado:
 
 ## ¿Qué problema resuelve?
 
-Toda misión en el universo sigue una serie estricta de etapas invariantes que deben ejecutarse en un orden predeterminado (preparar la nave y verificar recursos, ejecutar la tarea específica, evaluar el resultado y finalizar asentando el desenlace y ejecutando maniobras warp si hubo éxito).
+Toda misión sigue las mismas cuatro fases, en el mismo orden: preparar, ejecutar,
+evaluar y cerrar. Sin Template Method cada misión implementaría su propio flujo,
+con riesgo de duplicar la validación de recursos, de alterar el orden de las
+fases o de olvidar el registro en la bitácora.
 
-Sin el patrón Template Method, cada misión concreta implementaría su propio flujo de control, lo que causaría:
-- Duplicación de la lógica de validación de recursos y motor.
-- Riesgo de alterar el orden de las etapas de ejecución.
-- Dispersión de la responsabilidad de asentar los eventos en la bitácora y ordenar el salto warp.
-
-El patrón Template Method permite fijar el esqueleto del algoritmo de ejecución en una clase abstracta (`Mision`), delegando únicamente los pasos variables (parte de `ejecutar` y `evaluar`) en las subclases concretas.
+El patrón fija el esqueleto del algoritmo en una clase abstracta (`Mision`) y
+delega en las subclases solo los pasos que varían.
 
 ## Participantes del patrón
 
-### Clase Abstracta (Plantilla): `Mision`
+### Clase abstracta (plantilla): `Mision`
 
-Define el método plantilla `realizarMision` marcado como `final` para impedir que las subclases alteren la estructura del proceso:
+El método plantilla `realizarMision` es `final`, de modo que las subclases no
+pueden alterar el orden de las fases:
 
 ```java
 public final InformeMision realizarMision(AsistenteComando asistente) {
-        
-        try {
-            preparar(asistente);
-            ejecutar(asistente);
-            evaluar(asistente);
-        } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion | TripulacionInvalidaExcepcion e) {
+    InformeMision informe = null;
+    try {
+        preparar(asistente);
+        ejecutar(asistente);
+        if (asistente.naveDestruida()) {
             this.resultado = ResultadoMision.FALLO;
-            observaciones.add(e.getMessage());
+            agregarObservacion("La nave fue destruida durante la mision");
         }
-
-        return finalizar(asistente);
+        informe = evaluar(asistente);
+        cerrar(asistente);
+    } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion
+             | TripulacionInvalidaExcepcion | InterruptedException
+             | NaveDestruidaExcepcion e) {
+        this.resultado = ResultadoMision.FALLO;
+        observaciones.add(e.getMessage());
+        asistente.registrarEvento(new Evento(TipoEvento.ERROR,
+                "Fallo en " + nombre + ": " + e.getMessage()));
+        if (informe == null) informe = generarInforme(asistente);
     }
+    return informe;
+}
 ```
-- **Pasos concretos (invariantes):**
-    - `preparar(AsistenteComando asistente)`: solicita al asistente validar que el motor esté disponible y existan los recursos suficientes (combustible, energía, tolerancia al desgaste) antes de iniciar. Asienta el evento de inicio en la bitácora.
-    - `finalizar(AsistenteComando asistente)`: si la evaluación fue exitosa, ordena al asistente ejecutar el salto warp y registra el desenlace; si falló, asienta el evento de fallo.
-- **Pasos primitivos (abstractos):**
-    - `ejecutar(AsistenteComando asistente)`: consume los recursos asignados y es implementado por sus subclases para realizar su tarea específica.
-    - `evaluar(AsistenteComando asistente)`: determina y asigna el estado final (`ResultadoMision.EXITO` o `ResultadoMision.FALLO`).
 
-### Clases Concretas
+**Fase 1, `preparar`** (común): valida la tripulación y que la nave no esté
+destruida, verifica de una sola vez que los recursos alcancen para el consumo
+inicial y el radar de largo alcance (si falta algo no se modifica nada), elige el
+objetivo, calcula la ruta con el radar de largo alcance y la registra.
 
-- `Mision01` (Intercepción y asistencia)
-- `Mision02` (Recolección)
-- `Mision03` (Retorno seguro)
+**Fase 2, `ejecutar`** (común, ampliable): consume los recursos iniciales de la
+misión (4 de combustible, 4 de desgaste y la energía propia de cada misión) y
+ejecuta el ciclo de travesía por turnos: la nave inspecciona su casilla e
+interactúa con el elemento que encuentre, escanea con el radar de corto alcance
+y decide el salto (Warp si hay un elemento en la ruta y el motor puede saltar;
+normal en caso contrario). Después el `Destino` mueve los elementos del tablero.
+Cada turno incluye una pausa para que la vista muestre el avance.
 
-Cada una define sus propios requisitos de recursos en el constructor y concreta las acciones específicas de su labor mediante las órdenes canalizadas por el `AsistenteComando`.
+**Fase 3, `evaluar`** (abstracta): cada misión decide su resultado y genera el
+`InformeMision` de la travesía, que describe lo ocurrido en el trayecto. El
+informe se guarda en el historial del asistente, separado de la bitácora.
 
-## Intermediación y Desacoplamiento (`AsistenteComando`)
+**Fase 4, `cerrar`** (con comportamiento por defecto, redefinible): aplica de
+forma definitiva sobre la nave los recursos ganados o entregados. Estas acciones
+finales no forman parte del informe.
 
-`Mision` no conoce ni interactúa directamente con `Nave`. Toda consulta de estado, verificación y consumo de combustible/energía se le solicita al `AsistenteComando`, quien gobierna la nave y asienta los sucesos en la bitácora.
+**Ganchos de la plantilla:** `getEnergiaInicial()` (abstracto) y
+`elegirObjetivo(Posicion)` (por defecto, el objetivo que sortea el tablero).
+
+### Clases concretas
+
+| Misión | Energía inicial | Verificación al llegar (`ejecutar`) | Aplicación sobre la nave (`cerrar`) |
+| --- | --- | --- | --- |
+| `Mision01` (Intercepción y asistencia) | 5 | La nave debe conservar más energía y combustible que el auxilio solicitado (0 a 50 de cada uno). | En `cerrar` verifica los recursos y descuenta el auxilio de la nave. |
+| `Mision02` (Recolección) | 10 | Haber llegado al objetivo. | En `cerrar` sortea de 20 a 100 gemas y las suma a la nave. |
+| `Mision03` (Retorno seguro) | 0 | Haber llegado a la base de origen (usa el objetivo que fija el tablero; no vuelve al centro). | En `cerrar` recarga combustible y energía al máximo y reinicia el desgaste. |
+
+## Intermediación y desacoplamiento (`AsistenteComando`)
+
+`Mision` no interactúa directamente con `Nave`. Toda consulta, verificación,
+consumo, salto y registro se canaliza por `AsistenteComando`, que gobierna la
+nave y asienta los sucesos en la bitácora.
 
 ## Ventajas de esta aplicación
 
-- **Permite añadir nuevos tipos de misiones sin tocar la estructura del algoritmo ni las misiones existentes.
-- **Control centralizado:** Asegura que ninguna misión comience sin recursos ni omita el registro en la bitácora o la transición del motor warp ante un éxito.
+- Se pueden agregar misiones nuevas sin tocar el algoritmo ni las existentes.
+- Ninguna misión puede omitir el registro del informe ni cambiar el orden de las
+  fases.
+- Separa decidir el resultado (`evaluar`) de aplicarlo sobre la nave (`cerrar`).
 
 <br><br>
 
@@ -293,46 +322,47 @@ la vista se registra como observador y se actualiza sola.
 | --- | --- | --- | --- |
 | `ObservadorNave` | `actualizarNave(Nave)` | `Nave` | `VControlNave` |
 | `ObservadorBitacora` | `actualizarBitacora(Bitacora)` | `Bitacora` | `VControlNave` |
-| `ObservadorMision` | `actualizarInformes(InformeMision)` | `Mision` | `VControlNave` |
+| `ObservadorMision` | `actualizarInformes(ArrayList<InformeMision>)` | `AsistenteComando` | `VControlNave` |
+| `ObservadorTablero` | `actualizar()` | `Tablero` | `VControlNave` |
 | `ObservadorPlataforma` | `actualizar(String)` | `PlataformaDeCarga` | `VVisorRecondito` |
 
 ### Sujetos
 
-Cada sujeto guarda su lista de observadores y expone `añadirObservador`,
-`quitarObservador` y `notificarObservadores`:
+Cada sujeto guarda su lista de observadores y los notifica cuando cambia:
 
-- `Nave` notifica ante cada cambio de recursos, desgaste o estado.
+- `Nave` notifica ante cada cambio de recursos, desgaste, gemas, estado del motor
+  o destrucción.
 - `Bitacora` notifica cada vez que registra un evento válido.
-- `Mision` notifica al finalizar, entregando el `InformeMision`.
+- `AsistenteComando` notifica el historial completo de informes cada vez que una
+  misión registra el suyo.
+- `Tablero` notifica cuando se mueve la nave o los elementos del universo.
 - `PlataformaDeCarga` notifica cada evento del universo paralelo con un mensaje
   de texto.
 
 ### Registro de los observadores
 
-El registro lo hace el código de coordinación, no el modelo ni la vista:
+`VControlNave` se registra a sí misma en su constructor ante el tablero, la nave,
+la bitácora y el asistente (`agregarObservador`). `Navegador` registra
+`VVisorRecondito` en la `PlataformaDeCarga`.
 
-- `Navegador` registra `VControlNave` en la nave y en la bitácora a través de
-  `AsistenteComando.añadirObservadorNave` y `añadirObservadorBitacora`.
-- `ControladorNave` registra `VControlNave` en cada misión antes de iniciarla.
-- `Navegador` registra `VVisorRecondito` en la `PlataformaDeCarga`.
-
-```
-java
-asistente.añadirObservadorNave(control);
-asistente.añadirObservadorBitacora(control);
+```java
+tablero.agregarObservador(this);
+nave.agregarObservador(this);
+bitacora.agregarObservador(this);
+asistente.agregarObservador(this);
 ```
 
 ### Mecanismo provisto por la cátedra
 
-El `Tablero` hereda de `Observable` y notifica a objetos `Observador`
-(`actualizar()` sin parámetros) cuando cambia el estado del universo. Es un
-mecanismo independiente del paquete `observer`, que se usa para el tablero.
+`Tablero` hereda de `Observable`, que notifica a objetos `ObservadorTablero`
+(`actualizar()` sin parámetros). La interfaz está en el paquete `observer`, junto
+con las demás.
 
 ## Consideración de diseño
 
 Los avisos de `PlataformaDeCarga` se emiten desde los hilos de generadoras y
 naves. Como Swing solo debe modificarse desde su propio hilo, `VVisorRecondito`
-delega la escritura en `SwingUtilities.invokeLater`.
+delega la escritura en `SwingUtilities.invokeLater`. La misión se ejecuta en un hilo propio, por lo que `VControlNave` también delega la actualización del tablero en `SwingUtilities.invokeLater`.
 
 ## Ventajas de esta aplicación
 
@@ -408,15 +438,19 @@ Toma los valores `GANA`, `PIERDE` y `PACTO`.
 ### Punto de uso: `Nave.interactuarCon`
 
 `Nave` implementa `ElementoDelUniverso`. Cuando la nave propia coincide con una
-nave enemiga en una casilla, se invoca `interactuarCon` y, si el resultado es
-`PIERDE`, la nave propia se destruye y la misión falla:
+nave enemiga en una casilla, se invoca `interactuarCon`. Si el resultado es
+`PIERDE`, la nave propia se destruye y la misión falla. El método devuelve un
+`ResultadoInteraccion` con una descripción, que `AsistenteComando` registra en
+la bitácora:
 
 ```java
-public void interactuarCon(Nave nave) {
+public ResultadoInteraccion interactuarCon(Nave nave) {
     ResultadoEncuentro resultado = nave.enfrentar(this);
     if (resultado == ResultadoEncuentro.PIERDE) {
         nave.destruir();
     }
+    return new ResultadoInteraccion("Encuentro con " + getNombre()
+            + " (" + getTipo() + "). Resultado: " + resultado);
 }
 ```
 
@@ -545,8 +579,7 @@ se muestra en cada momento.
 5. El controlador evalúa el resultado y coordina la respuesta con la vista (por
    ejemplo, mostrar un mensaje o abrir otra ventana).
 
-```
-java
+```java
 // ControladorCreacion
 public void actionPerformed(ActionEvent e) {
     String comando = e.getActionCommand();

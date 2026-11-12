@@ -42,8 +42,9 @@ El sistema se organiza en capas con responsabilidades separadas:
 | Persistencia | `modelo.persistencia` | Acceso a datos de usuarios (DAO y DTO sobre H2). |
 | Observadores | `observer` | Interfaces para las actualizaciones automáticas del modelo hacia la vista. |
 
-El punto de entrada es `Main`, que inicializa la base de datos, arma el tablero
-y el `Destino`, e inicia la pantalla de acceso.
+El punto de entrada es `Main`, que inicializa la base de datos, crea el `Universo`
+e inicia la pantalla de acceso. El `Navegador` arma el tablero y el `Destino` y
+coordina el paso entre las ventanas.
 
 ## Decisiones de diseño incorporadas
 
@@ -52,13 +53,26 @@ y el `Destino`, e inicia la pantalla de acceso.
   por su cuenta (recursos de la nave, bitácora, informes de misión y eventos de
   la plataforma) llegan a la vista mediante Observer, de modo que el dominio solo
   conoce interfaces y no clases de Swing.
-- **Integración con el tablero de la cátedra.** `Mision` conserva el método
-  plantilla del Template Method y se amplía con el ciclo de travesía por turnos:
-  el radar de largo alcance calcula la ruta, la nave inspecciona su casilla e
-  interactúa con el elemento que encuentre, escanea con el radar de corto
-  alcance, se mueve y luego el `Destino` mueve los elementos del universo.
-  La nave, los asteroides y las estaciones de carga implementan
-  `ElementoDelUniverso`, por lo que el tablero los trata de forma uniforme.
+- **Misiones con cuatro fases sobre el tablero de la cátedra.** `Mision` conserva
+  el método plantilla del Template Method con las fases preparar, ejecutar,
+  evaluar y cerrar. En `preparar` se verifican todos los recursos antes de
+  consumir nada y se calcula la ruta con el radar de largo alcance. En `ejecutar`
+  se consumen los recursos iniciales (4 de combustible, 4 de desgaste y la energía
+  propia de cada misión) y se recorre la ruta por turnos: la nave inspecciona su
+  casilla e interactúa con el elemento que encuentre, escanea con el radar de
+  corto alcance, salta y luego el `Destino` mueve los elementos del universo.
+  `evaluar` decide el resultado y genera el informe de la travesía; `cerrar`
+  aplica sobre la nave las acciones finales (auxilio, gemas, recarga), que no
+  forman parte del informe. Los informes se guardan en el historial del
+  asistente, separados de la bitácora. La nave, los
+  asteroides y las estaciones de carga implementan `ElementoDelUniverso`, por lo
+  que el tablero los trata de forma uniforme.
+- **Motor Warp con State y resultado de salto.** Las operaciones del motor son
+  `saltar()` y `saltarWarp(...)`. Los estados deciden el tipo de salto, los
+  casilleros que avanza la nave y el estado siguiente; `Nave` aplica los costos
+  (2 de combustible por salto normal, 5 de energía por salto Warp y 3 de desgaste
+  en el enfriamiento). Ante un elemento en la ruta, la misión intenta un salto
+  Warp, que avanza dos casilleros.
 - **Encuentros entre naves con Double Dispatch.** El resultado depende solo del
   tipo de cada nave. Se eliminan los condicionales por tipo y agregar un tipo de
   nave obliga a resolver su comportamiento frente a los demás.
@@ -99,3 +113,13 @@ y el `Destino`, e inicia la pantalla de acceso.
 ## Limitaciones conocidas y trabajo futuro
 
 - Las contraseñas se almacenan sin hash.
+- La nave aliada de la misión M-01 no existe como objeto del tablero: se modela
+  como el casillero objetivo, que el tablero mantiene libre de elementos. El
+  auxilio solicitado se sortea entre 0 y 50 de energía y de combustible.
+- Las gemas de M-02 se acumulan en la nave y se informan en su estado; no se
+  persisten.
+- El informe de una misión describe la travesía y refleja el estado de la nave
+  previo a `cerrar`; lo que se gana o entrega al cerrar no figura en él.
+- El tablero de la aplicación es de 10 por 10, definido en `Navegador`.
+- En el motor Warp, el enfriamiento y los dos turnos de preparación se cumplen
+  después del salto Warp.
