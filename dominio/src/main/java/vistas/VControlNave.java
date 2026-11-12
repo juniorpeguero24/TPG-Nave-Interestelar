@@ -146,10 +146,8 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
         this.panelInformacionNave = new JPanel();
         this.panelInformacionNave.setBackground(Estilo.fondoPanel);
-        this.panelInformacionNave.setBorder(
-                new EmptyBorder(12, 12, 12, 12));
-        this.panelInformacionNave.setLayout(
-                new GridLayout(2, 1, 0, 12));
+        this.panelInformacionNave.setBorder(new EmptyBorder(12, 12, 12, 12));
+        this.panelInformacionNave.setLayout(new GridLayout(2, 1, 0, 12));
 
         this.panelPrincipal.add(this.panelInformacionNave);
 
@@ -329,8 +327,7 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
 
         this.panelTablero = new JPanel();
         this.panelTablero.setBackground(Estilo.fondoPanel);
-        this.panelTablero.setBorder(
-                new EmptyBorder(12, 12, 12, 12));
+        this.panelTablero.setBorder(new EmptyBorder(12, 12, 12, 12));
         this.panelTablero.setLayout(new BorderLayout(5, 8));
         
 

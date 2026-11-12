@@ -25,7 +25,6 @@ public class ControladorNave implements ActionListener
     private Destino destino;
     private Tablero tablero;
     private Universo universo;
-    private boolean misionEnCurso = false;
 
     public ControladorNave(Universo universo, VControlNave controlNave, Navegador nav, Destino destino, Tablero tablero) {
         this.controlNave = controlNave;
@@ -63,9 +62,6 @@ public class ControladorNave implements ActionListener
     }
 
     public void iniciarMision()  {
-        if (misionEnCurso) {
-            return;
-        }
         String nombreMision = this.controlNave.getMisionSeleccionada();
 
         Mision mision = null;
@@ -78,11 +74,9 @@ public class ControladorNave implements ActionListener
         } else {
             throw new IllegalArgumentException("Misión seleccionada desconocida: " + nombreMision);
         }
-        
-        misionEnCurso = true;
+
         controlNave.setMisionEnCurso(true);
         ejecutarMisionenHilo(mision);
-        controlNave.setMisionEnCurso(false);
     }
 
 
@@ -97,12 +91,14 @@ public class ControladorNave implements ActionListener
 
                     // mision.realizarMision(asistenteComando);
                     InformeMision informe = mision.realizarMision(asistenteComando);
-
+                    controlNave.setMisionEnCurso(false);
+                    
                     if (asistenteComando.naveDestruida())
                     {
                         controlNave.desactivarMision();
                         controlNave.mostrarMensaje("NAVE DESTRUIDA");
                     }
+                    
             }
         });
 
