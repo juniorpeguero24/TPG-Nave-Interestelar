@@ -52,7 +52,11 @@ coordina el paso entre las ventanas.
   vista, `ActionListener`, controlador y modelo. Los cambios que genera el modelo
   por su cuenta (recursos de la nave, bitácora, informes de misión y eventos de
   la plataforma) llegan a la vista mediante Observer, de modo que el dominio solo
-  conoce interfaces y no clases de Swing.
+  conoce interfaces y no clases de Swing. La ejecución de las misiones se realiza en 
+  un hilo independiente para evitar bloquear la interfaz gráfica. Mientras una misión 
+  se encuentra en ejecución, el controlador deshabilita la posibilidad de iniciar otra. 
+  Al finalizar el hilo, tanto si la misión termina normalmente como si ocurre una excepción,
+   se restablece el estado de la interfaz. Si la nave fue destruida, se impide iniciar nuevas misiones.
 - **Misiones con cuatro fases sobre el tablero de la cátedra.** `Mision` conserva
   el método plantilla del Template Method con las fases preparar, ejecutar,
   evaluar y cerrar. En `preparar` se verifican todos los recursos antes de
