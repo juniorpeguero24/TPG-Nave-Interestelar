@@ -32,6 +32,13 @@ public class Universo {
         }
         return null;
     }
+    
+    public void seleccionarAsistente(AsistenteComando asistente) {
+        if (!asistentes.contains(asistente)) {
+            throw new IllegalArgumentException("El asistente no esta registrado en el universo");
+        }
+        this.asistenteEnOperacion = asistente;
+    }
 
     public void agregarTripulanteDisponible(Tripulante tripulante) throws TripulanteRepetidoException {
             if (tripulantesDisponibles.contains(tripulante))

@@ -68,7 +68,8 @@ public abstract class Mision {
             this.resultado = ResultadoMision.FALLO;
             observaciones.add(e.getMessage());
             asistente.registrarEvento(new Evento(TipoEvento.ERROR, "Fallo en " + nombre + ": " + e.getMessage()));
-            informe = generarInforme(asistente);
+            if (informe == null) 
+                informe = generarInforme(asistente);
         }
         return informe;
     }

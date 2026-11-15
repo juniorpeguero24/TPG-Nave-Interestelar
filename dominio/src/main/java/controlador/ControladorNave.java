@@ -88,17 +88,18 @@ public class ControladorNave implements ActionListener
         Thread hiloMision = new Thread(new Runnable() {
             @Override
             public void run() {
-
+                try {
                     // mision.realizarMision(asistenteComando);
                     InformeMision informe = mision.realizarMision(asistenteComando);
+                } catch (Exception e) {
+                    controlNave.mostrarMensaje("Error durante la misión: " + e.getMessage());
+                } finally {
                     controlNave.setMisionEnCurso(false);
-                    
-                    if (asistenteComando.naveDestruida())
-                    {
+                    if (asistenteComando.naveDestruida()) {
                         controlNave.desactivarMision();
                         controlNave.mostrarMensaje("NAVE DESTRUIDA");
                     }
-                    
+                }
             }
         });
 
