@@ -529,6 +529,18 @@ public AsistenteComando seleccionarNave(String nombreNave);
 - Si encuentra una nave cuyo nombre coincide exactamente con `nombreNave` (sensible a mayúsculas y minúsculas), la establece como asistente en operación y la devuelve.
 - Si no encuentra coincidencia, incluso cuando `nombreNave` es `null`, devuelve `null` y no cambia el asistente en operación.
 
+### `seleccionarAsistente`
+
+```java
+public void seleccionarAsistente(AsistenteComando asistente);
+```
+
+#### Precondiciones
+- El asistente debe estar registrado en el universo.
+
+#### Postcondiciones
+- `asistenteEnOperacion` referencia exactamente al asistente recibido. Si no está registrado, se lanza IllegalArgumentException y no se modifica la selección actual.
+
 ### `getAsistenteEnOperacion`
 
 ```java
@@ -1855,7 +1867,7 @@ public final InformeMision realizarMision(AsistenteComando asistente);
   informes del asistente. El informe no se asienta en la bitácora: el asistente
   guarda por separado los informes y la bitácora.
 - Ante una excepción registra además un evento `ERROR` en la bitácora. Si el
-  informe ya se había generado en `evaluar`, no se genera otro.
+  informe ya se había generado en `evaluar`, no se genera otro ante un error posterior durante cerrar().
 
 #### Invariantes
 

@@ -67,7 +67,7 @@ public class ControladorCreacion implements ActionListener
                 this.asistenteComando = new AsistenteComando(nave);
 
                 universo.registrarAsistente(this.asistenteComando);
-                universo.seleccionarNave(nombre);
+                universo.seleccionarAsistente(this.asistenteComando);
 
                 this.vCreacion.setDatosNaveCreada(nombre, tipo);
                 this.vCreacion.habilitaAsignarTripulante();
