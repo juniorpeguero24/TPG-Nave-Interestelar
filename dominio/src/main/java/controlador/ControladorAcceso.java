@@ -1,6 +1,7 @@
 package controlador;
 
 import modelo.persistencia.IUsuarioDAO;
+import modelo.persistencia.InicializadorBD;
 import modelo.persistencia.UsuarioDAO;
 import modelo.persistencia.UsuarioDTO;
 import modelo.universo.Universo;
@@ -23,6 +24,7 @@ public class ControladorAcceso implements ActionListener {
         this.universo = universo;
         this.usuarioDAO = new UsuarioDAO();
         this.vista.setActionListener(this);
+        inicializarBD();
     }
 
     @Override
@@ -72,6 +74,14 @@ public class ControladorAcceso implements ActionListener {
             }
         } catch (SQLException  e) {
             vista.mostrarMensaje("Error al iniciar sesión: " + e.getMessage());
+        }
+    }
+
+    private void inicializarBD() {
+        try {
+            InicializadorBD.inicializar();
+        } catch (SQLException e) {
+            vista.mostrarMensaje("Error al inicializar la BD: " + e.getMessage());
         }
     }
 }
