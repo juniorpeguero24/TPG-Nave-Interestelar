@@ -355,7 +355,7 @@ asistente.agregarObservador(this);
 ### Mecanismo provisto por la cátedra
 
 `Tablero` hereda de `Observable`, que notifica a objetos `ObservadorTablero`
-(`actualizar()` sin parámetros). La interfaz está en el paquete `observer`, junto
+(`actualizar(Tablero tablero)`). La interfaz está en el paquete `observer`, junto
 con las demás.
 
 ## Consideración de diseño
