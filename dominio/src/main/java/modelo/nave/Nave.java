@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import modelo.excepciones.*;
-import modelo.bitacora.Evento;
 import modelo.motorwarp.MotorWarp;
 import modelo.tripulacion.Tripulacion;
 import modelo.mision.CostosMision;
