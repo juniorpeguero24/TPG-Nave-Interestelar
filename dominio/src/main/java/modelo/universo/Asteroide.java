@@ -1,12 +1,19 @@
 package modelo.universo;
 
+import modelo.excepciones.ElementoDelUniversoInvalidoExcepcion;
+
+import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
+
 import modelo.nave.Nave;
 
 public class Asteroide implements ElementoDelUniverso {
     private int danioEnergia;
 
-    public Asteroide(int danioEnergia) {
-        this.danioEnergia = danioEnergia;
+    public Asteroide(int danioEnergia) throws ElementoDelUniversoInvalidoExcepcion {
+        if (danioEnergia < 0) {
+            throw new ElementoDelUniversoInvalidoExcepcion("El danio del asteroide no puede ser negativo");
+        } 
+        this.danioEnergia = 0;
     }
     
     public int getDanioEnergia() {
@@ -16,7 +23,11 @@ public class Asteroide implements ElementoDelUniverso {
     @Override
     public ResultadoInteraccion interactuarCon(Nave nave) {
         int energiaAntes = nave.getEnergia();
-        nave.recibirDanioEnergia(danioEnergia);
+        try {
+            nave.recibirDanioEnergia(danioEnergia);
+        } catch (OperacionRecursoInvalidaExcepcion e) {
+            return new ResultadoInteraccion("Error al aplicar el daño del asteroide: " + e.getMessage());
+        }
         int energiaPerdida = energiaAntes - nave.getEnergia();
         return new ResultadoInteraccion("Impacto con asteroide. Energia perdida: "+ energiaPerdida);
     }

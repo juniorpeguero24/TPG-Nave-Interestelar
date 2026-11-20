@@ -1,3 +1,5 @@
+package modelo.excepciones;
+
 import controlador.ControladorAcceso;
 import controlador.Navegador;
 import modelo.universo.Universo;

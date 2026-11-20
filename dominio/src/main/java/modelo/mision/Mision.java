@@ -211,7 +211,7 @@ public abstract class Mision {
                 elemento = tablero.inspeccionarPosicion();
                 if (elemento != null) {
                     asistente.interactuarCon(elemento);
-                    agregarObservacion("Se interactuo con un elemento del espacio. Posicion: " + actual);
+                    agregarObservacion("Se interactuo con un elemento del espacio. Posicion: " + nuevaPosicion);
                     ultimoElementoInteractuado = elemento;
                     ultimaPosicionInteraccion = nuevaPosicion;
                 }

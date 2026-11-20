@@ -32,9 +32,9 @@ public abstract class Observable {
     /**
      * Notifica a los observadores registrados que este objeto se actualizó.
      */
-    public void notificarObservadores() {
+    public void notificarObservadores(Tablero tablero) {
         for (ObservadorTablero observadorTablero : observadores) {
-            observadorTablero.actualizar();
+            observadorTablero.actualizar(tablero);
         }
     }
 }
