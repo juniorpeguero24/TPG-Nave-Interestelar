@@ -89,7 +89,7 @@ coordina el paso entre las ventanas.
   base de datos puede reemplazarse sin modificarlo.
 - **Manejo de errores.** Además de las excepciones de la Entrega 1 se agregaron
   excepciones propias (`NaveInvalidaException`, `TripulanteInvalidoException`,
-  `TripulanteRepetidoException`, `CapitanExistenteException`, `ElementoDelUniversoInvalidoException`). 
+  `TripulanteRepetidoException`, `CapitanExistenteException`, `ElementoDelUniversoInvalidoExcepcion`). 
   Las validaciones de formato se hacen en la vista y el controlador, las reglas de negocio en el
   dominio y las consultas en el DAO.
 - **Observer del tablero con sujeto explícito.** Se modificó la notificación del tablero para utilizar notificarObservadores(this), 
