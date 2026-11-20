@@ -87,13 +87,8 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     private ImageIcon iconoNaveVsNaveEnemiga;
     private ImageIcon iconoDestino;
 
-
-    private Tablero tablero;
-
     public VControlNave(Tablero tablero, AsistenteComando asistente) {
-
-        this.tablero = tablero;
-        this.tablero.agregarObservador(this);
+        tablero.agregarObservador(this);
 
         Nave nave = asistente.getNave();
         nave.agregarObservador(this);
