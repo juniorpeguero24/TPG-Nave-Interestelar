@@ -150,7 +150,7 @@ Disponible
   la nave y cuál es el estado siguiente.
 - `Nave` verifica antes de delegar que existan los recursos necesarios y aplica
   después los costos según el resultado: 2 de combustible por salto normal,
-  5 de energía por salto Warp y 5 de desgaste en el enfriamiento.
+  5 de energía por salto Warp y 3 de desgaste en el enfriamiento.
 - `AsistenteComando` registra cada resultado como evento de la bitácora.
 - `Mision` decide cuándo intentar un salto Warp (ante un elemento en la ruta) y
   mueve la nave en el tablero según los casilleros del resultado.
@@ -242,12 +242,13 @@ public final InformeMision realizarMision(AsistenteComando asistente) {
         informe = evaluar(asistente);
         cerrar(asistente);
     } catch (OperacionRecursoInvalidaExcepcion | RecursoInsuficienteExcepcion
-             | TripulacionInvalidaExcepcion | InterruptedException e) {
+             | TripulacionInvalidaExcepcion | InterruptedException
+             | NaveDestruidaExcepcion e) {
         this.resultado = ResultadoMision.FALLO;
         observaciones.add(e.getMessage());
+        asistente.registrarEvento(new Evento(TipoEvento.ERROR,
+                "Fallo en " + nombre + ": " + e.getMessage()));
         if (informe == null) informe = generarInforme(asistente);
-    } catch (NaveDestruidaExcepcion e) {
-        // ... mismo tratamiento, registrando el error en la bitácora
     }
     return informe;
 }
@@ -266,22 +267,24 @@ y decide el salto (Warp si hay un elemento en la ruta y el motor puede saltar;
 normal en caso contrario). Después el `Destino` mueve los elementos del tablero.
 Cada turno incluye una pausa para que la vista muestre el avance.
 
-**Fase 3, `evaluar`** (abstracta): cada misión decide su resultado, calcula el
-balance de recursos ganados o entregados y genera el `InformeMision`.
+**Fase 3, `evaluar`** (abstracta): cada misión decide su resultado y genera el
+`InformeMision` de la travesía, que describe lo ocurrido en el trayecto. El
+informe se guarda en el historial del asistente, separado de la bitácora.
 
 **Fase 4, `cerrar`** (con comportamiento por defecto, redefinible): aplica de
-forma definitiva sobre la nave los recursos ganados o entregados.
+forma definitiva sobre la nave los recursos ganados o entregados. Estas acciones
+finales no forman parte del informe.
 
 **Ganchos de la plantilla:** `getEnergiaInicial()` (abstracto) y
 `elegirObjetivo(Posicion)` (por defecto, el objetivo que sortea el tablero).
 
 ### Clases concretas
 
-| Misión | Energía inicial | Verificación al llegar (`ejecutar`) | Balance (`evaluar`) y aplicación (`cerrar`) |
+| Misión | Energía inicial | Verificación al llegar (`ejecutar`) | Aplicación sobre la nave (`cerrar`) |
 | --- | --- | --- | --- |
-| `Mision01` (Intercepción y asistencia) | 5 | La nave debe conservar más energía y combustible que el auxilio solicitado (0 a 50 de cada uno). | Suma el auxilio a los consumos; en `cerrar` lo descuenta de la nave. |
-| `Mision02` (Recolección) | 10 | Haber llegado al objetivo. | Sortea de 20 a 100 gemas; en `cerrar` las suma a la nave. |
-| `Mision03` (Retorno seguro) | 0 | Haber llegado a la base (el centro del tablero, redefiniendo `elegirObjetivo`). | Calcula la recarga total; en `cerrar` recarga combustible y energía y reinicia el desgaste. |
+| `Mision01` (Intercepción y asistencia) | 5 | La nave debe conservar más energía y combustible que el auxilio solicitado (0 a 50 de cada uno). | En `cerrar` verifica los recursos y descuenta el auxilio de la nave. |
+| `Mision02` (Recolección) | 10 | Haber llegado al objetivo. | En `cerrar` sortea de 20 a 100 gemas y las suma a la nave. |
+| `Mision03` (Retorno seguro) | 0 | Haber llegado a la base de origen (usa el objetivo que fija el tablero; no vuelve al centro). | En `cerrar` recarga combustible y energía al máximo y reinicia el desgaste. |
 
 ## Intermediación y desacoplamiento (`AsistenteComando`)
 

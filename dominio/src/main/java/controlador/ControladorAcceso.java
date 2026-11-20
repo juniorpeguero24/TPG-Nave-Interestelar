@@ -9,6 +9,8 @@ import vistas.VAcceso;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.sql.SQLException;
+
 public class ControladorAcceso implements ActionListener {
     private final VAcceso vista;
     private final IUsuarioDAO usuarioDAO;
@@ -50,7 +52,7 @@ public class ControladorAcceso implements ActionListener {
             usuarioDAO.registrar(usuario);
             vista.mostrarMensaje("Registro exitoso");
             vista.limpiarCampos();
-        } catch (Exception e) {
+        } catch (SQLException  e) {
             vista.mostrarMensaje("Error al registrar usuario: " + e.getMessage());
         }
     }
@@ -68,7 +70,7 @@ public class ControladorAcceso implements ActionListener {
             } else {
                 vista.mostrarMensaje("Usuario o contraseña incorrectos");
             }
-        } catch (Exception e) {
+        } catch (SQLException  e) {
             vista.mostrarMensaje("Error al iniciar sesión: " + e.getMessage());
         }
     }

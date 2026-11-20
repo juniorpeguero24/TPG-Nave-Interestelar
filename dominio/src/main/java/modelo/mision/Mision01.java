@@ -48,26 +48,28 @@ public class Mision01 extends Mision {
     protected InformeMision evaluar(AsistenteComando asistente) {
         if (this.asistenciaRealizada) {
             this.resultado = ResultadoMision.EXITO;
-            sumarCombustibleConsumido(auxilioCombustible);
-            sumarEnergiaConsumida(auxilioEnergia);
-            agregarObservacion("Auxilio entregado a la nave aliada: " + auxilioEnergia
-                    + " de energia y " + auxilioCombustible + " de combustible");
+            agregarObservacion("Se verifico disponibilidad de recursos para entregar el auxilio");
         }
         return generarInforme(asistente);
     }
-
+    
     @Override
     protected void cerrar(AsistenteComando asistente) throws OperacionRecursoInvalidaExcepcion, RecursoInsuficienteExcepcion {
         if (resultado == ResultadoMision.EXITO) {
+            asistente.verificarDisponibilidadRecursos(auxilioCombustible, auxilioEnergia, 0);
+            // Entregamos los recursos a la nave aliada.
             if (auxilioCombustible > 0) {
                 asistente.consumirCombustible(auxilioCombustible);
             }
             if (auxilioEnergia > 0) {
                 asistente.consumirEnergia(auxilioEnergia);
             }
-            asistente.registrarEvento(new Evento(TipoEvento.MISION,
-                    "Auxilio entregado a la nave aliada: " + auxilioCombustible + " de combustible y "
-                            + auxilioEnergia + " de energia"));
+            asistente.registrarEvento(new Evento(
+                    TipoEvento.MISION,
+                    "Auxilio entregado a la nave aliada: "
+                    + auxilioCombustible + " de combustible y "
+                    + auxilioEnergia + " de energia"
+            ));
         }
         super.cerrar(asistente);
     }

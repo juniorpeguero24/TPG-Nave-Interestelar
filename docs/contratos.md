@@ -529,6 +529,18 @@ public AsistenteComando seleccionarNave(String nombreNave);
 - Si encuentra una nave cuyo nombre coincide exactamente con `nombreNave` (sensible a mayúsculas y minúsculas), la establece como asistente en operación y la devuelve.
 - Si no encuentra coincidencia, incluso cuando `nombreNave` es `null`, devuelve `null` y no cambia el asistente en operación.
 
+### `seleccionarAsistente`
+
+```java
+public void seleccionarAsistente(AsistenteComando asistente);
+```
+
+#### Precondiciones
+- El asistente debe estar registrado en el universo.
+
+#### Postcondiciones
+- `asistenteEnOperacion` referencia exactamente al asistente recibido. Si no está registrado, se lanza IllegalArgumentException y no se modifica la selección actual.
+
 ### `getAsistenteEnOperacion`
 
 ```java
@@ -1746,7 +1758,7 @@ public ResultadoSalto saltar() throws RecursoInsuficienteExcepcion, OperacionRec
 
 - Si falta combustible, se lanza la excepción antes de modificar el motor.
 - Delega en el motor y aplica los costos según el resultado: 2 de combustible
-  si el salto es normal o de enfriamiento, y 5 de desgaste adicionales si es de
+  si el salto es normal o de enfriamiento, y 3 de desgaste adicionales si es de
   enfriamiento (sin superar el máximo).
 - Verifica la destrucción de la nave y notifica a los observadores.
 
@@ -1851,8 +1863,11 @@ public final InformeMision realizarMision(AsistenteComando asistente);
   `TripulacionInvalidaExcepcion`, `NaveDestruidaExcepcion` o
   `InterruptedException`, establece `FALLO` y agrega el mensaje a las
   observaciones. Estas excepciones no se propagan.
-- Siempre devuelve un `InformeMision`, que se registra en el historial del
-  asistente y en la bitácora como evento de tipo `INFORME`.
+- Siempre devuelve un `InformeMision`, que se registra en el historial de
+  informes del asistente. El informe no se asienta en la bitácora: el asistente
+  guarda por separado los informes y la bitácora.
+- Ante una excepción registra además un evento `ERROR` en la bitácora. Si el
+  informe ya se había generado en `evaluar`, no se genera otro ante un error posterior durante cerrar().
 
 #### Invariantes
 
@@ -1880,10 +1895,11 @@ public final InformeMision realizarMision(AsistenteComando asistente);
 - Consume los recursos iniciales: 4 de combustible, 4 de desgaste y la energía
   propia de la misión.
 - Mientras haya ruta y la nave no esté destruida: inspecciona la casilla actual e
-  interactúa con su elemento, escanea con el radar de corto alcance (1 de
+  interactúa con su elemento (sin repetir la interacción ya ocurrida al llegar a
+  esa casilla en el turno anterior), escanea con el radar de corto alcance (1 de
   energía), realiza un salto Warp si hay un elemento adelante y el motor puede
-  saltar (si no, un salto normal), mueve la nave en el tablero y da el turno al
-  `Destino`.
+  saltar (si no, un salto normal), mueve la nave en el tablero, interactúa con el elemento de la casilla a la que
+  llegó y da el turno al `Destino`.
 - Cada turno incluye una pausa para que la vista muestre el avance.
 
 ### `evaluar`
@@ -1894,9 +1910,11 @@ protected abstract InformeMision evaluar(AsistenteComando asistente);
 
 #### Postcondiciones
 
-- La subclase fija el resultado (`EXITO` o `FALLO`), registra el balance de
-  recursos ganados o entregados y devuelve el informe generado con
-  `generarInforme`.
+- La subclase fija el resultado (`EXITO` o `FALLO`) y devuelve el informe
+  generado con `generarInforme`.
+- El informe describe lo ocurrido en el trayecto (acciones, consumos, desgaste,
+  estado de la nave y observaciones). No incluye las acciones finales de
+  `cerrar`.
 
 ### `cerrar`
 
@@ -1906,9 +1924,11 @@ protected void cerrar(AsistenteComando asistente) throws OperacionRecursoInvalid
 
 #### Postcondiciones
 
-- Por defecto registra en la bitácora si la misión se cumplió o terminó sin éxito.
+- Por defecto registra en la bitácora si la misión se cumplió o si la nave no
+  alcanzó el objetivo.
 - Las subclases lo redefinen para aplicar sobre la nave los recursos ganados o
   entregados, y luego llaman a `super.cerrar`.
+- Estas acciones finales no forman parte del informe de la misión.
 
 ### Ganchos
 
@@ -1922,11 +1942,12 @@ protected void cerrar(AsistenteComando asistente) throws OperacionRecursoInvalid
 - `Mision01` ("M-01 - Intercepcion y asistencia"): energía inicial 5. Al llegar,
   la nave debe conservar más energía y combustible que el auxilio solicitado
   (aleatorio de 0 a 50 cada uno); si no, el resultado es `FALLO`. Si tiene éxito,
-  el auxilio se suma a los consumos en `evaluar` y se descuenta en `cerrar`.
+  en `cerrar` verifica de nuevo que los recursos alcancen y descuenta el auxilio.
 - `Mision02` ("M-02 - Recoleccion"): energía inicial 10. Si llega al objetivo,
-  obtiene de 20 a 100 gemas, que se suman a la nave en `cerrar`.
+  obtiene de 20 a 100 gemas, que se sortean y se suman a la nave en `cerrar`.
 - `Mision03` ("M-03 - Retorno seguro"): energía inicial 0. El objetivo es la base
-  de origen (el centro del tablero). Si llega, en `cerrar` recarga combustible y
+  de origen: no redefine la elección del objetivo y usa el que fija el tablero (no
+  vuelve al centro). Si llega, en `cerrar` recarga combustible y
   energía al máximo y reinicia el desgaste.
 - Las tres consumen 4 de combustible y 4 de desgaste al comenzar.
 

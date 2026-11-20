@@ -45,7 +45,7 @@ public class VCreacion extends JFrame implements IVista {
     private JButton btnCrearTripulante;
     private JButton btnAsignar;
     private JButton btnIniciar;
-    private JButton btnConsejo;
+    private JButton btnAsignarTodos;
 
     private JList<Tripulante> listaDisponibles;
     private DefaultListModel<Tripulante> modeloDisponibles;
@@ -295,18 +295,18 @@ public class VCreacion extends JFrame implements IVista {
         btnAsignar.setFocusPainted(false);
         btnAsignar.setEnabled(false);
 
-        btnConsejo = new JButton("Agregar Consejo");
-        btnConsejo.setBackground(celeste);
-        btnConsejo.setForeground(fondo);
-        btnConsejo.setFont(fuenteBold);
-        btnConsejo.setFocusPainted(false);
-        btnConsejo.setEnabled(true);
+        btnAsignarTodos = new JButton("Asignar todos");
+        btnAsignarTodos.setBackground(celeste);
+        btnAsignarTodos.setForeground(fondo);
+        btnAsignarTodos.setFont(fuenteBold);
+        btnAsignarTodos.setFocusPainted(false);
+        btnAsignarTodos.setEnabled(false);
 
         panelDisponibles.add(scrollDisponibles, BorderLayout.CENTER);
         panelDisponibles.add(panelBotonesTripulante, BorderLayout.SOUTH);
 
         panelBotonesTripulante.add(btnAsignar);
-        panelBotonesTripulante.add(btnConsejo);
+        panelBotonesTripulante.add(btnAsignarTodos);
 
         // AGREGAR PANELES
 
@@ -340,7 +340,7 @@ public class VCreacion extends JFrame implements IVista {
         this.btnAsignar.addActionListener(c);
         this.btnCrearNave.addActionListener(c);
         this.btnCrearTripulante.addActionListener(c);
-        this.btnConsejo.addActionListener(c);
+        this.btnAsignarTodos.addActionListener(c);
     }
 
     public void setDatosNaveCreada(String nombre, String tipo){
@@ -366,7 +366,6 @@ public class VCreacion extends JFrame implements IVista {
     }
 
     public void actualizarListaDisponibles(ArrayList<Tripulante> tripulantes) {
-
         this.modeloDisponibles.removeAllElements();
         for (Tripulante tripulante : tripulantes) {
             this.modeloDisponibles.addElement(tripulante);
@@ -379,6 +378,7 @@ public class VCreacion extends JFrame implements IVista {
 
     public void habilitaAsignarTripulante(){
         this.btnAsignar.setEnabled(true);
+        this.btnAsignarTodos.setEnabled(true);
     }
 
     public Tripulante getTripulanteSeleccionado() {

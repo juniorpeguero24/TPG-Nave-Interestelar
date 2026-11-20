@@ -288,7 +288,7 @@ public class Tablero extends Observable {
      * <p><b>Postcondiciones:</b> el estado permanece igual.</p>
      * @return objetivo actual, o {@code null} si todavía no se eligió uno
      */
-    protected Posicion getObjetivo() {
+    public Posicion getObjetivo() {
         return objetivo;
     }
 

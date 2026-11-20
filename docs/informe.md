@@ -52,7 +52,11 @@ coordina el paso entre las ventanas.
   vista, `ActionListener`, controlador y modelo. Los cambios que genera el modelo
   por su cuenta (recursos de la nave, bitácora, informes de misión y eventos de
   la plataforma) llegan a la vista mediante Observer, de modo que el dominio solo
-  conoce interfaces y no clases de Swing.
+  conoce interfaces y no clases de Swing. La ejecución de las misiones se realiza en 
+  un hilo independiente para evitar bloquear la interfaz gráfica. Mientras una misión 
+  se encuentra en ejecución, el controlador deshabilita la posibilidad de iniciar otra. 
+  Al finalizar el hilo, tanto si la misión termina normalmente como si ocurre una excepción,
+   se restablece el estado de la interfaz. Si la nave fue destruida, se impide iniciar nuevas misiones.
 - **Misiones con cuatro fases sobre el tablero de la cátedra.** `Mision` conserva
   el método plantilla del Template Method con las fases preparar, ejecutar,
   evaluar y cerrar. En `preparar` se verifican todos los recursos antes de
@@ -61,14 +65,16 @@ coordina el paso entre las ventanas.
   propia de cada misión) y se recorre la ruta por turnos: la nave inspecciona su
   casilla e interactúa con el elemento que encuentre, escanea con el radar de
   corto alcance, salta y luego el `Destino` mueve los elementos del universo.
-  `evaluar` decide el resultado, calcula el balance de lo ganado o entregado y
-  genera el informe; `cerrar` aplica ese balance sobre la nave. La nave, los
+  `evaluar` decide el resultado y genera el informe de la travesía; `cerrar`
+  aplica sobre la nave las acciones finales (auxilio, gemas, recarga), que no
+  forman parte del informe. Los informes se guardan en el historial del
+  asistente, separados de la bitácora. La nave, los
   asteroides y las estaciones de carga implementan `ElementoDelUniverso`, por lo
   que el tablero los trata de forma uniforme.
 - **Motor Warp con State y resultado de salto.** Las operaciones del motor son
   `saltar()` y `saltarWarp(...)`. Los estados deciden el tipo de salto, los
   casilleros que avanza la nave y el estado siguiente; `Nave` aplica los costos
-  (2 de combustible por salto normal, 5 de energía por salto Warp y 5 de desgaste
+  (2 de combustible por salto normal, 5 de energía por salto Warp y 3 de desgaste
   en el enfriamiento). Ante un elemento en la ruta, la misión intenta un salto
   Warp, que avanza dos casilleros.
 - **Encuentros entre naves con Double Dispatch.** El resultado depende solo del
@@ -116,8 +122,8 @@ coordina el paso entre las ventanas.
   auxilio solicitado se sortea entre 0 y 50 de energía y de combustible.
 - Las gemas de M-02 se acumulan en la nave y se informan en su estado; no se
   persisten.
-- El informe de una misión refleja el estado de la nave previo a `cerrar`. Lo que
-  se gana o entrega al cerrar figura en el balance (consumos y observaciones).
+- El informe de una misión describe la travesía y refleja el estado de la nave
+  previo a `cerrar`; lo que se gana o entrega al cerrar no figura en él.
 - El tablero de la aplicación es de 10 por 10, definido en `Navegador`.
 - En el motor Warp, el enfriamiento y los dos turnos de preparación se cumplen
   después del salto Warp.

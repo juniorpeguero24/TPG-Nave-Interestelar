@@ -119,9 +119,6 @@ de acceso. Flujo de uso:
 
 ## Ejecutar las verificaciones
 
-[COMPLETAR: indicar cómo se ejecutan las pruebas o demostraciones reproducibles
-del grupo y qué resultado esperado muestra cada una.]
-
 Verificación disponible de la persistencia (registra un usuario de prueba y
 muestra el resultado por consola):
 

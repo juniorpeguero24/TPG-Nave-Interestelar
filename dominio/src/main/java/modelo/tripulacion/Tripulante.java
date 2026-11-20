@@ -81,17 +81,25 @@ public class Tripulante {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Tripulante)) {
+            return false;
+        }
         Tripulante tripulante = (Tripulante) o;
-        return this.hashCode() == tripulante.hashCode();
+        return id == tripulante.getId() &&
+            cargo == tripulante.getCargo() &&
+            planetaOrigen == tripulante.getPlanetaOrigen() &&
+            nombre.equals(tripulante.getNombre());
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
+        int hash = Integer.hashCode(id);
         hash = 31 * hash + this.cargo.hashCode();
         hash = 17 * hash + this.nombre.hashCode();
-        hash = 7  * hash + this.antiguedad;
-        hash = 3 * hash + this.planetaOrigen.hashCode();
+        hash = 7 * hash + this.planetaOrigen.hashCode();
         return hash;
     }
 
