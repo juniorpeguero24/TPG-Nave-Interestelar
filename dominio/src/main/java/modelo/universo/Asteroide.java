@@ -13,7 +13,7 @@ public class Asteroide implements ElementoDelUniverso {
         if (danioEnergia < 0) {
             throw new ElementoDelUniversoInvalidoExcepcion("El danio del asteroide no puede ser negativo");
         } 
-        this.danioEnergia = 0;
+        this.danioEnergia = danioEnergia;
     }
     
     public int getDanioEnergia() {
