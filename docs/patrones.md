@@ -323,7 +323,7 @@ la vista se registra como observador y se actualiza sola.
 | `ObservadorNave` | `actualizarNave(Nave)` | `Nave` | `VControlNave` |
 | `ObservadorBitacora` | `actualizarBitacora(Bitacora)` | `Bitacora` | `VControlNave` |
 | `ObservadorMision` | `actualizarInformes(ArrayList<InformeMision>)` | `AsistenteComando` | `VControlNave` |
-| `ObservadorTablero` | `actualizar()` | `Tablero` | `VControlNave` |
+| `ObservadorTablero` | `actualizar(Tablero)` | `Tablero` | `VControlNave` |
 | `ObservadorPlataforma` | `actualizar(String)` | `PlataformaDeCarga` | `VVisorRecondito` |
 
 ### Sujetos

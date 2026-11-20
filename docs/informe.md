@@ -89,9 +89,12 @@ coordina el paso entre las ventanas.
   base de datos puede reemplazarse sin modificarlo.
 - **Manejo de errores.** Además de las excepciones de la Entrega 1 se agregaron
   excepciones propias (`NaveInvalidaException`, `TripulanteInvalidoException`,
-  `TripulanteRepetidoException`, `CapitanExistenteException`). Las validaciones
-  de formato se hacen en la vista y el controlador, las reglas de negocio en el
+  `TripulanteRepetidoException`, `CapitanExistenteException`, `ElementoDelUniversoInvalidoException`). 
+  Las validaciones de formato se hacen en la vista y el controlador, las reglas de negocio en el
   dominio y las consultas en el DAO.
+- **Observer del tablero con sujeto explícito.** Se modificó la notificación del tablero para utilizar notificarObservadores(this), 
+permitiendo que ObservadorTablero reciba el objeto mediante actualizar(Tablero tablero). La vista consulta la información a través 
+de dicho parámetro. Las actualizaciones visuales se realizan mediante SwingUtilities.invokeLater().
 
 ## Principios SOLID en la Entrega 2
 
