@@ -462,7 +462,15 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     }
 
     public void setMisionEnCurso(boolean enCurso) {
+
         btnIniciarMision.setEnabled(!enCurso);
+
+        if (enCurso) {
+            this.lblEstado.setText("Estado: En mision");
+        }
+        else  {
+            this.lblEstado.setText("Estado: En espera");
+        }
     }
 
     // OBSERVADOR DE NAVE BITACORA E INFORMES

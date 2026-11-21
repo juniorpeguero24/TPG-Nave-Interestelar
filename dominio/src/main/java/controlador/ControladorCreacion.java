@@ -31,6 +31,7 @@ public class ControladorCreacion implements ActionListener
         this.vCreacion = vCreacion;
         this.vCreacion.setActionListener(this);
         this.navegador = nav;
+        this.actualizarListaDisponibles();
     }
 
     @Override
@@ -124,10 +125,7 @@ public class ControladorCreacion implements ActionListener
     }
 
     private void asignarTodos() {
-        if (asistenteComando == null) {
-            vCreacion.mostrarMensaje("Primero debe crear una nave");
-            return;
-        }
+
         ArrayList<Tripulante> disponibles = new ArrayList<>(universo.getTripulanteDisponibles());
         int asignados = 0;
         String errores = "";
@@ -145,9 +143,7 @@ public class ControladorCreacion implements ActionListener
         if (asistenteComando.tieneTripulacionValida()) {
             vCreacion.habilitaIniciarJuego();
         }
-        String mensaje = "Tripulantes asignados: " + asignados
-                + "\nTripulantes no asignados: "
-                + (disponibles.size() - asignados);
+        String mensaje = "Tripulantes asignados: " + asignados;
         if (!errores.isEmpty()) {
             mensaje += "\n\nNo se pudieron asignar:\n" + errores;
         }
