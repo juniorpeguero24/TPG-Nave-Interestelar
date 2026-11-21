@@ -5,9 +5,7 @@ import modelo.excepciones.OperacionRecursoInvalidaExcepcion;
 import modelo.excepciones.RecursoInsuficienteExcepcion;
 
 import modelo.tablero.Destino;
-import modelo.tablero.Posicion;
 import modelo.tablero.Tablero;
-import modelo.tablero.Posicion;
 
 public class Mision03 extends Mision {
     private boolean regresoCompletado = false;
