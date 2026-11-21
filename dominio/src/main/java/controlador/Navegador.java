@@ -38,13 +38,10 @@ public class Navegador {
         this.visor = null;
     }
 
-
     public void mostrarCreacion(Universo universo) {
         if  (this.creacion == null) {
             this.creacion = new VCreacion();
             ControladorCreacion controladorCreacion = new ControladorCreacion(universo, creacion, this);
-
-            controladorCreacion.actualizarListaDisponibles();
 
             acceso.setVisible(false);
             creacion.setVisible(true);
@@ -63,8 +60,6 @@ public class Navegador {
             this.control = new VControlNave(tablero, asistente);
             ControladorNave controladorNave = new ControladorNave(universo, control, this, destino, tablero);
 
-            controladorNave.configuracionInicial();
-
             creacion.setVisible(false);
             control.setVisible(true);
         }
@@ -78,8 +73,6 @@ public class Navegador {
         if (tripulantes == null) {
             this.tripulantes = new VTripulantes();
             ControladorTripulantes controladorTripulantes = new ControladorTripulantes(asistenteComando, tripulantes, this);
-
-            controladorTripulantes.setTablaTripulantes();
 
             control.setVisible(false);
             tripulantes.setVisible(true);
@@ -96,9 +89,9 @@ public class Navegador {
 
     public void mostrarVisorRecondito() {
         if (visor == null) {
-            this.visor = new VVisorRecondito();
+
             PlataformaDeCarga plataforma = new  PlataformaDeCarga();
-            plataforma.añadirObservador(visor);
+            this.visor = new VVisorRecondito(plataforma);
             ControladorPlataforma controladorPlataforma = new ControladorPlataforma(plataforma, visor, this);
 
             control.setVisible(false);
