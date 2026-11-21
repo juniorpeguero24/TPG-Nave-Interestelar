@@ -18,6 +18,8 @@ import modelo.tablero.Destino;
 
 import java.util.ArrayList;
 
+import modelo.excepciones.ElementoDelUniversoInvalidoExcepcion;
+
 public class Navegador {
     private VAcceso acceso;
     private VCreacion creacion;
@@ -135,19 +137,24 @@ public class Navegador {
         int cantFilas = 10;
         int cantColumnas = 10;
         ArrayList<ElementoDelUniverso> elementos = new ArrayList<>();
-
-        elementos.add(new Asteroide(5));
-        elementos.add(new Asteroide(7));
-        elementos.add(new Asteroide(2));
-        elementos.add(new Asteroide(5));
-        elementos.add(new EstacionCarga(5, 5));
-        elementos.add(new EstacionCarga(5, 3));
-        elementos.add(new EstacionCarga(5, 5));
-        elementos.add(new EstacionCarga(5, 3));
-        elementos.add(new EstacionCarga(5, 5));
-        elementos.add(new EstacionCarga(5, 3));
-        elementos.add(new EstacionCarga(5, 5));
-        elementos.add(new EstacionCarga(5, 3));
+        
+        try {
+            elementos.add(new Asteroide(5));
+            elementos.add(new Asteroide(7));
+            elementos.add(new Asteroide(2));
+            elementos.add(new Asteroide(5));
+            elementos.add(new EstacionCarga(5, 5));
+            elementos.add(new EstacionCarga(5, 3));
+            elementos.add(new EstacionCarga(5, 5));
+            elementos.add(new EstacionCarga(5, 3));
+            elementos.add(new EstacionCarga(5, 5));
+            elementos.add(new EstacionCarga(5, 3));
+            elementos.add(new EstacionCarga(5, 5));
+            elementos.add(new EstacionCarga(5, 3));
+        } catch (ElementoDelUniversoInvalidoExcepcion e) {
+            System.out.println("Error al crear elementos del universo: " + e.getMessage());
+        }
+        
         try {
             elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
             elementos.add(NaveFactory.crearNave("Enemiga 2", "combate"));
@@ -160,6 +167,7 @@ public class Navegador {
             elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));
         }
         catch (NaveInvalidaException e){
+            System.out.println("Error al crear naves enemigas: " + e.getMessage());
         }
 
         Tablero tablero;

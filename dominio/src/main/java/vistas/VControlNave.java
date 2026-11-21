@@ -87,13 +87,8 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     private ImageIcon iconoNaveVsNaveEnemiga;
     private ImageIcon iconoDestino;
 
-
-    private Tablero tablero;
-
     public VControlNave(Tablero tablero, AsistenteComando asistente) {
-
-        this.tablero = tablero;
-        this.tablero.agregarObservador(this);
+        tablero.agregarObservador(this);
 
         Nave nave = asistente.getNave();
         nave.agregarObservador(this);
@@ -512,26 +507,27 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
     Así se evitan modificaciones simultáneas de la interfaz y del modelo.*/
 
     @Override
-    public void actualizar() {
-        ElementoDelUniverso[][] matriz = this.tablero.verTablero();
+    public void actualizar(Tablero tablero) {
+        ElementoDelUniverso[][] matriz = tablero.verTablero();
 
         int PosXnave = tablero.getPosicionNave().getX();
         int PosYnave = tablero.getPosicionNave().getY();
 
+        Posicion objetivo = tablero.getObjetivo();
+
         javax.swing.SwingUtilities.invokeLater(
-                () -> actualizarTablero(matriz, PosXnave, PosYnave)
+                () -> actualizarTablero(matriz, PosXnave, PosYnave, objetivo)
         );
     }
 
-    private void actualizarTablero(ElementoDelUniverso[][] matriz, int PosXnave, int PosYnave) {
+    private void actualizarTablero(ElementoDelUniverso[][] matriz, int PosXnave, int PosYnave, Posicion objetivo) {
         modeloTablero.setRowCount(0);
 
         setPosicionNave(PosXnave, PosYnave);
-        Posicion objetivo = tablero.getObjetivo();
 
         for(int i = 0; i < matriz.length; i++){
             ImageIcon[] fila = new ImageIcon[matriz[i].length];
-            for(int j = 0; j < tablero.getY(); j++){
+            for(int j = 0; j < matriz[i].length; j++){
                 boolean esPosicionNave = i == PosXnave && j == PosYnave;
                 
                 if (esPosicionNave) {
@@ -556,9 +552,9 @@ public class VControlNave extends JFrame implements IVista, ObservadorNave, Obse
         }
     }
     
-    public void setTablero() {
+    public void setTablero(Tablero tablero) {
         ajustarTablero(tablero.getX(), tablero.getY());
-        actualizar();
+        actualizar(tablero);
     }
 
     public void ajustarTablero(int filas, int columnas) {

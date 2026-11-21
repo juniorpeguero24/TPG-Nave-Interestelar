@@ -75,7 +75,10 @@ public class Recursos {
         energia -= cantidad;
     }
     
-    public void reducirEnergia(int cantidad) {
+    public void reducirEnergia(int cantidad) throws OperacionRecursoInvalidaExcepcion {
+        if (cantidad < 0) {
+            throw new OperacionRecursoInvalidaExcepcion("No se puede reducir una cantidad negativa de energía");
+        }
         energia -= cantidad;
         if (energia < 0) {
             energia = 0;

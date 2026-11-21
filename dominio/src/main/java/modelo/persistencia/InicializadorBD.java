@@ -11,9 +11,10 @@ public class InicializadorBD {
                     "nombre_usuario VARCHAR(50) NOT NULL UNIQUE, " +
                     "contrasenia VARCHAR(100) NOT NULL" +
                     ")";
+        // try con recursos, los recursos se cierran al salir del try
         try (
             Connection conexion = ConexionBD.obtenerConexion();
-            Statement sentencia = conexion.createStatement()
+            Statement sentencia = conexion.createStatement() // permite ejecutar sql
         ) {
             sentencia.execute(sql);
         }
