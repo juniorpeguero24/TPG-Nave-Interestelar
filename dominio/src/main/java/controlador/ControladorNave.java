@@ -34,6 +34,7 @@ public class ControladorNave implements ActionListener
         this.navegador = nav;
         this.destino = destino;
         this.tablero = tablero;
+        this.configuracionInicial();
     }
 
     @Override
@@ -90,7 +91,7 @@ public class ControladorNave implements ActionListener
             public void run() {
                 try {
                     // mision.realizarMision(asistenteComando);
-                    InformeMision informe = mision.realizarMision(asistenteComando);
+                    mision.realizarMision(asistenteComando);
                 } catch (Exception e) {
                     controlNave.mostrarMensaje("Error durante la misión: " + e.getMessage());
                 } finally {

@@ -31,6 +31,7 @@ public class ControladorCreacion implements ActionListener
         this.vCreacion = vCreacion;
         this.vCreacion.setActionListener(this);
         this.navegador = nav;
+        this.actualizarListaDisponibles();
     }
 
     @Override
