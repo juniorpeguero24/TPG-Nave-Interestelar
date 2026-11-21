@@ -323,7 +323,7 @@ la vista se registra como observador y se actualiza sola.
 | `ObservadorNave` | `actualizarNave(Nave)` | `Nave` | `VControlNave` |
 | `ObservadorBitacora` | `actualizarBitacora(Bitacora)` | `Bitacora` | `VControlNave` |
 | `ObservadorMision` | `actualizarInformes(ArrayList<InformeMision>)` | `AsistenteComando` | `VControlNave` |
-| `ObservadorTablero` | `actualizar()` | `Tablero` | `VControlNave` |
+| `ObservadorTablero` | `actualizar(Tablero)` | `Tablero` | `VControlNave` |
 | `ObservadorPlataforma` | `actualizar(String)` | `PlataformaDeCarga` | `VVisorRecondito` |
 
 ### Sujetos
@@ -355,7 +355,7 @@ asistente.agregarObservador(this);
 ### Mecanismo provisto por la cátedra
 
 `Tablero` hereda de `Observable`, que notifica a objetos `ObservadorTablero`
-(`actualizar()` sin parámetros). La interfaz está en el paquete `observer`, junto
+(`actualizar(Tablero tablero)`). La interfaz está en el paquete `observer`, junto
 con las demás.
 
 ## Consideración de diseño

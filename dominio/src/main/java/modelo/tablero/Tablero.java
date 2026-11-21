@@ -243,7 +243,7 @@ public class Tablero extends Observable {
      */
     public void moverNave(Posicion posicion) {
         posicionNave = posicion;
-        notificarObservadores();
+        notificarObservadores(this);
     } 
 
     /**
@@ -319,7 +319,7 @@ public class Tablero extends Observable {
             libre = libres.get(azar.nextInt(libres.size()));
         }
         this.objetivo = libre;
-        notificarObservadores();
+        notificarObservadores(this);
         return libre;
     }
 
@@ -348,7 +348,7 @@ public class Tablero extends Observable {
      * <p><b>Excepciones declaradas:</b> ninguna.</p>
      */
     protected void notificarActualizacion(){
-        notificarObservadores();
+        notificarObservadores(this);
     }
 
     /**

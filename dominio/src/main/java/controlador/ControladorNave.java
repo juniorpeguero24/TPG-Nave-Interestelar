@@ -59,7 +59,7 @@ public class ControladorNave implements ActionListener
         String tipo = this.asistenteComando.getTipo();
         String recursos = this.asistenteComando.obtenerEstadoNaveActual();
         controlNave.setDatosNave(nombre, tipo, recursos);
-        controlNave.setTablero();
+        controlNave.setTablero(tablero);
     }
 
     public void iniciarMision()  {

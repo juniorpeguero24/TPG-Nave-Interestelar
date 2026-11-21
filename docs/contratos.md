@@ -1408,6 +1408,21 @@ public void verificarDisponibilidadRecursos(int combustibleNecesario, int energi
 - Si el desgaste actual más `desgasteGenerado` supera 100, lanza `OperacionRecursoInvalidaExcepcion`.
 - Si todos los requisitos se cumplen, termina normalmente sin modificar los recursos.
 
+### `reducirEnergia`
+
+```java
+public void reducirEnergia(int cantidad) throws OperacionRecursoInvalidaExcepcion;
+```
+
+#### Precondiciones
+
+- `cantidad` debe ser mayor o igual a cero.
+
+#### Postcondiciones
+
+- Si `cantidad` es negativa, lanza `OperacionRecursoInvalidaExcepcion` y no modifica la energía.
+- Si es válida, reduce la energía en esa cantidad, sin permitir que sea menor que cero.
+
 ---
 
 ## `Nave`
@@ -1649,6 +1664,22 @@ public void consumirEnergia(int cantidad) throws RecursoInsuficienteExcepcion, O
 - Si la cantidad es negativa, lanza `OperacionRecursoInvalidaExcepcion`.
 - Si la cantidad supera la energía disponible, lanza `RecursoInsuficienteExcepcion`.
 - En ambos casos de error, la energía no se modifica.
+
+### `recibirDanioEnergia`
+
+```java
+public void recibirDanioEnergia(int cantidad) throws OperacionRecursoInvalidaExcepcion;
+```
+
+#### Precondiciones
+
+- `cantidad` debe ser mayor o igual a cero.
+
+#### Postcondiciones
+
+- Delega la operación en `Recursos.reducirEnergia()`.
+- Si el daño es negativo, propaga `OperacionRecursoInvalidaExcepcion`.
+- Si el daño es válido, actualiza los recursos, verifica si la nave fue destruida y notifica a sus observadores.
 
 ### `getDesgaste`
 
@@ -2198,11 +2229,11 @@ public Asteroide(int danioEnergia);
 
 #### Precondiciones
 
-- `danioEnergia` no debe ser negativo. El constructor no lo valida.
+- `danioEnergia` no debe ser negativo.
 
 #### Postcondiciones
-
-- Se crea un asteroide con el daño indicado.
+- Si `danioEnergia` es negativo, lanza `ElementoDelUniversoInvalidoExcepcion` y no se crea el objeto
+- En caso contrario, se crea un asteroide con el daño indicado.
 
 ### `getDanioEnergia`
 
@@ -2231,9 +2262,11 @@ public ResultadoInteraccion interactuarCon(Nave nave);
 #### Postcondiciones
 
 - La energía de `nave` disminuye en `danioEnergia`, sin bajar de cero.
-- Se verifica la destrucción de la nave: si su energía o su combustible llegan a cero, o su desgaste alcanza 100, la nave queda destruida.
+- Se verifica la destrucción de la nave: si su energía llega a cero, la nave queda destruida.
 - El asteroide no cambia, por lo que puede impactar más de una vez.
 - Devuelve un `ResultadoInteraccion` no nulo con una descripción de lo ocurrido (por ejemplo, la energía perdida o los recursos recuperados).
+- El daño inválido se impide desde la construcción del asteroide. Si `recibirDanioEnergia()` propaga `OperacionRecursoInvalidaExcepcion`, 
+la interacción captura la excepción y comunica el error mediante el `ResultadoInteraccion`.
 
 ---
 
@@ -2251,11 +2284,11 @@ public EstacionCarga(int cargaCombustible, int cargaEnergia);
 
 #### Precondiciones
 
-- `cargaCombustible` y `cargaEnergia` no deben ser negativos. El constructor no lo valida.
+- `cargaCombustible` y `cargaEnergia` no deben ser negativos.
 
 #### Postcondiciones
-
-- Se crea una estación con las cargas indicadas.
+- Si alguna carga es negativa, lanza `ElementoDelUniversoInvalidoExcepcion` y no se crea el objeto.
+- En caso contrario, se crea una estación con las cargas indicadas.
 
 ### `getCargaCombustible` y `getCargaEnergia`
 

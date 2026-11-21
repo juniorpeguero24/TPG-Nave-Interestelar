@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import modelo.excepciones.*;
-import modelo.bitacora.Evento;
 import modelo.motorwarp.MotorWarp;
 import modelo.tripulacion.Tripulacion;
 import modelo.mision.CostosMision;
@@ -139,7 +138,7 @@ public abstract class Nave implements ElementoDelUniverso {
     }
     
     // gasto involuntario
-    public void recibirDanioEnergia(int cantidad) {
+    public void recibirDanioEnergia(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         recursos.reducirEnergia(cantidad);
         verificarDestruccion();
         notificarObservadores();
