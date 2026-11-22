@@ -20,24 +20,9 @@
     </dependencies>
     <build>
     <resources>
-      <resource>
-        <directory>${basedir}</directory>
-        <includes>
-          <include>*</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/resources/</directory>
-        <includes>
-          <include>*</include>
-        </includes>
-      </resource>
-      <resource>
-        <directory>src/main/java</directory>
-        <includes>
-          <include>vistas/recursos/**</include>
-        </includes>
-      </resource>
+        <resource>
+            <directory>src/main/resources</directory>
+        </resource>
     </resources>
         <plugins>
             <plugin>
