@@ -138,7 +138,7 @@ public abstract class Nave implements ElementoDelUniverso {
     }
     
     // gasto involuntario
-    public void recibirDanioEnergia(int cantidad) {
+    public void recibirDanioEnergia(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         recursos.reducirEnergia(cantidad);
         verificarDestruccion();
         notificarObservadores();

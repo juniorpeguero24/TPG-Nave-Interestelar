@@ -1,5 +1,6 @@
 package vistas;
 
+import modelo.concurrencia.PlataformaDeCarga;
 import observer.ObservadorPlataforma;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -36,11 +37,13 @@ public class VVisorRecondito extends JFrame implements IVista, ObservadorPlatafo
 	private JLabel lblTiempo;
 	private JTextField txtTiempo;
 
-	public VVisorRecondito() {
+	public VVisorRecondito(PlataformaDeCarga plataforma) {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(250, 250, 700, 850);
 		setResizable(false);
 		setLocationRelativeTo(null);
+
+		plataforma.añadirObservador(this);
 
 		this.contentPane = new JPanel();
 		this.contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

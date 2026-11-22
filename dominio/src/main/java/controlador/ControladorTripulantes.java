@@ -26,6 +26,7 @@ public class ControladorTripulantes extends WindowAdapter implements ActionListe
         this.vTripulantes.addWindowListener(this);
         this.vTripulantes.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.navegador = nav;
+        this.setTablaTripulantes();
     }
 
     @Override

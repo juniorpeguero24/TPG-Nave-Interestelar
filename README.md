@@ -117,15 +117,6 @@ de acceso. Flujo de uso:
    el visor del universo paralelo para agregar naves consumidoras y
    generadoras de energía.
 
-## Ejecutar las verificaciones
-
-Verificación disponible de la persistencia (registra un usuario de prueba y
-muestra el resultado por consola):
-
-```bash
-mvn -pl dominio compile exec:java -Dexec.mainClass=modelo.persistencia.PruebaPersistencia
-```
-
 ## Configuración local
 
 - **Base de datos:** H2 en modo embebido, sin servidor ni credenciales

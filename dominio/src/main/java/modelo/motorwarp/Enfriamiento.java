@@ -7,11 +7,6 @@ class Enfriamiento implements EstadoWarp {
         this.motor = motor;
     }
 
-    private ResultadoSalto completarEnfriamiento() {
-        motor.cambiarEstado(new Disponible(motor));
-        return motor.resultado(TipoResultadoSalto.ENFRIAMIENTO, 0, "Enfriamiento completado. Motor nuevamente disponible");
-    }
-
     @Override
     public ResultadoSalto saltar() {
         motor.cambiarEstado(new PreparandoSalto(motor, 0));

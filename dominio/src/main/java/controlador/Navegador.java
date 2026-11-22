@@ -18,6 +18,8 @@ import modelo.tablero.Destino;
 
 import java.util.ArrayList;
 
+import modelo.excepciones.ElementoDelUniversoInvalidoExcepcion;
+
 public class Navegador {
     private VAcceso acceso;
     private VCreacion creacion;
@@ -36,13 +38,10 @@ public class Navegador {
         this.visor = null;
     }
 
-
     public void mostrarCreacion(Universo universo) {
         if  (this.creacion == null) {
             this.creacion = new VCreacion();
             ControladorCreacion controladorCreacion = new ControladorCreacion(universo, creacion, this);
-
-            controladorCreacion.actualizarListaDisponibles();
 
             acceso.setVisible(false);
             creacion.setVisible(true);
@@ -61,8 +60,6 @@ public class Navegador {
             this.control = new VControlNave(tablero, asistente);
             ControladorNave controladorNave = new ControladorNave(universo, control, this, destino, tablero);
 
-            controladorNave.configuracionInicial();
-
             creacion.setVisible(false);
             control.setVisible(true);
         }
@@ -76,8 +73,6 @@ public class Navegador {
         if (tripulantes == null) {
             this.tripulantes = new VTripulantes();
             ControladorTripulantes controladorTripulantes = new ControladorTripulantes(asistenteComando, tripulantes, this);
-
-            controladorTripulantes.setTablaTripulantes();
 
             control.setVisible(false);
             tripulantes.setVisible(true);
@@ -94,9 +89,9 @@ public class Navegador {
 
     public void mostrarVisorRecondito() {
         if (visor == null) {
-            this.visor = new VVisorRecondito();
+
             PlataformaDeCarga plataforma = new  PlataformaDeCarga();
-            plataforma.añadirObservador(visor);
+            this.visor = new VVisorRecondito(plataforma);
             ControladorPlataforma controladorPlataforma = new ControladorPlataforma(plataforma, visor, this);
 
             control.setVisible(false);
@@ -135,19 +130,24 @@ public class Navegador {
         int cantFilas = 10;
         int cantColumnas = 10;
         ArrayList<ElementoDelUniverso> elementos = new ArrayList<>();
-
-        elementos.add(new Asteroide(5));
-        elementos.add(new Asteroide(7));
-        elementos.add(new Asteroide(2));
-        elementos.add(new Asteroide(5));
-        elementos.add(new EstacionCarga(5, 5));
-        elementos.add(new EstacionCarga(5, 3));
-        elementos.add(new EstacionCarga(5, 5));
-        elementos.add(new EstacionCarga(5, 3));
-        elementos.add(new EstacionCarga(5, 5));
-        elementos.add(new EstacionCarga(5, 3));
-        elementos.add(new EstacionCarga(5, 5));
-        elementos.add(new EstacionCarga(5, 3));
+        
+        try {
+            elementos.add(new Asteroide(5));
+            elementos.add(new Asteroide(7));
+            elementos.add(new Asteroide(2));
+            elementos.add(new Asteroide(5));
+            elementos.add(new EstacionCarga(5, 5));
+            elementos.add(new EstacionCarga(5, 3));
+            elementos.add(new EstacionCarga(5, 5));
+            elementos.add(new EstacionCarga(5, 3));
+            elementos.add(new EstacionCarga(5, 5));
+            elementos.add(new EstacionCarga(5, 3));
+            elementos.add(new EstacionCarga(5, 5));
+            elementos.add(new EstacionCarga(5, 3));
+        } catch (ElementoDelUniversoInvalidoExcepcion e) {
+            System.out.println("Error al crear elementos del universo: " + e.getMessage());
+        }
+        
         try {
             elementos.add(NaveFactory.crearNave("Enemiga 1", "exploradora"));
             elementos.add(NaveFactory.crearNave("Enemiga 2", "combate"));
@@ -160,6 +160,7 @@ public class Navegador {
             elementos.add(NaveFactory.crearNave("Enemiga 3", "carguero"));
         }
         catch (NaveInvalidaException e){
+            System.out.println("Error al crear naves enemigas: " + e.getMessage());
         }
 
         Tablero tablero;
