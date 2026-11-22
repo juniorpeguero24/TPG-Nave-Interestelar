@@ -88,7 +88,7 @@ public class Tripulante {
             return false;
         }
         Tripulante tripulante = (Tripulante) o;
-        return id == tripulante.getId() &&
+        return antiguedad == tripulante.getAntiguedad() &&
             cargo == tripulante.getCargo() &&
             planetaOrigen == tripulante.getPlanetaOrigen() &&
             nombre.equals(tripulante.getNombre());
@@ -96,7 +96,7 @@ public class Tripulante {
 
     @Override
     public int hashCode() {
-        int hash = Integer.hashCode(id);
+        int hash = Integer.hashCode(antiguedad);
         hash = 31 * hash + this.cargo.hashCode();
         hash = 17 * hash + this.nombre.hashCode();
         hash = 7 * hash + this.planetaOrigen.hashCode();
