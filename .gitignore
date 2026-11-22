@@ -8,3 +8,4 @@ dominio/target/
 *.jpr
 *.mv.db
 *.trace.db
+dependency-reduced-pom.xml
