@@ -232,6 +232,7 @@ public class AsistenteComando {
     public void aumentarDesgaste(int cantidad) throws OperacionRecursoInvalidaExcepcion {
         try {
             this.nave.aumentarDesgaste(cantidad);
+            this.registrarEvento(new Evento(TipoEvento.RECURSOS, "Se aumentó en " + cantidad + " unidades el desgaste"));
         }
         catch (OperacionRecursoInvalidaExcepcion e) {
             registrarEvento(new Evento(TipoEvento.ERROR, e.getMessage()));
