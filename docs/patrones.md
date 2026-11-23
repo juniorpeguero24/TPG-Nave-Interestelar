@@ -74,7 +74,7 @@ delega en el objeto que representa la fase actual.
 ### Contexto: `MotorWarp`
 
 `MotorWarp` es el **Contexto**. Mantiene una referencia al estado actual y
-expone hacia el exterior las operaciones `saltar()` y `saltarWarp(...)`, que
+expone hacia el exterior las operaciones `saltar()` y `saltarWarp()`, que
 delega en ese estado:
 
 ```java
@@ -84,8 +84,8 @@ public ResultadoSalto saltar() {
     return estado.saltar();
 }
 
-public ResultadoSalto saltarWarp(boolean energiaSuficiente) {
-    return estado.saltarWarp(energiaSuficiente);
+public ResultadoSalto saltarWarp() {
+    return estado.saltarWarp();
 }
 
 public boolean puedeSaltarWarp() {
@@ -101,7 +101,7 @@ delega las operaciones y permite cambiarlo.
 ```java
 public interface EstadoWarp {
     ResultadoSalto saltar();
-    ResultadoSalto saltarWarp(boolean energiaSuficiente);
+    ResultadoSalto saltarWarp();
 }
 ```
 
