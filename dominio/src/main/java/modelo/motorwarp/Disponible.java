@@ -18,10 +18,7 @@ class Disponible implements EstadoWarp {
     }
 
     @Override
-    public ResultadoSalto saltarWarp(boolean energiaSuficiente) {
-        if (!energiaSuficiente) {
-            return saltar();
-        }
+    public ResultadoSalto saltarWarp() {
         motor.cambiarEstado(new Enfriamiento(motor));
         return motor.resultado(TipoResultadoSalto.SALTO_WARP, 2, "Salto Warp ejecutado");
     }

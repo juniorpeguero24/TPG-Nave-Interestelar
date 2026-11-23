@@ -217,9 +217,10 @@ public abstract class Nave implements ElementoDelUniverso {
         if (!puedeSaltarWarp()) {
             return saltar();
         }
+        
         // Validamos antes de cambiar el estado a Enfriamiento.
         verificarDisponibilidadRecursos(0, CostosMision.COSTO_ENERGIA_WARP, 0);
-        ResultadoSalto resultado = motorWarp.saltarWarp(true);
+        ResultadoSalto resultado = motorWarp.saltarWarp();
         aplicarCostosSalto(resultado);
         notificarObservadores();
         return resultado;

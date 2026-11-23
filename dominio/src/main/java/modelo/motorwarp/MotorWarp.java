@@ -23,8 +23,8 @@ public class MotorWarp {
         return estado instanceof Disponible;
     }
 
-    public ResultadoSalto saltarWarp(boolean energiaSuficiente) {
-        return estado.saltarWarp(energiaSuficiente);
+    public ResultadoSalto saltarWarp() {
+        return estado.saltarWarp();
     }
 
     @Override

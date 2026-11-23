@@ -72,7 +72,7 @@ coordina el paso entre las ventanas.
   asteroides y las estaciones de carga implementan `ElementoDelUniverso`, por lo
   que el tablero los trata de forma uniforme.
 - **Motor Warp con State y resultado de salto.** Las operaciones del motor son
-  `saltar()` y `saltarWarp(...)`. Los estados deciden el tipo de salto, los
+  `saltar()` y `saltarWarp()`. Los estados deciden el tipo de salto, los
   casilleros que avanza la nave y el estado siguiente; `Nave` aplica los costos
   (2 de combustible por salto normal, 5 de energía por salto Warp y 3 de desgaste
   en el enfriamiento). Ante un elemento en la ruta, la misión intenta un salto

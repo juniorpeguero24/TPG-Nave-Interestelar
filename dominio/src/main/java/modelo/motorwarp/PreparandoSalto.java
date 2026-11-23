@@ -19,7 +19,7 @@ class PreparandoSalto implements EstadoWarp {
     }
 
     @Override
-    public ResultadoSalto saltarWarp(boolean energiaSuficiente) {
+    public ResultadoSalto saltarWarp() {
         return saltar();
     }
 

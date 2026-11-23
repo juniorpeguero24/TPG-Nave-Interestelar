@@ -235,13 +235,12 @@ public ResultadoSalto saltar();
 ### `saltarWarp`
 
 ```java
-public ResultadoSalto saltarWarp(boolean energiaSuficiente);
+public ResultadoSalto saltarWarp();
 ```
 
 #### Precondiciones
 
-- Ninguna. `energiaSuficiente` indica si la nave cuenta con la energía necesaria,
-  dato que el motor no conoce por sí mismo.
+- Ninguna.
 
 #### Postcondiciones
 
